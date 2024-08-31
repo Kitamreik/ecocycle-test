@@ -25,6 +25,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 
+//stage routing traffic
+//const userRoutes = require('./routes/userRoutes');
+//app.use('/', userRoutes);
+
 // Error handling middleware
 // Error handling functions have four arguments instead of three: (err, req, res, next)
 // This is an example of an "catch-all" error handler
@@ -40,17 +44,18 @@ app.use((err, req, res, next) => {
       statusCode: err.status || 500,
     });
   });
-
-  //stage routing traffic
-  
+ 
   app.get("/", (req, res, next) => {
     res.status(200).json({
       success: { message: "Index page works after deployment" },
       statusCode: 200,
     });
   });
+
+  app.get("/users/home", (req, res, next) => {
+    res.render('pages/user-home')
+  });
   
-  app.listen(PORT);
-  console.log(
-    `The server is listening on port ${PORT}. Use http://localhost:${PORT}/`
-  );
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}. Use http://localhost:${PORT}/`);
+});
