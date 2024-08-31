@@ -55,6 +55,10 @@ app.use((err, req, res, next) => {
   app.get("/users/home", (req, res, next) => {
     res.render('pages/user-home')
   });
+
+  app.get("/users", (req, res, next) => {
+    res.render('pages/users')
+  });
   
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}. Use http://localhost:${PORT}/`);
