@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.6.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "name": "ecocycle-test",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kitamreik/ecocycle-test.git"
+  },
+  "author": "Kit Fenrir Amreik (they/she)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kitamreik/ecocycle-test/issues"
+  },
+  "homepage": "https://github.com/Kitamreik/ecocycle-test#readme",
+  "description": ""
+}
