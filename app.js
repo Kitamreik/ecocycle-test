@@ -1,6 +1,7 @@
-// require("dotenv").config();
+require("dotenv").config();
 // require("./config/connection");
 // require("./config/authStrategy");
+const dotenv = require("dotenv");
 
 const express = require("express");
 const path = require("node:path");
@@ -63,3 +64,6 @@ app.use((err, req, res, next) => {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}. Use http://localhost:${PORT}/`);
 });
+
+const trainingRequestRoutes = require('./routes/trainingRequestRoutes');
+app.use('/api', trainingRequestRoutes);
