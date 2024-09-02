@@ -1,3 +1,5 @@
+### Potential ERD for the project:
+
 ```mermaid
 erDiagram
     USERS {
