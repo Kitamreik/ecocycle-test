@@ -1,6 +1,4 @@
-const db = require('../data/data');
-
-const User = {
+const User = (db) => ({
     create: (userData, callback) => {
         const { name, email } = userData;
         db.run('INSERT INTO users (name, email) VALUES (?, ?)', [name, email], function (err) {
@@ -48,6 +46,6 @@ const User = {
             }
         });
     }
-};
+});
 
 module.exports = User;
