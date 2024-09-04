@@ -27,7 +27,7 @@ app.set('layout', 'layout');
 // Adding Path module and EJS to app.js 
 app.set('view engine', 'ejs');
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
 // Error handling middleware
@@ -55,10 +55,6 @@ app.get("/users/home", (req, res, next) => {
 app.get("/users", (req, res, next) => {
     res.render('pages/users');
 });
-
-// Import and use routes
-const trainingRequestRoutes = require('./routes/trainingRequestRoutes');
-app.use('/api', trainingRequestRoutes);
 
 // Start the server
 app.listen(PORT, () => {
