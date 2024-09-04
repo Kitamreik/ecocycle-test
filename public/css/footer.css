@@ -1,0 +1,38 @@
+﻿.site-footer {
+    padding: 8rem 3rem;
+    background-color: #37383d;
+}
+
+.site-footer__nav {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5rem;
+}
+
+.site-footer__item {
+    margin-right: 4rem;
+}
+
+.site-footer__link {
+    font-size: 1.6rem;
+    color: #eee;
+    text-decoration: none;
+}
+
+.site-footer__logo {
+    height: 5rem;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 5rem;
+}
+
+.site-footer__copyright {
+    font-size: 1.4rem;
+    color: #aaa;
+    text-align: center;
+}
+
+.site-footer__copyright .site-footer__link {
+    font-size: 1.4rem;
+}
