@@ -1,0 +1,59 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <style>
+    .background { fill: #f0f0f0; }
+    .sidebar { fill: #2c3e50; }
+    .main-content { fill: #ffffff; }
+    .header { fill: #3498db; }
+    .text { font-family: Arial, sans-serif; }
+    .title { font-size: 24px; fill: #ffffff; }
+    .subtitle { font-size: 24px; fill: #2c3e50; }
+    .nav-item { font-size: 14px; fill: #ecf0f1; }
+    .button { fill: #008000; }
+    .button-text { font-size: 14px; fill: #ffffff; font-weight: bold; text-anchor: middle; dominant-baseline: middle; }
+    .event-title { font-size: 16px; fill: #2c3e50; }
+    .event-time { font-size: 14px; fill: #7f8c8d; }
+    .selected-nav { fill: #008000; }
+    .icon-text { fill: #ffffff; }
+  </style>
+
+  <!-- Background -->
+  <rect width="800" height="600" class="background" />
+  <!-- Sidebar -->
+  <rect width="160" height="600" class="sidebar" />
+  <!-- Navigation Items -->
+  <text x="20" y="40" class="text nav-item">Dashboard</text>
+  <text x="20" y="80" class="text nav-item">Requests</text>
+  <text x="20" y="120" class="text nav-item">Schools</text>
+  <text x="20" y="160" class="text nav-item">Users</text>
+  <text x="20" y="200" class="text selected-nav nav-item">Calendar</text>
+  <text x="20" y="240" class="text nav-item">Reports</text>
+  <!-- Main Content Area -->
+  <rect x="160" y="0" width="800" height="600" class="main-content" />
+  <!-- Header -->
+  <rect x="160" y="0" width="800" height="60" class="header" />
+  <text x="180" y="38" class="text title">Calendar</text>
+  <!-- Add New Event Button -->
+  <rect x="620" y="15" width="120" height="30" rx="5" class="button" />
+  <text x="680" y="30" class="button-text">+ New Event</text>
+  <!-- Menu Icon -->
+  <rect x="750" y="15" width="30" height="30" rx="5" class="button" />
+ <text x="758" y="38" class="icon-text" font-size="24">≡</text>
+  <!-- Upcoming Schedule -->
+  <text x="220" y="100" class="text subtitle">Upcoming Schedule</text>
+  <!-- Event 1 -->
+  <circle cx="220" cy="140" r="6" fill="#3498db"/>
+  <text x="240" y="145" class="text event-title">School Visit: Eco High</text>
+  <text x="240" y="165" class="text event-time">Sep 10, 2024 - 10:00 AM</text>
+  <!-- Event 2 -->
+  <circle cx="220" cy="200" r="6" fill="#e74c3c"/>
+  <text x="240" y="205" class="text event-title">Recycling Workshop</text>
+  <text x="240" y="225" class="text event-time">Sep 12, 2024 - 2:00 PM</text>
+  <!-- Event 3 -->
+  <circle cx="220" cy="260" r="6" fill="#2ecc71"/>
+  <text x="240" y="265" class="text event-title">Teacher Training</text>
+  <text x="240" y="285" class="text event-time">Sep 15, 2024 - 9:00 AM</text>
+  <!-- Event 4 -->
+  <circle cx="220" cy="320" r="6" fill="#f39c12"/>
+  <text x="240" y="325" class="text event-title">Eco-Club Meeting</text>
+  <text x="240" y="345" class="text event-time">Sep 18, 2024 - 3:30 PM</text>
+</svg>
