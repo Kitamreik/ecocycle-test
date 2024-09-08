@@ -1,3 +1,36 @@
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your App Name</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Cycle</title>
+    <link rel="stylesheet" href="/css/home1.css" />
+    <script src="/js/global.js" defer></script>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <img src="/img/ecocycle.png" alt="Eco Cycle Logo" class="nav__logo" id="logo" />
+            <ul class="nav__links">
+                <li class="nav__item">
+                    <a class="nav__link" href="#">About</a>
+                </li>
+                <li class="nav__item">
+                    <a class="nav__link" href="/login">Login</a>
+                </li>
+                <li class="nav__item">
+                    <a class="nav__link" href="#">Contact</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="header__title">
+            <h1>Eco-Cycle</h1>
+            <p>One of the largest non-profit recyclers in the US, pioneering resource conservation.</p>
+            <button class="btn--text btn--scroll-to" onclick="document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' })">
+                Learn more &DownArrow;
+            </button>
+            <!-- Moving image -->
+            <div class="header__moving-image"></div>
+        </div>
+    </header>
