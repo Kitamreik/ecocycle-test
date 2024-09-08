@@ -81,8 +81,17 @@ erDiagram
 
 ## Wireframe for the project (First Draft & MVP - Subject to Change):
 
-### Dashboard Page:
+### Dashboard Section:
 ![Mockup Image](./mockups/dashboard.png)
 
-### Request Management Page:
+### Request Management Section:
 ![Mockup Image](./mockups/requestpage.png)
+
+### School Management Section:
+![Mockup Image](./mockups/schoolsection.png)
+
+### User Management Section: 
+![Mockup Image](./mockups/usersection.png)
+
+### Calendar Section:
+![Mockup Image](./mockups/calendar.png)
