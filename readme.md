@@ -86,3 +86,6 @@ erDiagram
 
 ### Request Management Page:
 ![Mockup Image](./mockups/requestpage.png)
+
+### School Management Page:
+![Mockup Image](./mockups/schoolsection.png)
