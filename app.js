@@ -48,6 +48,33 @@ app.get("/", (req, res, next) => {
     res.render('pages/home');
 });
 
+// Dummy credentials for demonstration
+const adminCredentials = {
+    username: process.env.ADMIN_USERNAME,
+    password: process.env.ADMIN_PASSWORD
+};
+
+// Render login page
+app.get('/login', (req, res) => {
+    res.render('pages/adminlogin', {
+        layout: 'layout',
+        header: false,
+        footer: false
+    });
+});
+
+// Handle login form submission
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === adminCredentials.username && password === adminCredentials.password) {
+        // Redirect to admin panel if credentials are correct
+        res.redirect('/admin/panel');
+    } else {
+        // Redirect back to login page if credentials are incorrect
+        res.redirect('/admin/login');
+    }
+});
+
 app.get("/users/home", (req, res, next) => {
     res.render('pages/user-home');
 });
