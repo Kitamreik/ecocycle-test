@@ -64,7 +64,7 @@ app.get('/login', (req, res) => {
 });
 
 // Handle login form submission
-app.post('/login', (req, res) => {
+app.post('/admin/login', (req, res) => {
     const { username, password } = req.body;
     if (username === adminCredentials.username && password === adminCredentials.password) {
         // Redirect to admin panel if credentials are correct
@@ -74,6 +74,14 @@ app.post('/login', (req, res) => {
         res.redirect('/admin/login');
     }
 });
+
+app.get('/admin/panel', (req,res,next) => {
+    res.json("You have been authorized to see the admin console panel")
+})
+
+app.get('/admin/login', (req,res,next) => {
+    res.json("Potential admin credentials have been detected, however, please enter credentials again. ")
+})
 
 app.get("/users/home", (req, res, next) => {
     res.render('pages/user-home');
