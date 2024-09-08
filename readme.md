@@ -76,3 +76,13 @@ erDiagram
     TRAININGS ||--o{ CALENDAR: "scheduled in"
 
 ```
+
+<hr> 
+
+## Wireframe for the project (First Draft & MVP - Subject to Change):
+
+### Dashboard Page:
+![Mockup Image](./mockups/dashboard.png)
+
+### Request Management Page:
+![Mockup Image](./mockups/requestpage.png)

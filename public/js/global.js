@@ -1,41 +1,11 @@
 ﻿'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.querySelector('.modal');
-    const overlay = document.querySelector('.overlay');
-    const btnCloseModal = document.querySelector('.btn--close-modal');
-    const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-    const btnScrollTo = document.querySelector('.btn--scroll-to');
-    const section1 = document.querySelector('#section--1');
     const nav = document.querySelector('.nav');
     const header = document.querySelector('.header');
     const allSections = document.querySelectorAll('.section');
     const imgTargets = document.querySelectorAll('img[data-src]');
-
-    // Modal window functionality
-    const toggleModal = () => {
-        modal.classList.toggle('hidden');
-        overlay.classList.toggle('hidden');
-    };
-
-    btnsOpenModal.forEach(btn => btn.addEventListener('click', toggleModal));
-    btnCloseModal.addEventListener('click', toggleModal);
-    overlay.addEventListener('click', toggleModal);
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            toggleModal();
-        }
-    });
-
-    // Smooth scrolling
-    btnScrollTo.addEventListener('click', () => section1.scrollIntoView({ behavior: 'smooth' }));
-    document.querySelector('.nav__links').addEventListener('click', e => {
-        e.preventDefault();
-        if (e.target.classList.contains('nav__link')) {
-            document.querySelector(e.target.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-        }
-    });
-
+    
     // Menu fade animation
     const handleHover = (e, opacity) => {
         if (e.target.classList.contains('nav__link')) {
