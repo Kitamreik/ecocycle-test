@@ -76,7 +76,8 @@ app.post('/admin/login', (req, res) => {
 });
 
 app.get('/admin/panel', (req,res,next) => {
-    res.json("You have been authorized to see the admin console panel")
+    // res.json("You have been authorized to see the admin console panel")
+    res.render('pages/admin-panel')
 })
 
 app.get('/admin/login', (req,res,next) => {
