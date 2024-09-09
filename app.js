@@ -56,7 +56,7 @@ const adminCredentials = {
 
 // Render login page
 app.get('/login', (req, res) => {
-    res.render('pages/adminlogin', {
+    res.render('pages/admin-login', {
         layout: 'layout',
         header: false,
         footer: false
@@ -71,7 +71,7 @@ app.post('/admin/login', (req, res) => {
         res.redirect('/admin/panel');
     } else {
         // Redirect back to login page if credentials are incorrect
-        res.redirect('/admin/login');
+        res.redirect('/password-error');
     }
 });
 
@@ -80,8 +80,9 @@ app.get('/admin/panel', (req,res,next) => {
     res.render('pages/admin-panel')
 })
 
-app.get('/admin/login', (req,res,next) => {
-    res.json("Potential admin credentials have been detected, however, please enter credentials again. ")
+app.get('/password-error', (req,res,next) => {
+    //res.json("Potential admin credentials have been detected, however, please enter credentials again. ")
+    res.render('pages/admin-err')
 })
 
 app.get("/users/home", (req, res, next) => {
