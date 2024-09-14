@@ -275,3 +275,124 @@ header {
     border: none;
     cursor: pointer;
 }
+
+/* Responsive CSS Here */
+@media screen and (max-width: 950px) {
+    .nav-img {
+        height: 25px;
+    }
+    .nav-option {
+        gap: 30px;
+    }
+    .nav-option h3 {
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .navcontainer {
+        width: 60px;
+    }
+    .nav-text {
+        opacity: 0;
+    }
+    .main {
+        margin-left: 60px;
+    }
+    .searchbar {
+        display: none;
+    }
+    .main {
+        padding: 40px 30px 30px 30px;
+    }
+    .searchbar2 {
+        width: 100%;
+        display: flex;
+        margin: 0 0 40px 0;
+        justify-content: center;
+    }
+    .searchbar2 input {
+        width: 250px;
+        height: 42px;
+        border-radius: 50px 0 0 50px;
+        background-color: var(--background-color3);
+        padding: 0 20px;
+        font-size: 15px;
+        border: 2px solid var(--secondary-color);
+    }
+}
+
+@media screen and (max-width: 490px) {
+    .message {
+        display: none;
+    }
+    .logosec {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .logo {
+        font-size: 20px;
+    }
+    .menuicn {
+        height: 25px;
+    }
+    .nav-img {
+        height: 25px;
+    }
+    .nav-option {
+        gap: 25px;
+    }
+    .nav-option h3 {
+        font-size: 12px;
+    }
+    .nav-upper-options {
+        gap: 15px;
+    }
+    .user-card {
+        height: 190px;
+        width: 190px;
+    }
+    .user-img {
+        height: 80px;
+        width: 80px;
+    }
+    .user-name {
+        font-size: 16px;
+    }
+    .user-role {
+        font-size: 12px;
+    }
+    .add-user-btn {
+        height: 30px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .nav-option {
+        padding: 0 20px 0 10px;
+    }
+    .user-card {
+        height: 170px;
+        width: 170px;
+    }
+    .user-img {
+        height: 70px;
+        width: 70px;
+    }
+    .user-name {
+        font-size: 14px;
+    }
+    .user-role {
+        font-size: 11px;
+    }
+    .add-user-btn {
+        height: 28px;
+        padding: 0 8px;
+        font-size: 12px;
+    }
+    .searchbar2 input {
+        width: 200px;
+    }
+}
