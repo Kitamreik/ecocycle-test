@@ -182,6 +182,11 @@ header {
     background-color: #dadada;
     cursor: pointer;
 }
+.nav-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
 
 .nav-img {
     height: 30px;
@@ -261,9 +266,7 @@ header {
     font-size: 14px;
     color: var(--secondary-color);
 }
-a {
-    text-decoration: none;
-}
+
 .add-user-btn {
     height: 35px;
     padding: 0 15px;
