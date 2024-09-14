@@ -72,18 +72,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('resize', handleResponsive);
     handleResponsive(); // Call once on load
-
-    // Simple loading simulation
-    function simulateLoading() {
-        const main = document.querySelector('.main');
-        main.innerHTML = '<div class="loading">Loading...</div>';
-        setTimeout(() => {
-            main.innerHTML = document.querySelector('.main').innerHTML;
-        }, 1000);
+    
+    // Function to fetch and render content
+    function fetchAndRenderContent(url) {
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('.main').innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching content:', error));
     }
 
-    // Simulate loading when clicking on nav options
-    navOptions.forEach(option => {
-        option.addEventListener('click', simulateLoading);
-    });
+    // Define routes
+    page('/admin/dashboard', () => fetchAndRenderContent('/api/dashboard'));
+    page('/admin/requests', () => fetchAndRenderContent('/api/requests'));
+    page('/admin/schools', () => fetchAndRenderContent('/api/schools'));
+    page('/admin/reports', () => fetchAndRenderContent('/api/reports'));
+    page('/admin/calendar', () => fetchAndRenderContent('/api/calendar'));
+    page('/admin/logout', () => window.location.href = '/logout');
+
+    // Initialize the router
+    page();
+
 });
