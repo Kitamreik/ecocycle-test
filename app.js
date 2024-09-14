@@ -1,30 +1,23 @@
-// require("./config/connection");
-// require("./config/authStrategy");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const express = require("express");
 const path = require("node:path");
-
-// const cors = require("cors");
 const morgan = require("morgan");
-// const helmet = require("helmet");
-
-// const session = require("express-session");
-// const passport = require("passport");
+const expressLayouts = require('express-ejs-layouts');
 
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Morgan Functionality 
+// Morgan Functionality
 app.use(morgan('dev'));
 
-const expressLayouts = require('express-ejs-layouts');
+// Set up express-ejs-layouts
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
-// Adding Path module and EJS to app.js 
+// Adding Path module and EJS to app.js
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -36,7 +29,6 @@ app.use((err, req, res, next) => {
         console.log(err);
     }
 
-    // Any other error that is not caught anywhere else will be handled here
     return res.status(err.status || 500).json({
         error: { message: err.message || "Internal server error." },
         statusCode: err.status || 500,
@@ -44,7 +36,7 @@ app.use((err, req, res, next) => {
 });
 
 // Define routes
-app.get("/", (req, res, next) => {
+app.get("/", (req, res) => {
     res.render('pages/home');
 });
 
@@ -67,32 +59,67 @@ app.get('/login', (req, res) => {
 app.post('/admin/login', (req, res) => {
     const { username, password } = req.body;
     if (username === adminCredentials.username && password === adminCredentials.password) {
-        // Redirect to admin panel if credentials are correct
         res.redirect('/admin/panel');
     } else {
-        // Redirect back to login page if credentials are incorrect
         res.redirect('/password-error');
     }
 });
 
-app.get('/admin/panel', (req,res,next) => {
-    // res.json("You have been authorized to see the admin console panel")
-    res.render('pages/admin-dashboard/admin-panel')
-})
+app.get('/admin/panel', (req, res) => {
+    res.render('pages/admin-dashboard/admin-panel');
+});
 
-app.get('/password-error', (req,res,next) => {
-    //res.json("Potential admin credentials have been detected, however, please enter credentials again. ")
-    res.render('pages/admin-err')
-})
+app.get('/password-error', (req, res) => {
+    res.render('pages/admin-err');
+});
 
-app.get("/users/home", (req, res, next) => {
+app.get("/users/home", (req, res) => {
     res.render('pages/user-home');
 });
 
-app.get("/users", (req, res, next) => {
+app.get("/users", (req, res) => {
     res.render('pages/users');
 });
 
+// Defining API routes to serve EJS templates
+app.get('/api/dashboard', (req, res) => {
+    const data = {
+        overview: "This is the overview data",
+        statistics: "These are the statistics data"
+    };
+    res.render('pages/admin-dashboard/dashboard', { data });
+});
+
+app.get('/api/requests', (req, res) => {
+    const data = {
+        requests: "These are the requests data"
+    };
+    res.render('pages/admin-dashboard/requests', { data });
+});
+
+app.get('/api/schools', (req, res) => {
+    const data = {
+        schools: "These are the schools data"
+    };
+    res.render('pages/admin-dashboard/schools', { data });
+});
+
+app.get('/api/reports', (req, res) => {
+    const data = {
+        reports: "These are the reports data"
+    };
+    res.render('pages/admin-dashboard/reports', { data });
+});
+
+app.get('/api/calendar', (req, res) => {
+    const data = {
+        calendar: "This is the calendar data"
+    };
+    res.render('pages/admin-dashboard/calendar', { data });
+});
+app.get('*', (req, res) => {
+    res.render('pages/admin-dashboard/admin-panel');
+});
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}. Use http://localhost:${PORT}/`);
