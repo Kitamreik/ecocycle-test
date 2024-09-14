@@ -77,7 +77,7 @@ app.post('/admin/login', (req, res) => {
 
 app.get('/admin/panel', (req,res,next) => {
     // res.json("You have been authorized to see the admin console panel")
-    res.render('pages/admin-panel')
+    res.render('pages/admin-dashboard/admin-panel')
 })
 
 app.get('/password-error', (req,res,next) => {
