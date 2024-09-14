@@ -72,26 +72,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('resize', handleResponsive);
     handleResponsive(); // Call once on load
-    
+
     // Function to fetch and render content
     function fetchAndRenderContent(url) {
         fetch(url)
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
             .then(html => {
                 document.querySelector('.main').innerHTML = html;
             })
-            .catch(error => console.error('Error fetching content:', error));
+            .catch(error => {
+                console.error('Error fetching content:', error);
+                // Optionally, display an error message to the user
+                document.querySelector('.main').innerHTML = '<p>Error loading content. Please try again.</p>';
+            });
     }
 
-    // Define routes
-    page('/admin/dashboard', () => fetchAndRenderContent('/api/dashboard'));
-    page('/admin/requests', () => fetchAndRenderContent('/api/requests'));
-    page('/admin/schools', () => fetchAndRenderContent('/api/schools'));
-    page('/admin/reports', () => fetchAndRenderContent('/api/reports'));
-    page('/admin/calendar', () => fetchAndRenderContent('/api/calendar'));
-    page('/admin/logout', () => window.location.href = '/logout');
+// Define routes
+    page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
+    page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
+    page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
+    page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
+    page('/admin/reports', () => fetchAndRenderContent('/admin/api/reports'));
+    page('/admin/calendar', () => fetchAndRenderContent('/admin/api/calendar'));
+    page('/admin/logout', () => window.location.href = '/admin/logout');
 
-    // Initialize the router
+// Catch-all route for the admin panel
+    page('/admin/*', () => fetchAndRenderContent('/admin/api/dashboard'));
+
+// Initialize the router
     page();
 
 });
