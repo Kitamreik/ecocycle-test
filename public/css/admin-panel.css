@@ -264,7 +264,9 @@ header {
     font-size: 14px;
     color: var(--secondary-color);
 }
-
+a {
+    text-decoration: none;
+}
 .add-user-btn {
     height: 35px;
     padding: 0 15px;
