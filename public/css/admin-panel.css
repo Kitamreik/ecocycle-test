@@ -196,14 +196,11 @@ header {
 
 .option-active {
     border-left: 5px solid #010058af;
-    background-color: var(--Border-color);
-    color: white;
     cursor: pointer;
 }
 
 .option-active:hover {
     border-left: 5px solid #010058af;
-    background-color: var(--Border-color);
 }
 
 .nav-text {
