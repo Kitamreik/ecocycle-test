@@ -85,7 +85,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0px 50px 50px 0px;
+    border-radius: 0 50px 50px 0;
     background-color: var(--secondary-color);
     cursor: pointer;
 }
