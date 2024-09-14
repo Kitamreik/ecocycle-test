@@ -27,13 +27,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session middleware
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'testsecretkey',
-    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET,
     resave: false,
+    saveUninitialized: false,
     cookie: {
-        maxAge: 3600000, // 1 hour
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        httpOnly: true, // Mitigate XSS attacks
+        maxAge: 24 * 60 * 60 * 1000 // Sessions last for 24 hours
     }
 }));
 
