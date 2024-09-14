@@ -1,96 +1,61 @@
-// require("./config/connection");
-// require("./config/authStrategy");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const express = require("express");
 const path = require("node:path");
-
-// const cors = require("cors");
 const morgan = require("morgan");
-// const helmet = require("helmet");
-
-// const session = require("express-session");
-// const passport = require("passport");
+const expressLayouts = require('express-ejs-layouts');
+const session = require('express-session');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Morgan Functionality 
+// Morgan Functionality
 app.use(morgan('dev'));
 
-const expressLayouts = require('express-ejs-layouts');
+// Set up express-ejs-layouts
 app.use(expressLayouts);
 app.set('layout', 'layout');
 
-// Adding Path module and EJS to app.js 
+// Adding Path module and EJS to app.js
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    if (err) {
-        console.log(err);
+// Session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        httpOnly: true, // Mitigate XSS attacks
+        maxAge: 24 * 60 * 60 * 1000 // Sessions last for 24 hours
     }
-
-    // Any other error that is not caught anywhere else will be handled here
-    return res.status(err.status || 500).json({
-        error: { message: err.message || "Internal server error." },
-        statusCode: err.status || 500,
-    });
-});
+}));
 
 // Define routes
-app.get("/", (req, res, next) => {
+app.get("/", (req, res) => {
     res.render('pages/home');
 });
 
-// Dummy credentials for demonstration
-const adminCredentials = {
-    username: process.env.ADMIN_USERNAME,
-    password: process.env.ADMIN_PASSWORD
-};
-
-// Render login page
-app.get('/login', (req, res) => {
-    res.render('pages/admin-login', {
-        layout: 'layout',
-        header: false,
-        footer: false
-    });
-});
-
-// Handle login form submission
-app.post('/admin/login', (req, res) => {
-    const { username, password } = req.body;
-    if (username === adminCredentials.username && password === adminCredentials.password) {
-        // Redirect to admin panel if credentials are correct
-        res.redirect('/admin/panel');
-    } else {
-        // Redirect back to login page if credentials are incorrect
-        res.redirect('/password-error');
-    }
-});
-
-app.get('/admin/panel', (req,res,next) => {
-    // res.json("You have been authorized to see the admin console panel")
-    res.render('pages/admin-panel')
-})
-
-app.get('/password-error', (req,res,next) => {
-    //res.json("Potential admin credentials have been detected, however, please enter credentials again. ")
-    res.render('pages/admin-err')
-})
-
-app.get("/users/home", (req, res, next) => {
+app.get("/users/home", (req, res) => {
     res.render('pages/user-home');
 });
 
-app.get("/users", (req, res, next) => {
+app.get("/users", (req, res) => {
     res.render('pages/users');
+});
+
+app.use('/admin', adminRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
 
 // Start the server
