@@ -84,20 +84,35 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(html => {
                 document.querySelector('.main').innerHTML = html;
+                attachEventListeners();
             })
             .catch(error => {
                 console.error('Error fetching content:', error);
                 // Optionally, display an error message to the user
-                document.querySelector('.main').innerHTML = '<p>Error loading content. Please try again.</p>';
+                // document.querySelector('.main').innerHTML = '<p>Error loading content. Please try again.</p>';
             });
     }
-
+    
+// Function to attach event listeners after content is loaded
+    function attachEventListeners() {
+        const addUserBtn = document.querySelector('.button[onclick="location.href=\'/admin/users/add\'"]');
+        if (addUserBtn) {
+            addUserBtn.removeAttribute('onclick');
+            addUserBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                page('/admin/users/add');
+            });
+        }
+    }
+    
 // Define routes
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
     page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
-    page('/admin/reports', () => fetchAndRenderContent('/admin/api/reports'));
+    page('/admin/users', () => fetchAndRenderContent('/admin/api/users'));
+    page('/admin/users/add', () => fetchAndRenderContent('/admin/api/users/add'));
+    page('/admin/users/edit', () => fetchAndRenderContent('/admin/api/users/edit'));
     page('/admin/calendar', () => fetchAndRenderContent('/admin/api/calendar'));
     page('/admin/logout', () => window.location.href = '/admin/logout');
 

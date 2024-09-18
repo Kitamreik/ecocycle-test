@@ -1,0 +1,95 @@
+﻿<link rel="stylesheet" href="/css/users/view.css" />
+<div class="users-table-component">
+    <div class="content">
+        <section class="main-header grid">
+            <h1>Users</h1>
+            <button class="button" onclick="location.href='/admin/users/add'">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add new user</span>
+            </button>
+        </section>
+
+        <section class="table-header grid">
+            <div>
+                <div class="select">
+                    <select id="bulk-action">
+                        <option value="">Choose action</option>
+                        <option value="delete">Delete selected</option>
+                        <option value="export">Export selected</option>
+                    </select>
+                </div>
+                <span>Selected <span id="selected-count">0</span> of <span id="total-count"><%= users.length %></span> items</span>
+            </div>
+
+            <a class="button link" id="toggle-filters">
+                <span>Filters</span>
+                <i class="fa-solid fa-angle-down"></i>
+            </a>
+        </section>
+
+        <div class="card">
+            <table>
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkbox">
+                            <input type="checkbox" id="select-all" />
+                            <span class="checkmark"></span>
+                        </div>
+                    </th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Date Created</th>
+                    <th>Date Modified</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="users-table-body">
+                <% users.forEach(user => { %>
+                    <tr data-id="<%= user.id %>">
+                        <td>
+                            <div class="checkbox">
+                                <input type="checkbox" class="user-select" />
+                                <span class="checkmark"></span>
+                            </div>
+                        </td>
+                        <td><%= user.id %></td>
+                        <td><%= user.firstname %> <%= user.lastname %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.phone_number %></td>
+                        <td><%= user.role %></td>
+                        <td><%= new Date(user.created_at).toLocaleString() %></td>
+                        <td><%= new Date(user.updated_at).toLocaleString() %></td>
+                        <td>
+                            <a href="/users/<%= user.id %>/edit" class="button link">Edit</a>
+                            <button class="button link delete-user" data-id="<%= user.id %>">Delete</button>
+                        </td>
+                    </tr>
+                <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="table-footer grid">
+            <span>Displaying <%= users.length %> items</span>
+            <div class="paging grid">
+        <span>
+          Page
+          <input type="number" id="current-page" value="1" min="1">
+          of <span id="total-pages">1</span>
+        </span>
+                <div class="button icon" id="prev-page">
+                    <i class="fa-solid fa-angle-left"></i>
+                </div>
+                <div class="button icon" id="next-page">
+                    <i class="fa-solid fa-angle-right"></i>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="/js/user-section.js"></script>
