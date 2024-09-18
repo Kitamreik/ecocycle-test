@@ -1,0 +1,230 @@
+﻿@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400..700&display=swap');
+
+/* Define variables */
+:root {
+    --color-black: #41423d;
+    --color-neutral-100: #f5f4f0;
+    --color-neutral: #dfddd0;
+    --color-primary-100: #f0f7f5;
+    --color-primary-200: #e0eeeb;
+    --color-primary-300: #cfe5e0;
+    --color-primary: #3f9783;
+    --color-primary-500: #327969;
+    --color-white: #fbfcfa;
+    --text-font-family: 'Inter', sans-serif;
+    --title-font-family: 'Lora', serif;
+    --title-font-weight: 500;
+}
+
+/* Users table specific styles */
+.users-table-component {
+    font-family: var(--text-font-family), sans-serif;
+    color: var(--color-black);
+}
+
+.users-table-component h1 {
+    color: var(--color-primary);
+    font-family: var(--title-font-family), serif;
+    font-size: 2.5rem;
+    font-weight: var(--title-font-weight);
+    margin: 0;
+}
+
+.users-table-component a {
+    color: var(--color-primary);
+    font-size: .875rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+.users-table-component a:hover { color: var(--color-primary-500); }
+
+.users-table-component .content {
+    margin: 0 auto;
+    max-width: 1600px;
+    width: 100%;
+}
+
+.users-table-component .main-header { margin: 0 0 2.5rem; }
+.users-table-component .main-header.grid {
+    align-items: center;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: space-between;
+}
+
+.users-table-component .button {
+    background: var(--color-primary);
+    border: 0;
+    border-radius: .25rem;
+    color: var(--color-white);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 500;
+    height: 3rem;
+    line-height: 3rem;
+    padding: 0 2rem;
+    align-items: center;
+    display: grid;
+    gap: .75rem;
+    grid-auto-flow: column;
+}
+.users-table-component .button:hover { background: var(--color-primary-500); }
+.users-table-component .button i { font-size: 1.25rem; }
+
+.users-table-component .button.icon {
+    border-radius: 50%;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+    width: 3rem;
+}
+
+.users-table-component .button.link {
+    background: none;
+    color: var(--color-primary);
+    justify-content: start;
+    padding: 0;
+}
+.users-table-component .button.link:hover { color: var(--color-primary-500); }
+.users-table-component .button.link i { font-size: inherit; }
+
+.users-table-component .card {
+    border: 1px solid var(--color-neutral);
+    border-radius: .25rem;
+    background: var(--color-white);
+    margin: 0 0 2.5rem;
+    overflow: auto;
+    padding: 1.5rem 1.5rem 2.5rem;
+    width: 100%;
+}
+
+.users-table-component .checkbox {
+    background: var(--color-white);
+    border: 1px solid var(--color-neutral);
+    border-radius: .25rem;
+    cursor: pointer;
+    height: 1.5rem;
+    position: relative;
+    width: 1.5rem;
+}
+
+.users-table-component .checkbox input[type="checkbox"] {
+    cursor: pointer;
+    height: 0;
+    opacity: 0;
+    position: relative;
+    width: 0;
+}
+
+.users-table-component .checkbox .checkmark::after {
+    background: var(--color-primary);
+    border: 0;
+    border-radius: .25rem;
+    color: var(--color-white);
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free", sans-serif;
+    font-size: .75rem;
+    font-weight: 900;
+    height: 1.5rem;
+    width: 1.5rem;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+}
+.users-table-component .checkbox .checkmark.minus::after { content: "\f068"; }
+.users-table-component .checkbox .checkmark { display: none; }
+.users-table-component .checkbox input[type="checkbox"]:checked ~ .checkmark { display: block; }
+
+.users-table-component .select {
+    background: var(--color-white);
+    border: 1px solid var(--color-neutral);
+    border-radius: .25rem;
+    color: var(--color-black);
+    display: inline-block;
+    font: inherit;
+    height: 3rem;
+    margin: 0 1rem 0 0;
+    padding: 0 1rem;
+    position: relative;
+    width: 12rem;
+}
+
+.users-table-component .select::after {
+    content: "\f107";
+    font-family: "Font Awesome 6 Free", sans-serif;
+    font-weight: 900;
+    height: 3rem;
+    line-height: 3rem;
+    padding: 0 1rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.users-table-component select {
+    appearance: none;
+    background-color: transparent;
+    border: 0;
+    cursor: inherit;
+    font: inherit;
+    height: 3rem;
+    margin: 0;
+    padding: 0 1rem 0 0;
+    width: 100%;
+}
+
+.users-table-component input[type="number"],
+.users-table-component input[type="text"] {
+    background: var(--color-white);
+    border: 1px solid var(--color-neutral);
+    border-radius: .25rem;
+    color: var(--color-black);
+    display: inline-block;
+    font: inherit;
+    height: 3rem;
+    margin: 0 .5rem;
+    padding: 0 1rem;
+    width: 5rem;
+}
+
+.users-table-component .paging.grid {
+    align-items: center;
+    display: grid;
+    gap: .75rem;
+    grid-auto-flow: column;
+}
+
+.users-table-component .paging span { margin: 0 .75rem; }
+
+.users-table-component table { border-collapse: collapse; width: 100%; }
+.users-table-component td,
+.users-table-component th {
+    border-bottom: 1px solid var(--color-primary-300);
+    font-size: 1rem;
+    text-align: left;
+    white-space: nowrap;
+}
+.users-table-component th { padding: 1.5rem 1rem; }
+.users-table-component td { padding: 1rem; }
+
+.users-table-component tbody tr { cursor: pointer; }
+.users-table-component tbody tr.selected td { background: var(--color-primary-200); }
+.users-table-component tbody tr:hover:not(.selected) td { background: var(--color-primary-100); }
+
+.users-table-component .table-footer,
+.users-table-component .table-header { font-size: .875rem; }
+.users-table-component .table-footer { margin: -1.5rem 0 0; }
+.users-table-component .table-header { margin: 0 0 1rem; }
+
+.users-table-component .table-footer.grid,
+.users-table-component .table-header.grid {
+    align-items: center;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: space-between;
+}
