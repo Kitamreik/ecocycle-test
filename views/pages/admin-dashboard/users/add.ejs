@@ -1,1 +1,77 @@
-﻿<h1> Add is working </h1>
+﻿<link rel="stylesheet" href="/css/users/add.css">
+<body>
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>User Management</h1>
+        </div>
+
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/users">Users</a></li>
+                <li class="auf-breadcrumb-item">New User</li>
+            </ol>
+        </nav>
+
+        <div class="auf-user-id">
+            <strong>User ID:</strong> <span id="aufUserId">Auto-generated</span>
+        </div>
+
+        <form action="/add" method="POST" id="aufAddUserForm">
+            <div class="auf-form-row">
+                <div class="auf-form-col">
+                    <div class="auf-form-group">
+                        <label class="auf-label" for="aufFirstname">First Name</label>
+                        <input type="text" id="aufFirstname" name="firstname" class="auf-input" required>
+                    </div>
+                </div>
+                <div class="auf-form-col">
+                    <div class="auf-form-group">
+                        <label class="auf-label" for="aufLastname">Last Name</label>
+                        <input type="text" id="aufLastname" name="lastname" class="auf-input" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="aufEmail">Email</label>
+                <input type="email" id="aufEmail" name="email" class="auf-input" required>
+            </div>
+
+            <div class="auf-form-row">
+                <div class="auf-form-col">
+                    <div class="auf-form-group">
+                        <label class="auf-label" for="aufPhoneNumber">Phone Number</label>
+                        <input type="text" id="aufPhoneNumber" name="phone_number" class="auf-input" required>
+                    </div>
+                </div>
+                <div class="auf-form-col">
+                    <div class="auf-form-group">
+                        <label class="auf-label" for="aufPhoneType">Phone Type</label>
+                        <select id="aufPhoneType" name="phone_type" class="auf-select" required>
+                            <option value="Mobile">Mobile</option>
+                            <option value="Home">Home</option>
+                            <option value="Work">Work</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="aufRole">Role</label>
+                <select id="aufRole" name="role" class="auf-select" required>
+                    <option value="1">Admin</option>
+                    <option value="2">User</option>
+                    <option value="3">Guest</option>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-plus-circle"></i> Add User
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
