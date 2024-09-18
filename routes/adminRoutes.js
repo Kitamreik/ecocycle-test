@@ -1,8 +1,4 @@
-﻿const { createClient } = require('@supabase/supabase-js');
-const supabaseUrl = 'https://mmemoearbbtentcfipen.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
-
+﻿const { supabase } = require('../config/supabase');
 const express = require('express');
 const router = express.Router();
 
@@ -160,24 +156,28 @@ router.get('/api/schools', isAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/api/reports', isAuthenticated, async (req, res) => {
+router.get('/api/users', isAuthenticated, async (req, res) => {
     try {
-        const { data: reportsData, error: reportsError } = await supabase
-            .from('reports') // Adjust table name as needed
-            .select('*');
+        const { data: usersData, error: usersError } = await supabase
+            .from('users')
+            .select('user_id, firstname, lastname, email, phone_number, phone_type, role, created_at, updated_at');
 
-        if (reportsError) throw reportsError;
+        if (usersError) throw usersError;
 
-        const data = {
-            reports: reportsData
-        };
-        res.render('pages/admin-dashboard/reports', { data });
+        res.render('pages/admin-dashboard/users/view', { users: usersData });
     } catch (error) {
-        console.error('Error fetching reports data:', error);
+        console.error('Error fetching users data:', error);
         res.status(500).send('Error retrieving data from Supabase');
     }
 });
-
+router.get('/api/users/add', async (req, res) => {
+    try {
+        res.render('pages/admin-dashboard/users/add');
+    } catch (error) {
+        console.error('Error fetching users data:', error);
+        res.status(500).send('Error retrieving data from Supabase');
+    }
+});
 
 router.get('/api/calendar', async (req, res) => {
     try {
