@@ -7,7 +7,6 @@ const morgan = require("morgan");
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const adminRoutes = require('./routes/adminRoutes');
-
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -40,14 +39,6 @@ app.use(session({
 // Define routes
 app.get("/", (req, res) => {
     res.render('pages/home');
-});
-
-app.get("/users/home", (req, res) => {
-    res.render('pages/user-home');
-});
-
-app.get("/users", (req, res) => {
-    res.render('pages/users');
 });
 
 app.use('/admin', adminRoutes);
