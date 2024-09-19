@@ -92,8 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // document.querySelector('.main').innerHTML = '<p>Error loading content. Please try again.</p>';
             });
     }
-    
-// Function to attach event listeners after content is loaded
+
     function attachEventListeners() {
         const addUserBtn = document.querySelector('.button[onclick="location.href=\'/admin/users/add\'"]');
         if (addUserBtn) {
@@ -103,8 +102,81 @@ document.addEventListener('DOMContentLoaded', function() {
                 page('/admin/users/add');
             });
         }
+
+        // Attach event listeners to edit buttons
+        const editButtons = document.querySelectorAll('.edit-user-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const userId = this.dataset.userId;
+                fetchAndRenderContent(`/admin/api/users/edit`);
+            });
+        });
+
+        // Attach event listeners to delete buttons
+        const deleteButtons = document.querySelectorAll('.delete-user-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const userId = this.dataset.userId;
+                if (confirm('Are you sure you want to delete this user?')) {
+                    deleteUser(userId);
+                }
+            });
+        });
     }
     
+    function deleteUser(userId) {
+        fetch(`/admin/api/users/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'User deleted successfully') {
+                    // Refresh the user list
+                    fetchAndRenderContent('/admin/api/users');
+                } else {
+                    alert('Error deleting user');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error deleting user');
+            });
+    }
+    
+    // Function to handle form submission for editing a user
+    function handleEditFormSubmission(event) {
+        event.preventDefault();
+        const form = event.target;
+        const userId = form.dataset.userId;
+        const formData = new FormData(form);
+
+        fetch(`/admin/api/users/${userId}`, {
+            method: 'PUT',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'User updated successfully') {
+                    // Refresh the user list
+                    fetchAndRenderContent('/admin/api/users');
+                } else {
+                    alert('Error updating user');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error updating user');
+            });
+    }
+    
+    // Call this function after the content is loaded
+    document.addEventListener('DOMContentLoaded', attachEventListeners);
+
 // Define routes
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
@@ -112,11 +184,10 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
     page('/admin/users', () => fetchAndRenderContent('/admin/api/users'));
     page('/admin/users/add', () => fetchAndRenderContent('/admin/api/users/add'));
-    page('/admin/users/edit', () => fetchAndRenderContent('/admin/api/users/edit'));
+    page('/admin/users/edit/:userId', (ctx) => fetchAndRenderContent(`/admin/api/users/edit/${ctx.params.userId}`));
     page('/admin/calendar', () => fetchAndRenderContent('/admin/api/calendar'));
     page('/admin/logout', () => window.location.href = '/admin/logout');
-
-// Catch-all route for the admin panel
+    // Catch-all route for the admin panel
     page('/admin/*', () => fetchAndRenderContent('/admin/api/dashboard'));
 
 // Initialize the router

@@ -179,6 +179,73 @@ router.get('/api/users/add', async (req, res) => {
     }
 });
 
+// Get user for editing
+router.get('/api/users/edit/:userId', isAuthenticated, async (req, res) => {
+    try {
+        const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('user_id', req.params.userId)
+            .single();
+
+        if (userError) throw userError;
+
+        if (!userData) {
+            return res.status(404).send('User not found');
+        }
+
+        res.render('pages/admin-dashboard/users/edit', { user: userData });
+    } catch (error) {
+        console.error('Error fetching user data for edit:', error);
+        res.status(500).send('Error retrieving user data from Supabase');
+    }
+});
+
+
+// Update user
+router.put('/api/users/:userId', isAuthenticated, async (req, res) => {
+    try {
+        const { firstname, lastname, email, phone_number, phone_type, role } = req.body;
+
+        const { data, error } = await supabase
+            .from('users')
+            .update({
+                firstname,
+                lastname,
+                email,
+                phone_number,
+                phone_type,
+                role,
+                updated_at: new Date()
+            })
+            .eq('user_id', req.params.userId);
+
+        if (error) throw error;
+
+        res.json({ message: 'User updated successfully', data });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ error: 'Error updating user in Supabase' });
+    }
+});
+
+//Delete user
+router.delete('/api/users/:userId', isAuthenticated, async (req, res) => {
+    try {
+        const { error } = await supabase
+            .from('users')
+            .delete()
+            .eq('user_id', req.params.userId);
+
+        if (error) throw error;
+
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Error deleting user from Supabase' });
+    }
+});
+
 router.get('/api/calendar', async (req, res) => {
     try {
         const monthQuery = parseInt(req.query.month);
