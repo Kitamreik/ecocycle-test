@@ -113,24 +113,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchAndRenderContent(`/admin/api/users/edit`);
             });
         });
-        
+
         // Attach event listeners to delete buttons
-        const deleteButtons = document.querySelectorAll('.delete-user-btn');
+        const deleteButtons = document.querySelectorAll('.delete-user');
         deleteButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const userId = this.dataset.userId;
-                if (confirm('Are you sure you want to delete this user?')) {
-                    deleteUser(userId);
-                }
-            });
+            button.addEventListener('click', handleDeleteUser);
         });
+        
         const editForm = document.getElementById('eufEditUserForm');
         if (editForm) {
             editForm.addEventListener('submit', handleEditFormSubmission);
         }
     }
-    
+    function handleDeleteUser(event) {
+        event.preventDefault();
+        const userId = this.getAttribute('data-id');
+        showModal('Are you sure you want to delete this user?', false, true, () => deleteUser(userId));
+    }
+
     function deleteUser(userId) {
         fetch(`/admin/api/users/${userId}`, {
             method: 'DELETE',
@@ -141,16 +141,63 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.message === 'User deleted successfully') {
-                    // Refresh the user list
-                    fetchAndRenderContent('/admin/api/users');
+                    // Remove the user row from the table
+                    const userRow = document.querySelector(`tr[data-id="${userId}"]`);
+                    if (userRow) {
+                        userRow.remove();
+                    }
+                    // Show success message
+                    showModal('User deleted successfully');
                 } else {
-                    alert('Error deleting user');
+                    // Show error message
+                    showModal('Error deleting user', true);
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('Error deleting user');
+                // Show error message
+                showModal('Error deleting user', true);
             });
+    }
+    
+    //delete user confirmation modal
+    function showModal(message, isError = false, isConfirmation = false, onConfirm = null) {
+        const modal = document.createElement('div');
+        modal.className = 'custom-modal';
+
+        let buttonHtml = isConfirmation
+            ? '<button class="confirm-modal">Confirm</button><button class="cancel-modal">Cancel</button>'
+            : '<button class="close-modal">Close</button>';
+
+        modal.innerHTML = `
+            <div class="modal-content ${isError ? 'error' : isConfirmation ? 'confirmation' : 'success'}">
+                <p>${message}</p>
+                ${buttonHtml}
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const closeModal = () => {
+            document.body.removeChild(modal);
+        };
+
+        if (isConfirmation) {
+            const confirmButton = modal.querySelector('.confirm-modal');
+            const cancelButton = modal.querySelector('.cancel-modal');
+
+            confirmButton.addEventListener('click', () => {
+                closeModal();
+                if (onConfirm) onConfirm();
+            });
+
+            cancelButton.addEventListener('click', closeModal);
+        } else {
+            const closeButton = modal.querySelector('.close-modal');
+            closeButton.addEventListener('click', closeModal);
+
+            // Auto-close the modal after 3 seconds for non-confirmation modals
+            setTimeout(closeModal, 3000);
+        }
     }
     
     // Function to handle form submission for editing a user
