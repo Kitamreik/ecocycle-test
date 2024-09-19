@@ -201,7 +201,6 @@ router.get('/api/users/edit/:userId', isAuthenticated, async (req, res) => {
     }
 });
 
-
 // Update user
 router.put('/api/users/:userId', isAuthenticated, async (req, res) => {
     try {

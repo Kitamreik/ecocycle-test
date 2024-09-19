@@ -101,8 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 page('/admin/users/add');
             });
+            
         }
-
+        
         // Attach event listeners to edit buttons
         const editButtons = document.querySelectorAll('.edit-user-btn');
         editButtons.forEach(button => {
@@ -114,18 +115,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Attach event listeners to delete buttons
-        const deleteButtons = document.querySelectorAll('.delete-user-btn');
+        const deleteButtons = document.querySelectorAll('.delete-user');
         deleteButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const userId = this.dataset.userId;
-                if (confirm('Are you sure you want to delete this user?')) {
-                    deleteUser(userId);
-                }
-            });
+            button.addEventListener('click', handleDeleteUser);
         });
+        
+        const editForm = document.getElementById('eufEditUserForm');
+        if (editForm) {
+            editForm.addEventListener('submit', handleEditFormSubmission);
+        }
     }
-    
+    function handleDeleteUser(event) {
+        event.preventDefault();
+        const userId = this.getAttribute('data-id');
+        showModal('Are you sure you want to delete this user?', false, true, () => deleteUser(userId));
+    }
+
     function deleteUser(userId) {
         fetch(`/admin/api/users/${userId}`, {
             method: 'DELETE',
@@ -136,34 +141,85 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.message === 'User deleted successfully') {
-                    // Refresh the user list
-                    fetchAndRenderContent('/admin/api/users');
+                    // Remove the user row from the table
+                    const userRow = document.querySelector(`tr[data-id="${userId}"]`);
+                    if (userRow) {
+                        userRow.remove();
+                    }
+                    // Show success message
+                    showModal('User deleted successfully');
                 } else {
-                    alert('Error deleting user');
+                    // Show error message
+                    showModal('Error deleting user', true);
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('Error deleting user');
+                // Show error message
+                showModal('Error deleting user', true);
             });
+    }
+    
+    //delete user confirmation modal
+    function showModal(message, isError = false, isConfirmation = false, onConfirm = null) {
+        const modal = document.createElement('div');
+        modal.className = 'custom-modal';
+
+        let buttonHtml = isConfirmation
+            ? '<button class="confirm-modal">Confirm</button><button class="cancel-modal">Cancel</button>'
+            : '<button class="close-modal">Close</button>';
+
+        modal.innerHTML = `
+            <div class="modal-content ${isError ? 'error' : isConfirmation ? 'confirmation' : 'success'}">
+                <p>${message}</p>
+                ${buttonHtml}
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const closeModal = () => {
+            document.body.removeChild(modal);
+        };
+
+        if (isConfirmation) {
+            const confirmButton = modal.querySelector('.confirm-modal');
+            const cancelButton = modal.querySelector('.cancel-modal');
+
+            confirmButton.addEventListener('click', () => {
+                closeModal();
+                if (onConfirm) onConfirm();
+            });
+
+            cancelButton.addEventListener('click', closeModal);
+        } else {
+            const closeButton = modal.querySelector('.close-modal');
+            closeButton.addEventListener('click', closeModal);
+
+            // Auto-close the modal after 3 seconds for non-confirmation modals
+            setTimeout(closeModal, 3000);
+        }
     }
     
     // Function to handle form submission for editing a user
     function handleEditFormSubmission(event) {
         event.preventDefault();
         const form = event.target;
-        const userId = form.dataset.userId;
+        const userId = document.getElementById('eufUserId').textContent;
         const formData = new FormData(form);
+        const userData = Object.fromEntries(formData);
 
         fetch(`/admin/api/users/${userId}`, {
             method: 'PUT',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
         })
             .then(response => response.json())
             .then(data => {
                 if (data.message === 'User updated successfully') {
                     // Refresh the user list
-                    fetchAndRenderContent('/admin/api/users');
+                    page('/admin/users');
                 } else {
                     alert('Error updating user');
                 }
@@ -177,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call this function after the content is loaded
     document.addEventListener('DOMContentLoaded', attachEventListeners);
 
-// Define routes
+    // Define routes
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
@@ -190,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Catch-all route for the admin panel
     page('/admin/*', () => fetchAndRenderContent('/admin/api/dashboard'));
 
-// Initialize the router
+    // Initialize the router
     page();
 
 });
