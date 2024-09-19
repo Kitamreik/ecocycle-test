@@ -49,14 +49,14 @@
                 </thead>
                 <tbody id="users-table-body">
                 <% users.forEach(user => { %>
-                    <tr data-id="<%= user.id %>">
+                    <tr data-id="<%= user.user_id %>">
                         <td>
                             <div class="checkbox">
                                 <input type="checkbox" class="user-select" />
                                 <span class="checkmark"></span>
                             </div>
                         </td>
-                        <td><%= user.id %></td>
+                        <td><%= user.user_id %></td>
                         <td><%= user.firstname %> <%= user.lastname %></td>
                         <td><%= user.email %></td>
                         <td><%= user.phone_number %></td>
@@ -64,8 +64,8 @@
                         <td><%= new Date(user.created_at).toLocaleString() %></td>
                         <td><%= new Date(user.updated_at).toLocaleString() %></td>
                         <td>
-                            <a href="/users/<%= user.id %>/edit" class="button link">Edit</a>
-                            <button class="button link delete-user" data-id="<%= user.id %>">Delete</button>
+                            <a href="/admin/users/edit/<%= user.user_id %>" class="button link">Edit</a>
+                            <button class="button link delete-user" data-id="<%= user.user_id %>">Delete</button>
                         </td>
                     </tr>
                 <% }); %>

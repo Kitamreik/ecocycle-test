@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User</title>
+    <link rel="stylesheet" href="/css/users/edit.css">
+</head>
+<body>
+<div class="edit-user-form">
+    <div class="euf-container">
+        <div class="euf-header">
+            <h1>User Management</h1>
+        </div>
+
+        <nav>
+            <ol class="euf-breadcrumb">
+                <li class="euf-breadcrumb-item"><a href="/admin/users">Users</a></li>
+                <li class="euf-breadcrumb-item">Edit User</li>
+            </ol>
+        </nav>
+
+        <div class="euf-user-id">
+            <strong>User ID:</strong> <span id="eufUserId"><%= user.user_id %></span>
+        </div>
+
+        <form action="/edit/<%= user.user_id %>?_method=PUT" method="POST" id="eufEditUserForm">
+            <div class="euf-form-row">
+                <div class="euf-form-col">
+                    <div class="euf-form-group">
+                        <label class="euf-label" for="eufFirstname">First Name</label>
+                        <input type="text" id="eufFirstname" name="firstname" class="euf-input" value="<%= user.firstname %>" required>
+                    </div>
+                </div>
+                <div class="euf-form-col">
+                    <div class="euf-form-group">
+                        <label class="euf-label" for="eufLastname">Last Name</label>
+                        <input type="text" id="eufLastname" name="lastname" class="euf-input" value="<%= user.lastname %>" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="euf-form-group">
+                <label class="euf-label" for="eufEmail">Email</label>
+                <input type="email" id="eufEmail" name="email" class="euf-input" value="<%= user.email %>" required>
+            </div>
+
+            <div class="euf-form-row">
+                <div class="euf-form-col">
+                    <div class="euf-form-group">
+                        <label class="euf-label" for="eufPhoneNumber">Phone Number</label>
+                        <input type="text" id="eufPhoneNumber" name="phone_number" class="euf-input" value="<%= user.phone_number %>" required>
+                    </div>
+                </div>
+                <div class="euf-form-col">
+                    <div class="euf-form-group">
+                        <label class="euf-label" for="eufPhoneType">Phone Type</label>
+                        <select id="eufPhoneType" name="phone_type" class="euf-select" required>
+                            <option value="Mobile" <%= user.phone_type === 'Mobile' ? 'selected' : '' %>>Mobile</option>
+                            <option value="Home" <%= user.phone_type === 'Home' ? 'selected' : '' %>>Home</option>
+                            <option value="Work" <%= user.phone_type === 'Work' ? 'selected' : '' %>>Work</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="euf-form-group">
+                <label class="euf-label" for="eufRole">Role</label>
+                <select id="eufRole" name="role" class="euf-select" required>
+                    <option value="1" <%= user.role === '1' ? 'selected' : '' %>>Admin</option>
+                    <option value="2" <%= user.role === '2' ? 'selected' : '' %>>User</option>
+                    <option value="3" <%= user.role === '3' ? 'selected' : '' %>>Guest</option>
+                </select>
+            </div>
+
+            <div class="euf-form-group">
+                <button type="submit" class="euf-submit-btn">
+                    <i class="fas fa-save"></i> Update User
+                </button>
+                <button type="button" class="euf-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash-alt"></i> Delete User
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">You are about to remove a user record.</div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    This will remove the user record of <b class="fw-bold"><%= user.firstname %> <%= user.lastname %></b><br/>
+                    Are you sure?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form action="/edit/<%= user._id %>?_method=DELETE" method="POST" class="position-relative">
+                    <button type="submit" class="btn btn-danger">Yes, Remove User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/users/edit.js"></script>
+</body>
+</html>
