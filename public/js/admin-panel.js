@@ -101,8 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 page('/admin/users/add');
             });
+            
         }
-
+        
         // Attach event listeners to edit buttons
         const editButtons = document.querySelectorAll('.edit-user-btn');
         editButtons.forEach(button => {
@@ -112,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchAndRenderContent(`/admin/api/users/edit`);
             });
         });
-
+        
         // Attach event listeners to delete buttons
         const deleteButtons = document.querySelectorAll('.delete-user-btn');
         deleteButtons.forEach(button => {
@@ -124,6 +125,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+        const editForm = document.getElementById('eufEditUserForm');
+        if (editForm) {
+            editForm.addEventListener('submit', handleEditFormSubmission);
+        }
     }
     
     function deleteUser(userId) {
@@ -152,18 +157,22 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleEditFormSubmission(event) {
         event.preventDefault();
         const form = event.target;
-        const userId = form.dataset.userId;
+        const userId = document.getElementById('eufUserId').textContent;
         const formData = new FormData(form);
+        const userData = Object.fromEntries(formData);
 
         fetch(`/admin/api/users/${userId}`, {
             method: 'PUT',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
         })
             .then(response => response.json())
             .then(data => {
                 if (data.message === 'User updated successfully') {
                     // Refresh the user list
-                    fetchAndRenderContent('/admin/api/users');
+                    page('/admin/users');
                 } else {
                     alert('Error updating user');
                 }
@@ -177,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call this function after the content is loaded
     document.addEventListener('DOMContentLoaded', attachEventListeners);
 
-// Define routes
+    // Define routes
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
@@ -190,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Catch-all route for the admin panel
     page('/admin/*', () => fetchAndRenderContent('/admin/api/dashboard'));
 
-// Initialize the router
+    // Initialize the router
     page();
 
 });
