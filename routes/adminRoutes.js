@@ -179,6 +179,38 @@ router.get('/api/users/add', async (req, res) => {
     }
 });
 
+// POST route to add a new user
+router.post('/api/users/add', isAuthenticated, async (req, res) => {
+    try {
+        // Destructure the data from the request body
+        const { firstname, lastname, email, phone_number, phone_type, role } = req.body;
+
+        // Insert data into the 'users' table in Supabase
+        const { data, error } = await supabase
+            .from('users2')
+            .insert([
+                {
+                    firstname,
+                    lastname,
+                    email,
+                    phone_number,
+                    phone_type,
+                    role
+                }
+            ])
+            .select();
+
+        if (error) throw error; // If there's an error with Supabase
+
+        // Return success response with the inserted user data
+        res.status(201).json({ message: 'User added successfully', data });
+    } catch (error) {
+        console.error('Error adding new user:', error);
+        res.status(500).json({ error: 'Error adding new user to Supabase' });
+    }
+});
+
+
 // Get user for editing
 router.get('/api/users/edit/:userId', isAuthenticated, async (req, res) => {
     try {
