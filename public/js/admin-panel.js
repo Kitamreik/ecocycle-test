@@ -233,6 +233,42 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call this function after the content is loaded
     document.addEventListener('DOMContentLoaded', attachEventListeners);
 
+    const addUserForm = document.getElementById('aufAddUserForm');
+    if (addUserForm) {
+        addUserForm.addEventListener('submit', handleAddUserForm);
+    }
+
+    function handleAddUserForm(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(addUserForm);
+        const userData = Object.fromEntries(formData);
+
+        fetch('/admin/api/users/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Optionally handle success (e.g., display a success message)
+                showModal('User added successfully!', false);
+                // Redirect to users page or update UI accordingly
+                page('/admin/users');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal('Error adding user', true);
+            });
+    }
+    
     // Define routes
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
