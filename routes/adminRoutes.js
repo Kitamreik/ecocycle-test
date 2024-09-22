@@ -187,7 +187,7 @@ router.post('/api/users/add', isAuthenticated, async (req, res) => {
 
         // Insert data into the 'users' table in Supabase
         const { data, error } = await supabase
-            .from('users2')
+            .from('users')
             .insert([
                 {
                     firstname,
