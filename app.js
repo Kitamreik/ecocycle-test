@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const adminRoutes = require('./routes/adminRoutes');
+const userRoutes = require('./routes/userRoutes');
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -42,7 +43,7 @@ app.get("/", (req, res) => {
 });
 
 app.use('/admin', adminRoutes);
-
+app.use('/admin', userRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
