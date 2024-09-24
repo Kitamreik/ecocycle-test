@@ -31,14 +31,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const addUserBtn = document.querySelector('.add-user-btn');
     const userContainer = document.querySelector('.user-container');
 
-    addUserBtn.addEventListener('click', function() {
-        const newUser = {
-            name: 'New User',
-            role: 'New Role',
-            img: 'default-profile.png'
-        };
-        addUserCard(newUser);
-    });
+    if (addUserBtn) {
+        addUserBtn.addEventListener('click', function() {
+            const newUser = {
+                name: 'New User',
+                role: 'New Role',
+                img: 'default-profile.png'
+            };
+            addUserCard(newUser);
+        });
+    }
 
     function addUserCard(user) {
         const userCard = document.createElement('div');
@@ -101,16 +103,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 page('/admin/users/add');
             });
-            
         }
-        
+
         // Attach event listeners to edit buttons
         const editButtons = document.querySelectorAll('.edit-user-btn');
         editButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 const userId = this.dataset.userId;
-                fetchAndRenderContent(`/admin/api/users/edit`);
+                fetchAndRenderContent(`/admin/api/users/edit/${userId}`);
             });
         });
 
@@ -119,12 +120,19 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteButtons.forEach(button => {
             button.addEventListener('click', handleDeleteUser);
         });
-        
+
         const editForm = document.getElementById('eufEditUserForm');
         if (editForm) {
             editForm.addEventListener('submit', handleEditFormSubmission);
         }
+
+        // Attach event listener to add user form
+        const addUserForm = document.getElementById('aufAddUserForm');
+        if (addUserForm) {
+            addUserForm.addEventListener('submit', handleAddUserForm);
+        }
     }
+
     function handleDeleteUser(event) {
         event.preventDefault();
         const userId = this.getAttribute('data-id');
@@ -159,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showModal('Error deleting user', true);
             });
     }
-    
+
     //delete user confirmation modal
     function showModal(message, isError = false, isConfirmation = false, onConfirm = null) {
         const modal = document.createElement('div');
@@ -199,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(closeModal, 3000);
         }
     }
-    
+
     // Function to handle form submission for editing a user
     function handleEditFormSubmission(event) {
         event.preventDefault();
@@ -221,27 +229,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Refresh the user list
                     page('/admin/users');
                 } else {
-                    alert('Error updating user');
+                    showModal('Error updating user', true);
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('Error updating user');
+                showModal('Error updating user', true);
             });
-    }
-    
-    // Call this function after the content is loaded
-    document.addEventListener('DOMContentLoaded', attachEventListeners);
-
-    const addUserForm = document.getElementById('aufAddUserForm');
-    if (addUserForm) {
-        addUserForm.addEventListener('submit', handleAddUserForm);
     }
 
     function handleAddUserForm(event) {
         event.preventDefault(); // Prevent default form submission
 
-        const formData = new FormData(addUserForm);
+        const formData = new FormData(event.target);
         const userData = Object.fromEntries(formData);
 
         fetch('/admin/api/users/add', {
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showModal('Error adding user', true);
             });
     }
-    
+
     // Define routes
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
@@ -285,4 +285,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the router
     page();
 
+    // Initial call to attach event listeners
+    attachEventListeners();
 });
