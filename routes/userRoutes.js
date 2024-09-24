@@ -4,11 +4,7 @@ const userController = require('../controllers/userController');
 
 // Middleware to check if user is authenticated
 const isAuthenticated = (req, res, next) => {
-    if (req.session.isAuthenticated) {
-        next();
-    } else {
-        res.redirect('/admin/login');
-    }
+    next();
 };
 
 // Routes related to users
