@@ -1,0 +1,47 @@
+<body>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<h1>Presentations Dashboard</h1>
+<% if (typeof error !== 'undefined') { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+<% if (presentations && presentations.length > 0) { %>
+    <table>
+        <thead>
+        <tr>
+            <th>Presentation ID</th>
+            <th>Presentation Name</th>
+            <th>Category</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% presentations.forEach(presentation => { %>
+            <tr>
+                <td><%= presentation.pid %></td>
+                <td><%= presentation.pname %></td>
+                <td><%= presentation.presentationcategories.categoryname %></td>
+                <td><%= presentation.created_at %></td>
+                <td><%= presentation.updated_at %></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No presentations data available.</p>
+<% } %>
+</body>

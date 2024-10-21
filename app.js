@@ -11,6 +11,7 @@ const userRoutes = require('./routes/userRoutes');
 const requestRoutes = require('./routes/requestRoutes');
 const schoolRoutes = require('./routes/schoolRoutes');
 const fundingRoutes = require('./routes/fundingRoutes');
+const presetnationRoutes = require('./routes/presentationRoutes');
 
 // Create an express app
 const app = express();
@@ -51,6 +52,8 @@ app.use('/admin', userRoutes);
 app.use('/admin', requestRoutes);
 app.use('/admin', schoolRoutes);
 app.use('/admin', fundingRoutes);
+app.use('/admin', presetnationRoutes);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);

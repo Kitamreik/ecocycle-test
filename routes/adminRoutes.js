@@ -100,30 +100,4 @@ router.get('/api/trainingsessions', isAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/api/presentations', isAuthenticated, async (req, res) => {
-    try {
-        const { data: presentationsData, error: presentationsError } = await supabase
-            .from('presentations')
-            .select(`
-                pid, 
-                pname, 
-                created_at, 
-                updated_at, 
-                presentationcategories (
-                    categoryname
-                )
-            `); 
-        if (presentationsError) throw presentationsError;
-
-        const data = {
-            presentations: presentationsData
-        };
-        console.log('Presentations data:', data);
-        res.render('pages/admin-dashboard/presentations', { data });
-    } catch (error) {
-        console.error('Error fetching presentations data:', error);
-        res.status(500).send('Error retrieving data from Supabase');
-    }
-});
-
 module.exports = router;
