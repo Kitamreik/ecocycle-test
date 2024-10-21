@@ -1,0 +1,52 @@
+<body>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<h1>Schools Dashboard</h1>
+<% if (typeof error !== 'undefined') { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+<% if (schools && schools.length > 0) { %>
+    <table>
+        <thead>
+        <tr>
+            <th>School ID</th>
+            <th>Name</th>
+            <th>Street Address</th>
+            <th>City</th> 
+            <th>District</th> 
+            <th>GSS Status</th>
+            <th>Title I Status</th>
+            <th>Language</th> 
+        </tr>
+        </thead>
+        <tbody>
+        <% schools.forEach(school => { %>
+            <tr>
+                <td><%= school.sid %></td>
+                <td><%= school.sname %></td>
+                <td><%= school.sstreetaddress %></td>
+                <td><%= school.cityName %></td>
+                <td><%= school.districtName %></td> 
+                <td><%= school.sgss ? 'Yes' : 'No' %></td>
+                <td><%= school.stitle1 ? 'Yes' : 'No' %></td>
+                <td><%= school.languageName %></td> 
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No schools data available.</p>
+<% } %>

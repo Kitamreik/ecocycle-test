@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Sessions</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h1>Training Sessions</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Session ID</th>
+        <th>School Name</th>
+        <th>Presentation Name</th>
+        <th>Funding Source</th>
+        <th>Educator Name</th>
+        <th>Grades</th>
+        <th>Scheduled Date/Time</th>
+        <th>Preferred Start Time</th>
+        <th>Preferred End Time</th>
+        <th>Students</th>
+        <th>Classrooms</th>
+        <th>Adults</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% trainingsessions.forEach(function(session) { %>
+        <tr>
+            <td><%= session.tsid %></td>
+            <td><%= session.requests.schools.sname %></td>
+            <td><%= session.presentations.pname %></td>
+            <td><%= session.funding.fname %></td>
+            <td><%= session.users.username %></td>
+            <td><%= session.tsgrades %></td>
+            <td><%= new Date(session.tsscheduleddatetime).toLocaleString() %></td>
+            <td><%= new Date(session.tspreferreddatetimestart).toLocaleString() %></td>
+            <td><%= new Date(session.tspreferreddatetimeend).toLocaleString() %></td>
+            <td><%= session.tsstudents %></td>
+            <td><%= session.tsclassrooms %></td>
+            <td><%= session.tsadults %></td>
+        </tr>
+    <% }); %>
+    </tbody>
+</table>
+</body>
+</html>

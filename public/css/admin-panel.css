@@ -155,7 +155,7 @@ header {
 }
 
 .navcontainer {
-    width: 250px;
+    width: 290px;
     height: calc(100vh - 70px);
     position: relative;
     background-color: var(--background-color2);
