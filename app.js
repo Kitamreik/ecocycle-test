@@ -30,18 +30,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-// Session middleware
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        httpOnly: true, // Mitigate XSS attacks
-        maxAge: 24 * 60 * 60 * 1000 // Sessions last for 24 hours
-    }
-}));
-
 // Define routes
 app.get("/", (req, res) => {
     res.render('pages/home');
