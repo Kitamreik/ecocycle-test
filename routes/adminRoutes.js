@@ -111,7 +111,6 @@ router.get('/api/schools', isAuthenticated, async (req, res) => {
             console.error('Error fetching schools data:', schoolsError);
             throw schoolsError;
         }
-
         console.log('Schools data retrieved:', schoolsData);
 
         res.render('pages/admin-dashboard/schools', { schools: schoolsData || [] });
@@ -145,20 +144,31 @@ router.get('/api/trainingsessions', isAuthenticated, async (req, res) => {
 router.get('/api/presentations', isAuthenticated, async (req, res) => {
     try {
         const { data: presentationsData, error: presentationsError } = await supabase
-            .from('presentations') // Ensure this matches your table name
-            .select('*');
+            .from('presentations')
+            .select(`
+                pid, 
+                pname, 
+                created_at, 
+                updated_at, 
+                presentationcategories (
+                    categoryname
+                )
+            `); // Correct dot notation for related table, no need for manual joining
 
         if (presentationsError) throw presentationsError;
 
         const data = {
             presentations: presentationsData
         };
+        console.log('Presentations data:', data);
         res.render('pages/admin-dashboard/presentations', { data });
     } catch (error) {
         console.error('Error fetching presentations data:', error);
         res.status(500).send('Error retrieving data from Supabase');
     }
 });
+
+
 
 router.get('/api/funding', isAuthenticated, async (req, res) => {
     try {
