@@ -97,23 +97,23 @@ router.get('/api/dashboard', isAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/api/requests', isAuthenticated, async (req, res) => {
-    try {
-        const { data: requestsData, error: requestsError } = await supabase
-            .from('requests') 
-            .select('*');
-
-        if (requestsError) throw requestsError;
-
-        const data = {
-            requests: requestsData
-        };
-        res.render('pages/admin-dashboard/requests', { data });
-    } catch (error) {
-        console.error('Error fetching requests data:', error);
-        res.status(500).send('Error retrieving data from Supabase');
-    }
-});
+// router.get('/api/requests', isAuthenticated, async (req, res) => {
+//     try {
+//         const { data: requestsData, error: requestsError } = await supabase
+//             .from('requests') 
+//             .select('*');
+//
+//         if (requestsError) throw requestsError;
+//
+//         const data = {
+//             requests: requestsData
+//         };
+//         res.render('pages/admin-dashboard/requests', { data });
+//     } catch (error) {
+//         console.error('Error fetching requests data:', error);
+//         res.status(500).send('Error retrieving data from Supabase');
+//     }
+// });
 
 router.get('/api/schools', isAuthenticated, async (req, res) => {
     try {

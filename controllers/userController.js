@@ -5,17 +5,16 @@ const getUsers = async (req, res) => {
     try {
         const { data: usersData, error: usersError } = await supabase
             .from('users')
-            .select('user_id, firstname, lastname, email, phone_number, phone_type, role, created_at, updated_at');
+            .select('userid, username, useremail, userphone, isactive, created_at, updated_at');
 
         if (usersError) throw usersError;
 
-        res.render('pages/admin-dashboard/users/view', { users: usersData });
+        res.json({ users: usersData });
     } catch (error) {
         console.error('Error fetching users data:', error);
-        res.status(500).send('Error retrieving data from Supabase');
+        res.status(500).json({ error: 'Error retrieving data from Supabase' });
     }
 };
-
 // Add a new user
 const addUserForm = (req, res) => {
     res.render('pages/admin-dashboard/users/add');

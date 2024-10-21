@@ -8,6 +8,7 @@ const expressLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
+const requestRoutes = require('./routes/requestRoutes');
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -44,6 +45,8 @@ app.get("/", (req, res) => {
 
 app.use('/admin', adminRoutes);
 app.use('/admin', userRoutes);
+app.use('/admin', requestRoutes);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
