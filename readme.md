@@ -1,79 +1,136 @@
-### Potential ERD for the project:
+### ERD for the project:
 
 ```mermaid
 erDiagram
-    USERS {
-        int user_id PK
-        string name
-        string email
-        string phone_number
-        string phone_type
-        string role
-        datetime created_at
-        datetime updated_at
-    }
-    
-    SCHOOLS {
-        int school_id PK
-        string name
-        boolean greenstar_status
-        string funding_org_code
-        string title_1_info
-        string city
-        string county
-        string district
-        string address
-        string languages
-        datetime created_at
-        datetime updated_at
-    }
-    
-    REQUESTS {
-        int request_id PK
-        int user_id FK
-        int school_id FK
-        string contact_name
-        string contact_email
-        string contact_phone_number
-        string contact_phone_type
-        string best_contact_time
-        string grade_levels
-        string status
-        string communication_level
-        string notes
-        datetime created_at
-        datetime updated_at
-    }
-    
-    TRAININGS {
-        int training_id PK
-        int request_id FK
-        string title
-        string subject_category
-        string training_kit
-        string preferred_dates_times
-        datetime agreed_date_time
-        int number_of_classrooms
-        int number_of_students
-        int number_of_adults
-        string facilitators
-        datetime created_at
-        datetime updated_at
+    languages {
+        SERIAL languageId PK
+        VARCHAR(20) languageName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
-    CALENDAR {
-        int calendar_id PK
-        int training_id FK
-        datetime event_date_time
-        string color_code
-        datetime created_at
-        datetime updated_at
+    counties {
+        SERIAL countyId PK
+        VARCHAR(50) countyName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
-    USERS ||--o{ REQUESTS: "submits"
-    SCHOOLS ||--o{ REQUESTS: "associated with"
-    REQUESTS ||--o{ TRAININGS: "includes"
-    TRAININGS ||--o{ CALENDAR: "scheduled in"
+    cities {
+        SERIAL cityId PK
+        VARCHAR(50) cityName
+        INT countyId FK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    schoolDistricts {
+        SERIAL districtId PK
+        VARCHAR(50) districtName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    phoneTypes {
+        SERIAL phoneTypeId PK
+        VARCHAR(10) phoneTypeName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    requestStatuses {
+        SERIAL requestStatusId PK
+        VARCHAR(20) requestStatusName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    sessionStatuses {
+        SERIAL sessionStatusId PK
+        VARCHAR(20) sessionStatusName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    presentationCategories {
+        SERIAL categoryId PK
+        VARCHAR(20) categoryName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    schools {
+        SERIAL sId PK
+        VARCHAR(50) sName
+        VARCHAR(50) sStreetAddress
+        INT sDistrictId FK
+        INT sCityId FK
+        BOOLEAN sGSS
+        BOOLEAN sTitle1
+        INT sLanguageId FK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    requests {
+        SERIAL rId PK
+        INT rsId FK
+        VARCHAR(35) rContactName
+        VARCHAR(30) rContactEmail
+        VARCHAR(10) rContactPhone
+        phone_type rContactPType
+        VARCHAR(50) rContactBestTimes
+        INT rStatusId FK
+        VARCHAR(25) rCommunication
+        VARCHAR(255) rNotes
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    presentations {
+        SERIAL pId PK
+        VARCHAR(50) pName
+        INT pCategoryId FK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    funding {
+        SERIAL fId PK
+        VARCHAR(35) fName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    trainingSessions {
+        SERIAL tsId PK
+        INT rId FK
+        INT pId FK
+        INT fId FK
+        VARCHAR(25) tsGrades
+        TIMESTAMP tsScheduledDateTime
+        TIMESTAMP tsPreferredDateTimeStart
+        TIMESTAMP tsPreferredDateTimeEnd
+        INT tsStudents
+        INT tsClassrooms
+        INT tsAdults
+        VARCHAR(50) tsEducators
+        INT tsStatusId FK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+%% Relationships
+    counties ||--o{ cities : has
+    cities ||--o{ schools : has
+    schoolDistricts ||--o{ schools : has
+    languages ||--o{ schools : supports
+    schools ||--o{ requests : receives
+    presentations ||--o{ trainingSessions : involves
+    funding ||--o{ trainingSessions : provides
+    requestStatuses ||--o{ requests : defines
+    sessionStatuses ||--o{ trainingSessions : defines
+    presentationCategories ||--o{ presentations : categorizes
 
 ```
 
@@ -90,7 +147,7 @@ erDiagram
 ### School Management Section:
 ![Mockup Image](./mockups/schoolsection.png)
 
-### User Management Section: 
+### User Management Section:
 ![Mockup Image](./mockups/usersection.png)
 
 ### Calendar Section:
