@@ -13,13 +13,13 @@ const isAuthenticated = (req, res, next) => {
 
 // Get all requests
 router.get('/api/requests', isAuthenticated, requestController.getRequests);
-// router.get('/add', isAuthenticated, requestController.addRequestForm);
-// router.post('/add', isAuthenticated, requestController.addRequest);
-// router.get('/edit/:requestId', isAuthenticated, requestController.editRequestForm);
-// router.post('/edit/:requestId', isAuthenticated, (req, res, next) => {
-//     req.method = 'PUT';
-//     next();
-// }, requestController.updateRequest);
-// router.delete('/delete/:requestId', isAuthenticated, requestController.deleteRequest);
+router.get('/add', isAuthenticated, requestController.addRequestForm);
+router.post('/add', isAuthenticated, requestController.addRequest);
+router.get('/edit/:requestId', isAuthenticated, requestController.editRequestForm);
+router.post('/edit/:requestId', isAuthenticated, (req, res, next) => {
+    req.method = 'PUT';
+    next();
+}, requestController.updateRequest);
+router.delete('/delete/:requestId', isAuthenticated, requestController.deleteRequest);
 
 module.exports = router;

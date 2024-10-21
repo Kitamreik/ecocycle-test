@@ -80,21 +80,6 @@ router.get('/logout', (req, res) => {
 // Define API routes to serve EJS templates with data from Supabase
 
 router.get('/api/dashboard', isAuthenticated, async (req, res) => {
-    try {
-        const { data: overviewData, error: overviewError } = await supabase
-            .from('dashboard') // Adjust table name as needed
-            .select('*');
-
-        if (overviewError) throw overviewError;
-
-        const data = {
-            overview: overviewData
-        };
-        res.render('pages/admin-dashboard/dashboard', { data });
-    } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        res.status(500).send('Error retrieving data from Supabase');
-    }
 });
 
 // router.get('/api/requests', isAuthenticated, async (req, res) => {

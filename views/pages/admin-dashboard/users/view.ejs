@@ -38,10 +38,10 @@
                         </div>
                     </th>
                     <th>ID</th>
-                    <th>Name</th>
+                    <th>Username</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Role</th>
+                    <th>Status</th>
                     <th>Date Created</th>
                     <th>Date Modified</th>
                     <th>Actions</th>
@@ -49,14 +49,14 @@
                 </thead>
                 <tbody id="users-table-body">
                 <% users.forEach(user => { %>
-                    <tr data-id="<%= user.userId %>">
+                    <tr data-id="<%= user.userid %>">
                         <td>
                             <div class="checkbox">
                                 <input type="checkbox" class="user-select" />
                                 <span class="checkmark"></span>
                             </div>
                         </td>
-                        <td><%= user.userId %></td>
+                        <td><%= user.userid %></td>
                         <td><%= user.username %></td>
                         <td><%= user.useremail %></td>
                         <td><%= user.userphone %></td>
@@ -64,8 +64,8 @@
                         <td><%= new Date(user.created_at).toLocaleString() %></td>
                         <td><%= new Date(user.updated_at).toLocaleString() %></td>
                         <td>
-                            <a href="/admin/users/edit/<%= user.userId %>" class="button link">Edit</a>
-                            <button class="button link delete-user" data-id="<%= user.userId %>">Delete</button>
+                            <a href="/admin/users/edit/<%= user.userid %>" class="button link">Edit</a>
+                            <button class="button link delete-user" data-id="<%= user.userid %>">Delete</button>
                         </td>
                     </tr>
                 <% }); %>
