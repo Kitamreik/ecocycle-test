@@ -82,22 +82,4 @@ router.get('/logout', (req, res) => {
 router.get('/api/dashboard', isAuthenticated, async (req, res) => {
 });
 
-router.get('/api/trainingsessions', isAuthenticated, async (req, res) => {
-    try {
-        const { data: sessionsData, error: sessionsError } = await supabase
-            .from('trainingsessions') 
-            .select('*');
-
-        if (sessionsError) throw sessionsError;
-
-        const data = {
-            sessions: sessionsData
-        };
-        res.render('pages/admin-dashboard/trainingsessions', { data });
-    } catch (error) {
-        console.error('Error fetching training sessions data:', error);
-        res.status(500).send('Error retrieving data from Supabase');
-    }
-});
-
 module.exports = router;

@@ -11,8 +11,8 @@ const userRoutes = require('./routes/userRoutes');
 const requestRoutes = require('./routes/requestRoutes');
 const schoolRoutes = require('./routes/schoolRoutes');
 const fundingRoutes = require('./routes/fundingRoutes');
-const presetnationRoutes = require('./routes/presentationRoutes');
-
+const presentationRoutes = require('./routes/presentationRoutes');
+const trainingSessionsRoutes = require('./routes/trainingSessionRoutes');
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -52,7 +52,8 @@ app.use('/admin', userRoutes);
 app.use('/admin', requestRoutes);
 app.use('/admin', schoolRoutes);
 app.use('/admin', fundingRoutes);
-app.use('/admin', presetnationRoutes);
+app.use('/admin', presentationRoutes);
+app.use('/admin', trainingSessionsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

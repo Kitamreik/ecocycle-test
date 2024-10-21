@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
     page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
     page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
+    page('/admin/training-sessions', () => fetchAndRenderContent('/admin/api/training-sessions'));
     page('/admin/fundings', () => fetchAndRenderContent('/admin/api/fundings'));
     page('/admin/users', () => fetchAndRenderContent('/admin/api/users'));
     page('/admin/users/add', () => fetchAndRenderContent('/admin/api/users/add'));
