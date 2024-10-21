@@ -12,8 +12,6 @@ const getSchools = async (req, res) => {
                 sdistrictid,
                 scityid,
                 slanguageid,
-                created_at,
-                updated_at,
                 sgss,
                 stitle1,
                 schooldistricts (

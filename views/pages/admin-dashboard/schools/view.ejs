@@ -25,13 +25,11 @@
             <th>School ID</th>
             <th>Name</th>
             <th>Street Address</th>
-            <th>City</th> <!-- Changed from City ID to City Name -->
-            <th>District</th> <!-- Changed from District ID to District Name -->
+            <th>City</th> 
+            <th>District</th> 
             <th>GSS Status</th>
             <th>Title I Status</th>
-            <th>Language</th> <!-- Changed from Language ID to Language Name -->
-            <th>Created At</th>
-            <th>Updated At</th>
+            <th>Language</th> 
         </tr>
         </thead>
         <tbody>
@@ -40,13 +38,11 @@
                 <td><%= school.sid %></td>
                 <td><%= school.sname %></td>
                 <td><%= school.sstreetaddress %></td>
-                <td><%= school.cityName %></td> <!-- Use city name -->
-                <td><%= school.districtName %></td> <!-- Use district name -->
+                <td><%= school.cityName %></td>
+                <td><%= school.districtName %></td> 
                 <td><%= school.sgss ? 'Yes' : 'No' %></td>
                 <td><%= school.stitle1 ? 'Yes' : 'No' %></td>
-                <td><%= school.languageName %></td> <!-- Use language name -->
-                <td><%= school.created_at %></td>
-                <td><%= school.updated_at %></td>
+                <td><%= school.languageName %></td> 
             </tr>
         <% }); %>
         </tbody>
