@@ -126,24 +126,4 @@ router.get('/api/presentations', isAuthenticated, async (req, res) => {
     }
 });
 
-
-
-router.get('/api/funding', isAuthenticated, async (req, res) => {
-    try {
-        const { data: fundingData, error: fundingError } = await supabase
-            .from('funding') // Ensure this matches your table name
-            .select('*');
-
-        if (fundingError) throw fundingError;
-
-        const data = {
-            funding: fundingData
-        };
-        res.render('pages/admin-dashboard/funding', { data });
-    } catch (error) {
-        console.error('Error fetching funding data:', error);
-        res.status(500).send('Error retrieving data from Supabase');
-    }
-});
-
 module.exports = router;
