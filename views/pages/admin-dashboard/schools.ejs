@@ -13,37 +13,44 @@
             background-color: #f2f2f2;
         }
     </style>
-<h1>Schools Dashboard</h1>
-<% if (typeof error !== 'undefined') { %>
-    <p style="color: red;"><%= error %></p>
-<% } %>
-<% if (schools && schools.length > 0) { %>
-    <table>
-        <thead>
-        <tr>
-            <th>School ID</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>City</th>
-            <th>State</th>
-            <th>Zip Code</th>
-            <th>Phone Number</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% schools.forEach(school => { %>
+    
+    <h1>Schools Dashboard</h1>
+    <% if (typeof error !== 'undefined') { %>
+        <p style="color: red;"><%= error %></p>
+    <% } %>
+    <% if (schools && schools.length > 0) { %>
+        <table>
+            <thead>
             <tr>
-                <td><%= school['School ID'] %></td>
-                <td><%= school.Name %></td>
-                <td><%= school.Address %></td>
-                <td><%= school.City %></td>
-                <td><%= school.State %></td>
-                <td><%= school['Zip Code'] %></td>
-                <td><%= school['Phone Number'] %></td>
+                <th>School ID</th>
+                <th>Name</th>
+                <th>Street Address</th>
+                <th>City ID</th>
+                <th>District ID</th>
+                <th>GSS Status</th>
+                <th>Title I Status</th>
+                <th>Language ID</th>
+                <th>Created At</th>
+                <th>Updated At</th>
             </tr>
-        <% }); %>
-        </tbody>
-    </table>
-<% } else { %>
-    <p>No schools data available.</p>
-<% } %>
+            </thead>
+            <tbody>
+            <% schools.forEach(school => { %>
+                <tr>
+                    <td><%= school.sid %></td>
+                    <td><%= school.sname %></td>
+                    <td><%= school.sstreetaddress %></td>
+                    <td><%= school.scityid %></td>
+                    <td><%= school.sdistrictid %></td>
+                    <td><%= school.sgss ? 'Yes' : 'No' %></td>
+                    <td><%= school.stitle1 ? 'Yes' : 'No' %></td>
+                    <td><%= school.slanguageid %></td>
+                    <td><%= school.created_at %></td>
+                    <td><%= school.updated_at %></td>
+                </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No schools data available.</p>
+    <% } %>

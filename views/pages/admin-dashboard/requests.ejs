@@ -1,4 +1,18 @@
-﻿<div class="requests-content">
+﻿<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+<div class="requests-content">
     <h2>Requests</h2>
     <% if (requests && requests.length > 0) { %>
         <table>

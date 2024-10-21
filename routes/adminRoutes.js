@@ -106,8 +106,7 @@ router.get('/api/schools', isAuthenticated, async (req, res) => {
 
         const { data: schoolsData, error: schoolsError } = await supabase
             .from('schools')  
-            .select('sId, sName, sStreetAddress, sCityId, sDistrictId, sLanguageId');
-
+            .select('sid, sname, sstreetaddress, scityid, sdistrictid, slanguageid');
         if (schoolsError) {
             console.error('Error fetching schools data:', schoolsError);
             throw schoolsError;
