@@ -1,3 +1,4 @@
+<body>
 <style>
     table {
         border-collapse: collapse;
@@ -12,44 +13,43 @@
         background-color: #f2f2f2;
     }
 </style>
-<div class="requests-content">
-    <h2>Requests</h2>
-    <% if (requests && requests.length > 0) { %>
-        <table>
-            <thead>
+
+<h1>Requests Dashboard</h1>
+<% if (typeof error !== 'undefined') { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+<% if (requests && requests.length > 0) { %>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>School Name</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Best Times to Contact</th>
+            <th>Status</th>
+            <th>Communication</th>
+            <th>Notes</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% requests.forEach(request => { %>
             <tr>
-                <th>Request ID</th>
-                <th>School Name</th>
-                <th>Contact Name</th>
-                <th>Contact Email</th>
-                <th>Contact Phone</th>
-                <th>Phone Type</th>
-                <th>Best Contact Times</th>
-                <th>Status</th>
-                <th>Communication</th>
-                <th>Created At</th>
+                <td><%= request.rid %></td>
+                <td><%= request.rsid ? request.rsid.sname : 'N/A' %></td> <!-- School name -->
+                <td><%= request.rcontactname %></td>
+                <td><%= request.rcontactemail %></td>
+                <td><%= request.rcontactphone %></td>
+                <td><%= request.rcontactbesttimes %></td>
+                <td><%= request.rstatusid ? request.rstatusid.requeststatusname : 'N/A' %></td> <!-- Status name -->
+                <td><%= request.rcommunication %></td>
+                <td><%= request.rnotes %></td>
             </tr>
-            </thead>
-            <tbody>
-            <% requests.forEach(request => { %>
-                <tr>
-                    <td><%= request.rid %></td>
-                    <td><%= request.rcontactname %></td>
-                    <td><%= request.rcontactemail %></td>
-                    <td><%= request.rcontactphone %></td>
-                    <td><%= request.rcontactptype %></td>
-                    <td><%= request.rcontactbesttimes %></td>
-                    <td><%= request.rcommunication %></td>
-                    <td><%= new Date(request.created_at).toLocaleString() %></td>
-                    <td>
-                        <a href="/admin/requests/edit/<%= request.rid %>" class="button link">Edit</a>
-                        <button class="button link delete-request" data-id="<%= request.rid %>">Delete</button>
-                    </td>
-                </tr>
-            <% }); %>
-            </tbody>
-        </table>
-    <% } else { %>
-        <p>No requests available.</p>
-    <% } %>
-</div>
+        <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No requests data available.</p>
+<% } %>
+</body>

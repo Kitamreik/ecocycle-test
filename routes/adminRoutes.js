@@ -112,8 +112,7 @@ router.get('/api/presentations', isAuthenticated, async (req, res) => {
                 presentationcategories (
                     categoryname
                 )
-            `); // Correct dot notation for related table, no need for manual joining
-
+            `); 
         if (presentationsError) throw presentationsError;
 
         const data = {

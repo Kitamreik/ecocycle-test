@@ -7,17 +7,14 @@ const getRequests = async (req, res) => {
             .from('requests')
             .select(`
                 rid,
-                rsid,
+                rsid (sname),
                 rcontactname,
                 rcontactemail,
                 rcontactphone,
-                rcontactptype,
                 rcontactbesttimes,
-                rstatusid,
+                rstatusid (requeststatusname),
                 rcommunication,
-                rnotes,
-                created_at,
-                updated_at
+                rnotes
             `);
 
         if (requestsError) throw requestsError;
