@@ -100,7 +100,7 @@ router.get('/api/dashboard', isAuthenticated, async (req, res) => {
 router.get('/api/requests', isAuthenticated, async (req, res) => {
     try {
         const { data: requestsData, error: requestsError } = await supabase
-            .from('requests') // Adjust table name as needed
+            .from('requests') 
             .select('*');
 
         if (requestsError) throw requestsError;
@@ -119,34 +119,18 @@ router.get('/api/schools', isAuthenticated, async (req, res) => {
     try {
         console.log('Fetching schools data...');
 
-        let { data, error } = await supabase
-            .from('schools')  // Make sure this matches your table name exactly
-            .select('"School ID", Name, Address, City, State, "Zip Code", "Phone Number"');
+        const { data: schoolsData, error: schoolsError } = await supabase
+            .from('schools')  
+            .select('sId, sName, sStreetAddress, sCityId, sDistrictId, sLanguageId');
 
-        if (error) {
-            console.error('Error in initial query:', error);
-            throw error;
+        if (schoolsError) {
+            console.error('Error fetching schools data:', schoolsError);
+            throw schoolsError;
         }
 
-        if (!data || data.length === 0) {
-            console.log('No data returned from initial query. Attempting fallback query...');
+        console.log('Schools data retrieved:', schoolsData);
 
-            // Fallback query to check if the table exists and has data
-            const { data: fallbackData, error: fallbackError } = await supabase
-                .from('schools')
-                .select('count');
-
-            if (fallbackError) {
-                console.error('Error in fallback query:', fallbackError);
-                throw fallbackError;
-            }
-
-            console.log('Fallback query result:', fallbackData);
-        }
-
-        console.log('Schools data retrieved:', data);
-
-        res.render('pages/admin-dashboard/schools', { schools: data || [] });
+        res.render('pages/admin-dashboard/schools', { schools: schoolsData || [] });
     } catch (error) {
         console.error('Error fetching schools data:', error);
         res.status(500).render('pages/admin-dashboard/schools', {
@@ -155,46 +139,57 @@ router.get('/api/schools', isAuthenticated, async (req, res) => {
         });
     }
 });
-router.get('/api/calendar', async (req, res) => {
+
+router.get('/api/trainingsessions', isAuthenticated, async (req, res) => {
     try {
-        const monthQuery = parseInt(req.query.month);
-        const yearQuery = parseInt(req.query.year);
+        const { data: sessionsData, error: sessionsError } = await supabase
+            .from('trainingsessions') 
+            .select('*');
 
-        const currentDate = new Date();
-        const currentMonth = isNaN(monthQuery) ? currentDate.getMonth() : monthQuery; // 0-indexed
-        const currentYear = isNaN(yearQuery) ? currentDate.getFullYear() : yearQuery;
-        console.log('Current month:', currentMonth, 'Current year:', currentYear);
-        const { data: calendarData, error } = await supabase
-            .from('calendar')
-            .select('*')
-            .order('date', { ascending: true });
+        if (sessionsError) throw sessionsError;
 
-        if (error) throw error;
-
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-        const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-
-        const calendar = [];
-        for (let i = 0; i < firstDayOfMonth; i++) {
-            calendar.push({ day: '', events: [] }); // empty cells before the first day
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(currentYear, currentMonth, day);
-            const events = calendarData.filter(event =>
-                new Date(event.date).toDateString() === date.toDateString()
-            );
-            calendar.push({ day, events });
-        }
-
-        res.render('pages/admin-dashboard/calendar', {
-            calendar,
-            currentMonth,
-            currentYear,
-            monthName: new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })
-        });
+        const data = {
+            sessions: sessionsData
+        };
+        res.render('pages/admin-dashboard/trainingsessions', { data });
     } catch (error) {
-        console.error('Error fetching calendar data:', error);
+        console.error('Error fetching training sessions data:', error);
+        res.status(500).send('Error retrieving data from Supabase');
+    }
+});
+
+router.get('/api/presentations', isAuthenticated, async (req, res) => {
+    try {
+        const { data: presentationsData, error: presentationsError } = await supabase
+            .from('presentations') // Ensure this matches your table name
+            .select('*');
+
+        if (presentationsError) throw presentationsError;
+
+        const data = {
+            presentations: presentationsData
+        };
+        res.render('pages/admin-dashboard/presentations', { data });
+    } catch (error) {
+        console.error('Error fetching presentations data:', error);
+        res.status(500).send('Error retrieving data from Supabase');
+    }
+});
+
+router.get('/api/funding', isAuthenticated, async (req, res) => {
+    try {
+        const { data: fundingData, error: fundingError } = await supabase
+            .from('funding') // Ensure this matches your table name
+            .select('*');
+
+        if (fundingError) throw fundingError;
+
+        const data = {
+            funding: fundingData
+        };
+        res.render('pages/admin-dashboard/funding', { data });
+    } catch (error) {
+        console.error('Error fetching funding data:', error);
         res.status(500).send('Error retrieving data from Supabase');
     }
 });
