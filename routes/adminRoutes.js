@@ -82,47 +82,6 @@ router.get('/logout', (req, res) => {
 router.get('/api/dashboard', isAuthenticated, async (req, res) => {
 });
 
-// router.get('/api/requests', isAuthenticated, async (req, res) => {
-//     try {
-//         const { data: requestsData, error: requestsError } = await supabase
-//             .from('requests') 
-//             .select('*');
-//
-//         if (requestsError) throw requestsError;
-//
-//         const data = {
-//             requests: requestsData
-//         };
-//         res.render('pages/admin-dashboard/requests', { data });
-//     } catch (error) {
-//         console.error('Error fetching requests data:', error);
-//         res.status(500).send('Error retrieving data from Supabase');
-//     }
-// });
-
-router.get('/api/schools', isAuthenticated, async (req, res) => {
-    try {
-        console.log('Fetching schools data...');
-
-        const { data: schoolsData, error: schoolsError } = await supabase
-            .from('schools')  
-            .select('sid, sname, sstreetaddress, scityid, sdistrictid, slanguageid');
-        if (schoolsError) {
-            console.error('Error fetching schools data:', schoolsError);
-            throw schoolsError;
-        }
-        console.log('Schools data retrieved:', schoolsData);
-
-        res.render('pages/admin-dashboard/schools', { schools: schoolsData || [] });
-    } catch (error) {
-        console.error('Error fetching schools data:', error);
-        res.status(500).render('pages/admin-dashboard/schools', {
-            schools: [],
-            error: `Error retrieving data from Supabase: ${error.message}`
-        });
-    }
-});
-
 router.get('/api/trainingsessions', isAuthenticated, async (req, res) => {
     try {
         const { data: sessionsData, error: sessionsError } = await supabase

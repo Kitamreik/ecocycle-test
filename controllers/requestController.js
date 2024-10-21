@@ -21,7 +21,7 @@ const getRequests = async (req, res) => {
             `);
 
         if (requestsError) throw requestsError;
-        res.render('pages/admin-dashboard/requests', { requests: requestsData || [] });
+        res.render('pages/admin-dashboard/requests/view', { requests: requestsData || [] });
     } catch (error) {
         console.error('Error fetching requests data:', error);
         res.status(500).json({ error: 'Error retrieving data from Supabase' });

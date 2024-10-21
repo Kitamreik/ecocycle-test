@@ -9,6 +9,8 @@ const session = require('express-session');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
 const requestRoutes = require('./routes/requestRoutes');
+const schoolRoutes = require('./routes/schoolRoutes');
+
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -46,6 +48,7 @@ app.get("/", (req, res) => {
 app.use('/admin', adminRoutes);
 app.use('/admin', userRoutes);
 app.use('/admin', requestRoutes);
+app.use('/admin', schoolRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
