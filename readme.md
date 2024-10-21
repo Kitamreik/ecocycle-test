@@ -2,67 +2,69 @@
 
 ```mermaid
 erDiagram
+%% Lookup Tables
     languages {
-        SERIAL languageId PK
-        VARCHAR(20) languageName
+        INT languageId PK
+        STRING languageName
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     counties {
-        SERIAL countyId PK
-        VARCHAR(50) countyName
+        INT countyId PK
+        STRING countyName
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     cities {
-        SERIAL cityId PK
-        VARCHAR(50) cityName
+        INT cityId PK
+        STRING cityName
         INT countyId FK
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     schoolDistricts {
-        SERIAL districtId PK
-        VARCHAR(50) districtName
+        INT districtId PK
+        STRING districtName
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     phoneTypes {
-        SERIAL phoneTypeId PK
-        VARCHAR(10) phoneTypeName
+        INT phoneTypeId PK
+        STRING phoneTypeName
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     requestStatuses {
-        SERIAL requestStatusId PK
-        VARCHAR(20) requestStatusName
+        INT requestStatusId PK
+        STRING requestStatusName
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     sessionStatuses {
-        SERIAL sessionStatusId PK
-        VARCHAR(20) sessionStatusName
+        INT sessionStatusId PK
+        STRING sessionStatusName
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     presentationCategories {
-        SERIAL categoryId PK
-        VARCHAR(20) categoryName
+        INT categoryId PK
+        STRING categoryName
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
+%% Main Tables
     schools {
-        SERIAL sId PK
-        VARCHAR(50) sName
-        VARCHAR(50) sStreetAddress
+        INT sId PK
+        STRING sName
+        STRING sStreetAddress
         INT sDistrictId FK
         INT sCityId FK
         BOOLEAN sGSS
@@ -73,65 +75,76 @@ erDiagram
     }
 
     requests {
-        SERIAL rId PK
+        INT rId PK
         INT rsId FK
-        VARCHAR(35) rContactName
-        VARCHAR(30) rContactEmail
-        VARCHAR(10) rContactPhone
-        phone_type rContactPType
-        VARCHAR(50) rContactBestTimes
+        STRING rContactName
+        STRING rContactEmail
+        STRING rContactPhone
+        STRING rContactPType
+        STRING rContactBestTimes
         INT rStatusId FK
-        VARCHAR(25) rCommunication
-        VARCHAR(255) rNotes
+        STRING rCommunication
+        STRING rNotes
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     presentations {
-        SERIAL pId PK
-        VARCHAR(50) pName
+        INT pId PK
+        STRING pName
         INT pCategoryId FK
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     funding {
-        SERIAL fId PK
-        VARCHAR(35) fName
+        INT fId PK
+        STRING fName
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    users {
+        INT userId PK
+        STRING userName
+        STRING userEmail
+        STRING userPhone
+        BOOLEAN isActive
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     trainingSessions {
-        SERIAL tsId PK
+        INT tsId PK
         INT rId FK
         INT pId FK
         INT fId FK
-        VARCHAR(25) tsGrades
+        INT userId FK
+        STRING tsGrades
         TIMESTAMP tsScheduledDateTime
         TIMESTAMP tsPreferredDateTimeStart
         TIMESTAMP tsPreferredDateTimeEnd
         INT tsStudents
         INT tsClassrooms
         INT tsAdults
-        VARCHAR(50) tsEducators
         INT tsStatusId FK
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
 %% Relationships
-    counties ||--o{ cities : has
-    cities ||--o{ schools : has
-    schoolDistricts ||--o{ schools : has
-    languages ||--o{ schools : supports
-    schools ||--o{ requests : receives
-    presentations ||--o{ trainingSessions : involves
-    funding ||--o{ trainingSessions : provides
-    requestStatuses ||--o{ requests : defines
-    sessionStatuses ||--o{ trainingSessions : defines
-    presentationCategories ||--o{ presentations : categorizes
-
+    cities ||--o{ counties : has
+    schools ||--o{ cities : located_in
+    schools ||--o{ schoolDistricts : belongs_to
+    schools ||--o{ languages : offers
+    requests ||--o{ schools : pertains_to
+    requests ||--o{ requestStatuses : has
+    presentations ||--o{ presentationCategories : belongs_to
+    trainingSessions ||--o{ requests : involves
+    trainingSessions ||--o{ presentations : includes
+    trainingSessions ||--o{ funding : funded_by
+    trainingSessions ||--o{ users : conducted_by
+    trainingSessions ||--o{ sessionStatuses : has
 ```
 
 <hr> 
