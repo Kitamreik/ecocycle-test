@@ -1,49 +1,55 @@
-﻿export function attachUserEventListeners() {
-    const addUserBtn = document.querySelector('.button[onclick="location.href=\'/admin/users/add\'"]');
-    if (addUserBtn) {
-        addUserBtn.removeAttribute('onclick');
-        addUserBtn.addEventListener('click', function(e) {
+export function attachFundingEventListeners() {
+    const addFundingBtn = document.querySelector('.button[onclick="location.href=\'/admin/fundings/add\'"]');
+    if (addFundingBtn) {
+        addFundingBtn.removeAttribute('onclick');
+        addFundingBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            page('/admin/users/add');
+            console.log("Hi there");
+            console.log("Attempting to navigate to:", '/admin/fundings/add');  // Debug navigation attempt
+            try {
+                page('/admin/fundings/add');
+            } catch (error) {
+                console.error("Navigation error:", error);  // Debug any page.js errors
+            }
         });
     }
 
     // Attach event listeners to edit buttons
-    const editButtons = document.querySelectorAll('.edit-user-btn');
+    const editButtons = document.querySelectorAll('.edit-funding-btn');
     editButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            const userId = this.dataset.userId;
-            page(`/admin/users/edit/${userId}`);
+            const fundingId = this.dataset.fundingId;
+            page(`/admin/fundings/edit/${fundingId}`);
         });
     });
 
     // Attach event listeners to delete buttons
-    const deleteButtons = document.querySelectorAll('.delete-user');
+    const deleteButtons = document.querySelectorAll('.delete-funding');
     deleteButtons.forEach(button => {
-        button.addEventListener('click', handleDeleteUser);
+        button.addEventListener('click', handleDeleteFunding);
     });
 
-    const editForm = document.getElementById('eufEditUserForm');
+    const editForm = document.getElementById('aufEditFundingForm');
     if (editForm) {
         editForm.addEventListener('submit', handleEditFormSubmission);
     }
 
-    // Attach event listener to add user form
-    const addUserForm = document.getElementById('aufAddUserForm');
-    if (addUserForm) {
-        addUserForm.addEventListener('submit', handleAddUserForm);
+    // Attach event listener to add funding form
+    const addFundingForm = document.getElementById('aufAddFundingForm');
+    if (addFundingForm) {
+        addFundingForm.addEventListener('submit', handleAddFundingForm);
     }
 }
 
-function handleDeleteUser(event) {
+function handleDeleteFunding(event) {
     event.preventDefault();
-    const userId = this.getAttribute('data-id');
-    showModal('Are you sure you want to delete this user?', false, true, () => deleteUser(userId));
+    const fundingId = this.getAttribute('data-id');
+    showModal('Are you sure you want to delete this funding source?', false, true, () => deleteFunding(fundingId));
 }
 
-function deleteUser(userId) {
-    fetch(`/admin/api/users/${userId}`, {
+function deleteFunding(fundingId) {
+    fetch(`/api/fundings/${fundingId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -51,61 +57,61 @@ function deleteUser(userId) {
     })
         .then(response => response.json())
         .then(data => {
-            if (data.message === 'User deleted successfully') {
-                const userRow = document.querySelector(`tr[data-id="${userId}"]`);
-                if (userRow) {
-                    userRow.remove();
+            if (data.message === 'Funding deleted successfully') {
+                const fundingRow = document.querySelector(`tr[data-id="${fundingId}"]`);
+                if (fundingRow) {
+                    fundingRow.remove();
                 }
-                showModal('User deleted successfully');
+                showModal('Funding source deleted successfully');
             } else {
-                showModal('Error deleting user', true);
+                showModal('Error deleting funding source', true);
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            showModal('Error deleting user', true);
+            showModal('Error deleting funding source', true);
         });
 }
 
-function  handleEditFormSubmission(event) {
+function handleEditFormSubmission(event) {
     event.preventDefault();
     const form = event.target;
-    const userId = document.getElementById('eufUserId').textContent;
+    const fundingId = document.getElementById('aufFundingId').textContent;
     const formData = new FormData(form);
-    const userData = Object.fromEntries(formData);
+    const fundingData = Object.fromEntries(formData);
 
-    fetch(`/admin/api/users/${userId}`, {
+    fetch(`/api/fundings/${fundingId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(fundingData)
     })
         .then(response => response.json())
         .then(data => {
-            if (data.message === 'User updated successfully') {
-                page('/admin/users');
+            if (data.message === 'Funding updated successfully') {
+                page('/admin/fundings');
             } else {
-                showModal('Error updating user', true);
+                showModal('Error updating funding source', true);
             }
         })
         .catch((error) => {
             console.error('Error:', error);
-            showModal('Error updating user', true);
+            showModal('Error updating funding source', true);
         });
 }
 
-function handleAddUserForm(event) {
+function handleAddFundingForm(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const userData = Object.fromEntries(formData);
+    const fundingData = Object.fromEntries(formData);
 
-    fetch('/admin/api/users/add', {
+    fetch('/api/fundings', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(fundingData)
     })
         .then(response => {
             if (!response.ok) {
@@ -114,12 +120,12 @@ function handleAddUserForm(event) {
             return response.json();
         })
         .then(data => {
-            showModal('User added successfully!', false);
-            page('/admin/users');
+            showModal('Funding source added successfully!', false);
+            page('/admin/fundings');
         })
         .catch(error => {
             console.error('Error:', error);
-            showModal('Error adding user', true);
+            showModal('Error adding funding source', true);
         });
 }
 

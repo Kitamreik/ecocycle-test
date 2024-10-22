@@ -1,4 +1,5 @@
 ﻿import { attachUserEventListeners, showModal } from './users.js';
+import { attachFundingEventListeners } from './fundings.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(html => {
                 document.querySelector('.main').innerHTML = html;
                 attachUserEventListeners();
+                attachFundingEventListeners();
             })
             .catch(error => {
                 console.error('Error fetching content:', error);
@@ -77,8 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
     page('/admin/training-sessions', () => fetchAndRenderContent('/admin/api/training-sessions'));
     page('/admin/fundings', () => fetchAndRenderContent('/admin/api/fundings'));
+    page('/admin/fundings/add', () => fetchAndRenderContent('/admin/api/fundings/add'));
     page('/admin/users', () => fetchAndRenderContent('/admin/api/users'));
-    page('/admin/users/add', () => fetchAndRenderContent('/admin/api/users/add'));
+    page('/admin/users/add', () => fetchAndRenderContent('/api/users/add'));
     page('/admin/users/edit/:userId', (ctx) => fetchAndRenderContent(`/admin/api/users/edit/${ctx.params.userId}`));
     page('/admin/calendar', () => fetchAndRenderContent('/admin/api/calendar'));
     page('/admin/logout', () => window.location.href = '/admin/logout');
@@ -90,4 +93,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial call to attach event listeners
     attachUserEventListeners();
+    attachFundingEventListeners();
 });
