@@ -100,6 +100,7 @@ erDiagram
     funding {
         INT fId PK
         STRING fName
+        STRING fCode
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
