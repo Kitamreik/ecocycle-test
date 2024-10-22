@@ -5,7 +5,6 @@ const express = require("express");
 const path = require("node:path");
 const morgan = require("morgan");
 const expressLayouts = require('express-ejs-layouts');
-const session = require('express-session');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
 const requestRoutes = require('./routes/requestRoutes');
@@ -13,6 +12,7 @@ const schoolRoutes = require('./routes/schoolRoutes');
 const fundingRoutes = require('./routes/fundingRoutes');
 const presentationRoutes = require('./routes/presentationRoutes');
 const trainingSessionsRoutes = require('./routes/trainingSessionRoutes');
+
 // Create an express app
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -30,17 +30,17 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-// Session middleware
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-        httpOnly: true, // Mitigate XSS attacks
-        maxAge: 24 * 60 * 60 * 1000 // Sessions last for 24 hours
-    }
-}));
+// Remove session middleware
+// app.use(session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+//         httpOnly: true, // Mitigate XSS attacks
+//         maxAge: 24 * 60 * 60 * 1000 // Sessions last for 24 hours
+//     }
+// }));
 
 // Define routes
 app.get("/", (req, res) => {

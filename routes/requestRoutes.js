@@ -4,11 +4,12 @@ const requestController = require('../controllers/requestController');
 
 // Middleware to check if the user is authenticated
 const isAuthenticated = (req, res, next) => {
-    if (req.session.isAuthenticated) {
-        next();
-    } else {
-        res.redirect('/admin/login');
-    }
+    // if (req.session.isAuthenticated) {
+    //     next();
+    // } else {
+    //     res.redirect('/admin/login');
+    // }
+    next();
 };
 
 // Get all requests
