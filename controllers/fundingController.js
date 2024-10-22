@@ -187,6 +187,7 @@ const updateFunding = async (req, res) => {
 const deleteFunding = async (req, res) => {
     try {
         const { fundingId } = req.params;
+        console.log('Delete request for funding ID:', fundingId);
 
         if (!fundingId || isNaN(fundingId)) {
             return res.status(400).json({
@@ -202,6 +203,7 @@ const deleteFunding = async (req, res) => {
             .single();
 
         if (checkError && checkError.code !== 'PGRST116') {
+            console.error('Error checking funding:', checkError);
             throw checkError;
         }
 
@@ -216,14 +218,18 @@ const deleteFunding = async (req, res) => {
             .delete()
             .eq('fid', fundingId);
 
-        if (error) throw error;
+        if (error) {
+            console.error('Error during deletion:', error);
+            throw error;
+        }
 
-        res.json({
+        // Always return a properly formatted JSON response
+        return res.status(200).json({
             message: 'Funding deleted successfully'
         });
     } catch (error) {
         console.error('Error deleting funding:', error);
-        res.status(500).json({
+        return res.status(500).json({
             error: 'Failed to delete funding source'
         });
     }

@@ -5,11 +5,11 @@ export function attachFundingEventListeners() {
         addFundingBtn.addEventListener('click', function(e) {
             e.preventDefault();
             console.log("Hi there");
-            console.log("Attempting to navigate to:", '/admin/fundings/add');  // Debug navigation attempt
+            console.log("Attempting to navigate to:", '/admin/fundings/add'); 
             try {
                 page('/admin/fundings/add');
             } catch (error) {
-                console.error("Navigation error:", error);  // Debug any page.js errors
+                console.error("Navigation error:", error);
             }
         });
     }
@@ -26,8 +26,14 @@ export function attachFundingEventListeners() {
 
     // Attach event listeners to delete buttons
     const deleteButtons = document.querySelectorAll('.delete-funding');
+    console.log('Found delete buttons:', deleteButtons.length); // Debug log
     deleteButtons.forEach(button => {
-        button.addEventListener('click', handleDeleteFunding);
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const fundingId = this.getAttribute('data-id');
+            console.log('Delete clicked for funding:', fundingId); // Debug log
+            showModal('Are you sure you want to delete this funding source?', false, true, () => deleteFunding(fundingId));
+        });
     });
 
     const editForm = document.getElementById('aufEditFundingForm');
@@ -49,7 +55,7 @@ function handleDeleteFunding(event) {
 }
 
 function deleteFunding(fundingId) {
-    fetch(`/api/fundings/${fundingId}`, {
+    fetch(`/admin/api/fundings/${fundingId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -105,14 +111,15 @@ function handleAddFundingForm(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const fundingData = Object.fromEntries(formData);
+    console.log("fundingData:", fundingData);
 
-    fetch('/api/fundings', {
+    fetch('/admin/api/fundings/add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(fundingData)
-    })
+    }) 
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
