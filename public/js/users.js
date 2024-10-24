@@ -1,126 +1,129 @@
-﻿export function attachUserEventListeners() {
-    const addUserBtn = document.querySelector('.button[onclick="location.href=\'/admin/users/add\'"]');
-    if (addUserBtn) {
-        addUserBtn.removeAttribute('onclick');
-        addUserBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            page('/admin/users/add');
+﻿// users.js
+export class UserManager {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.attachEventListeners();
+    }
+
+    attachEventListeners() {
+        // Add button
+        const addUserBtn = document.querySelector('.button[onclick="location.href=\'/admin/users/add\'"]');
+        if (addUserBtn) {
+            addUserBtn.removeAttribute('onclick');
+            addUserBtn.addEventListener('click', this.handleAddClick.bind(this));
+        }
+
+        // Edit buttons
+        const editButtons = document.querySelectorAll('.edit-user-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', this.handleEditClick.bind(this));
         });
-    }
 
-    // Attach event listeners to edit buttons
-    const editButtons = document.querySelectorAll('.edit-user-btn');
-    editButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const userId = this.dataset.userId;
-            page(`/admin/users/edit/${userId}`);
+        // Delete buttons
+        const deleteButtons = document.querySelectorAll('.delete-user');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (e) => this.handleDeleteClick(e, button));
         });
-    });
 
-    // Attach event listeners to delete buttons
-    const deleteButtons = document.querySelectorAll('.delete-user');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', handleDeleteUser);
-    });
+        // Forms
+        const editForm = document.getElementById('eufEditUserForm');
+        if (editForm) {
+            editForm.addEventListener('submit', this.handleEditFormSubmission.bind(this));
+        }
 
-    const editForm = document.getElementById('eufEditUserForm');
-    if (editForm) {
-        editForm.addEventListener('submit', handleEditFormSubmission);
+        const addForm = document.getElementById('aufAddUserForm');
+        if (addForm) {
+            addForm.addEventListener('submit', this.handleAddFormSubmission.bind(this));
+        }
     }
 
-    // Attach event listener to add user form
-    const addUserForm = document.getElementById('aufAddUserForm');
-    if (addUserForm) {
-        addUserForm.addEventListener('submit', handleAddUserForm);
+    handleAddClick(e) {
+        e.preventDefault();
+        page('/admin/users/add');
     }
-}
 
-function handleDeleteUser(event) {
-    event.preventDefault();
-    const userId = this.getAttribute('data-id');
-    showModal('Are you sure you want to delete this user?', false, true, () => deleteUser(userId));
-}
+    handleEditClick(e) {
+        e.preventDefault();
+        const userId = this.dataset.userId;
+        page(`/admin/users/edit/${userId}`);
+    }
 
-function deleteUser(userId) {
-    fetch(`/admin/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-        .then(response => response.json())
-        .then(data => {
+    handleDeleteClick(e, button) {
+        e.preventDefault();
+        const userId = button.getAttribute('data-id');
+        showModal('Are you sure you want to delete this user?', false, true,
+            () => this.deleteUser(userId));
+    }
+
+    async deleteUser(userId) {
+        try {
+            const response = await fetch(`/admin/api/users/${userId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const data = await response.json();
+
             if (data.message === 'User deleted successfully') {
                 const userRow = document.querySelector(`tr[data-id="${userId}"]`);
-                if (userRow) {
-                    userRow.remove();
-                }
+                if (userRow) userRow.remove();
                 showModal('User deleted successfully');
             } else {
-                showModal('Error deleting user', true);
+                throw new Error(data.error || 'Error deleting user');
             }
-        })
-        .catch((error) => {
+        } catch (error) {
             console.error('Error:', error);
             showModal('Error deleting user', true);
-        });
-}
+        }
+    }
 
-function  handleEditFormSubmission(event) {
-    event.preventDefault();
-    const form = event.target;
-    const userId = document.getElementById('eufUserId').textContent;
-    const formData = new FormData(form);
-    const userData = Object.fromEntries(formData);
+    async handleEditFormSubmission(event) {
+        event.preventDefault();
+        const userId = document.getElementById('eufUserId').textContent;
+        const formData = new FormData(event.target);
 
-    fetch(`/admin/api/users/${userId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData)
-    })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            const response = await fetch(`/admin/api/users/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+            const data = await response.json();
+
             if (data.message === 'User updated successfully') {
                 page('/admin/users');
             } else {
-                showModal('Error updating user', true);
+                throw new Error(data.error || 'Error updating user');
             }
-        })
-        .catch((error) => {
+        } catch (error) {
             console.error('Error:', error);
             showModal('Error updating user', true);
-        });
-}
+        }
+    }
 
-function handleAddUserForm(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const userData = Object.fromEntries(formData);
+    async handleAddFormSubmission(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
 
-    fetch('/admin/api/users/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
+        try {
+            const response = await fetch('/admin/api/users/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const data = await response.json();
             showModal('User added successfully!', false);
             page('/admin/users');
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error:', error);
             showModal('Error adding user', true);
-        });
+        }
+    }
 }
 
 export function showModal(message, isError = false, isConfirmation = false, onConfirm = null) {
