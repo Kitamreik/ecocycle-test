@@ -1,37 +1,68 @@
-<div>
-    <h1>Edit Funding Source</h1>
-    <a href="/admin/fundings">Back to Funding Sources</a>
+<link rel="stylesheet" href="/css/users/add.css">
+<body>
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>Funding Management</h1>
+        </div>
 
-    <% if (typeof funding !== 'undefined' && funding) { %>
-        <form id="editFundingForm">
-            <div>
-                <strong>ID:</strong>
-                <span id="fundingId"><%= funding.fid %></span>
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/fundings">Funding Sources</a></li>
+                <li class="auf-breadcrumb-item">Edit Funding Source</li>
+            </ol>
+        </nav>
+
+        <% if (typeof funding !== 'undefined' && funding) { %>
+            <div class="auf-user-id">
+                <strong>Funding ID:</strong> <span id="fundingId"><%= funding.fid %></span>
             </div>
 
-            <div>
-                <label for="fName">Name:</label>
-                <input
-                        type="text"
-                        id="fName"
-                        name="fName"
-                        value="<%= funding.fname %>"
-                        required
-                >
-            </div>
-            <div>
-                <label for="fCode">Code (optional):</label>
-                <input
-                        type="text"
-                        id="fCode"
-                        name="fCode"
-                        value="<%= funding.fcode != null ? funding.fcode : '' %>"
-                >
-            </div>
+            <form id="editFundingForm">
+                <div class="auf-form-row">
+                    <div class="auf-form-col">
+                        <div class="auf-form-group">
+                            <label class="auf-label" for="fName">Funding Name</label>
+                            <input
+                                    type="text"
+                                    id="fName"
+                                    name="fName"
+                                    class="auf-input"
+                                    value="<%= funding.fname %>"
+                                    required
+                                    minlength="2"
+                                    maxlength="35"
+                                    placeholder="Enter funding source name"
+                            >
+                        </div>
+                        <div class="auf-form-group">
+                            <label class="auf-label" for="fCode">Code (optional)</label>
+                            <input
+                                    type="text"
+                                    id="fCode"
+                                    name="fCode"
+                                    class="auf-input"
+                                    value="<%= funding.fcode != null ? funding.fcode : '' %>"
+                                    placeholder="Enter funding code"
+                            >
+                        </div>
+                    </div>
+                </div>
 
-            <button type="submit">Update</button>
-        </form>
-    <% } else { %>
-        <p>Funding not found</p>
-    <% } %>
+                <div class="auf-form-group">
+                    <button type="submit" class="auf-submit-btn">
+                        <i class="fas fa-save"></i> Update Funding Source
+                    </button>
+                </div>
+            </form>
+        <% } else { %>
+            <div class="auf-form-group">
+                <p>Funding not found</p>
+                <a href="/admin/fundings" class="auf-submit-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Funding Sources
+                </a>
+            </div>
+        <% } %>
+    </div>
 </div>
+</body>
