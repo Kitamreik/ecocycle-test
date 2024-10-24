@@ -42,8 +42,8 @@
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Status</th>
-                    <th>Date Created</th>
-                    <th>Date Modified</th>
+                    <th>Created</th>
+                    <th>Updated</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -59,7 +59,7 @@
                         <td><%= user.userid %></td>
                         <td><%= user.username %></td>
                         <td><%= user.useremail %></td>
-                        <td><%= user.userphone %></td>
+                        <td><%= user.userphone || 'N/A' %></td>
                         <td><%= user.isactive ? 'Active' : 'Inactive' %></td>
                         <td><%= new Date(user.created_at).toLocaleString() %></td>
                         <td><%= new Date(user.updated_at).toLocaleString() %></td>
@@ -70,17 +70,17 @@
                     </tr>
                 <% }); %>
                 </tbody>
-            </table>WW
+            </table>
         </div>
 
         <section class="table-footer grid">
             <span>Displaying <%= users.length %> items</span>
             <div class="paging grid">
-        <span>
-          Page
-          <input type="number" id="current-page" value="1" min="1">
-          of <span id="total-pages">1</span>
-        </span>
+                <span>
+                    Page
+                    <input type="number" id="current-page" value="1" min="1">
+                    of <span id="total-pages">1</span>
+                </span>
                 <div class="button icon" id="prev-page">
                     <i class="fa-solid fa-angle-left"></i>
                 </div>
