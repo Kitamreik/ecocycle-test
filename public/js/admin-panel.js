@@ -1,11 +1,12 @@
 ﻿// admin-panel.js
 import { UserManager } from './users.js';
 import { FundingManager } from './fundings.js';
-
+import { SchoolManager } from './schools.js';
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize managers
     const userManager = new UserManager();
     const fundingManager = new FundingManager();
+    const schoolManager = new SchoolManager();
 
     // Mobile menu toggle
     const menuIcon = document.querySelector(".menuicn");
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('.main').innerHTML = html;
                 userManager.init();
                 fundingManager.init();
+                schoolManager.init();
             })
             .catch(error => {
                 console.error('Error fetching content:', error);
@@ -57,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
-    page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
     page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
     page('/admin/training-sessions', () => fetchAndRenderContent('/admin/api/training-sessions'));
 
@@ -67,7 +68,13 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/fundings/edit/:fundingId', (ctx) =>
         fetchAndRenderContent(`/admin/api/fundings/edit/${ctx.params.fundingId}`)
     );
-
+    // School routes
+    page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
+    page('/admin/schools/add', () => fetchAndRenderContent('/admin/api/schools/add'));
+    page('/admin/schools/edit/:schoolId', (ctx) =>
+        fetchAndRenderContent(`/admin/api/schools/edit/${ctx.params.schoolId}`)
+    );
+    
     // User routes
     page('/admin/users', () => fetchAndRenderContent('/admin/api/users'));
     page('/admin/users/add', () => fetchAndRenderContent('/admin/api/users/add'));
@@ -111,7 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (process.env.NODE_ENV === 'development') {
         window.managers = {
             user: userManager,
-            funding: fundingManager
+            funding: fundingManager,
+            school: schoolManager
         };
     }
 });

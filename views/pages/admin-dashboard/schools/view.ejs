@@ -1,52 +1,115 @@
-<body>
-<style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-</style>
+<link rel="stylesheet" href="/css/users/view.css" />
+<div class="users-table-component">
+    <div class="content">
+        <section class="main-header grid">
+            <h1>Schools</h1>
+            <button class="button" onclick="location.href='/admin/schools/add'">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add new school</span>
+            </button>
+        </section>
 
-<h1>Schools Dashboard</h1>
+        <section class="table-header grid">
+            <div>
+                <div class="select">
+                    <select id="bulk-action">
+                        <option value="">Choose action</option>
+                        <option value="delete">Delete selected</option>
+                        <option value="export">Export selected</option>
+                    </select>
+                </div>
+                <span>Selected <span id="selected-count">0</span> of <span id="total-count"><%= schools.length %></span> items</span>
+            </div>
+
+            <a class="button link" id="toggle-filters">
+                <span>Filters</span>
+                <i class="fa-solid fa-angle-down"></i>
+            </a>
+        </section>
+
+        <div class="card">
+            <table>
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkbox">
+                            <input type="checkbox" id="select-all" />
+                            <span class="checkmark"></span>
+                        </div>
+                    </th>
+                    <th>ID</th>
+                    <th>School Name</th>
+                    <th>Street Address</th>
+                    <th>City</th>
+                    <th>District</th>
+                    <th>GSS Status</th>
+                    <th>Title I Status</th>
+                    <th>Language</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="schools-table-body">
+                <% if (schools && schools.length > 0) { %>
+                    <% schools.forEach(school => { %>
+                        <tr data-id="<%= school.sid %>">
+                            <td>
+                                <div class="checkbox">
+                                    <input type="checkbox" class="school-select" />
+                                    <span class="checkmark"></span>
+                                </div>
+                            </td>
+                            <td><%= school.sid %></td>
+                            <td><%= school.sname %></td>
+                            <td><%= school.sstreetaddress %></td>
+                            <td><%= school.cityName %></td>
+                            <td><%= school.districtName %></td>
+                            <td>
+                                <span class="status-badge <%= school.sgss ? 'active' : 'inactive' %>">
+                                    <%= school.sgss ? 'Yes' : 'No' %>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="status-badge <%= school.stitle1 ? 'active' : 'inactive' %>">
+                                    <%= school.stitle1 ? 'Yes' : 'No' %>
+                                </span>
+                            </td>
+                            <td><%= school.languageName %></td>
+                            <td>
+                                <a href="/admin/schools/edit/<%= school.sid %>" class="button link">Edit</a>
+                                <button class="button link delete-school" data-id="<%= school.sid %>">Delete</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="10" class="text-center">No schools data available.</td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="table-footer grid">
+            <span>Displaying <%= schools ? schools.length : 0 %> items</span>
+            <div class="paging grid">
+                <span>
+                    Page
+                    <input type="number" id="current-page" value="1" min="1">
+                    of <span id="total-pages">1</span>
+                </span>
+                <div class="button icon" id="prev-page">
+                    <i class="fa-solid fa-angle-left"></i>
+                </div>
+                <div class="button icon" id="next-page">
+                    <i class="fa-solid fa-angle-right"></i>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
 <% if (typeof error !== 'undefined') { %>
-    <p style="color: red;"><%= error %></p>
-<% } %>
-<% if (schools && schools.length > 0) { %>
-    <table>
-        <thead>
-        <tr>
-            <th>School ID</th>
-            <th>Name</th>
-            <th>Street Address</th>
-            <th>City</th> 
-            <th>District</th> 
-            <th>GSS Status</th>
-            <th>Title I Status</th>
-            <th>Language</th> 
-        </tr>
-        </thead>
-        <tbody>
-        <% schools.forEach(school => { %>
-            <tr>
-                <td><%= school.sid %></td>
-                <td><%= school.sname %></td>
-                <td><%= school.sstreetaddress %></td>
-                <td><%= school.cityName %></td>
-                <td><%= school.districtName %></td> 
-                <td><%= school.sgss ? 'Yes' : 'No' %></td>
-                <td><%= school.stitle1 ? 'Yes' : 'No' %></td>
-                <td><%= school.languageName %></td> 
-            </tr>
-        <% }); %>
-        </tbody>
-    </table>
-<% } else { %>
-    <p>No schools data available.</p>
+    <div class="alert error">
+        <%= error %>
+    </div>
 <% } %>

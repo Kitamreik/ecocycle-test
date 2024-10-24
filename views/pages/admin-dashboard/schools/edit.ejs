@@ -1,0 +1,121 @@
+<link rel="stylesheet" href="/css/users/edit.css">
+<body>
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>School Management</h1>
+        </div>
+
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/schools">Schools</a></li>
+                <li class="auf-breadcrumb-item">Edit School</li>
+            </ol>
+        </nav>
+
+        <div class="auf-user-id">
+            <strong>School ID:</strong> <span id="aufSchoolId"><%= school.sid %></span>
+        </div>
+
+        <form action="/admin/schools/edit/<%= school.sid %>?_method=PUT" method="POST" id="aufEditSchoolForm">
+            <div class="auf-form-group">
+                <label class="auf-label" for="sname">School Name</label>
+                <input
+                        type="text"
+                        id="sname"
+                        name="sname"
+                        class="auf-input"
+                        value="<%= school.sname %>"
+                        required
+                        minlength="2"
+                        placeholder="Enter school name"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="sstreetaddress">Street Address</label>
+                <input
+                        type="text"
+                        id="sstreetaddress"
+                        name="sstreetaddress"
+                        class="auf-input"
+                        value="<%= school.sstreetaddress %>"
+                        required
+                        placeholder="Enter street address"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="scityid">City</label>
+                <select id="scityid" name="scityid" class="auf-select" required>
+                    <% cities.forEach(city => { %>
+                        <option value="<%= city.cityid %>"
+                                <%= school.scityid === city.cityid ? 'selected' : '' %>>
+                            <%= city.cityname %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="sdistrictid">District</label>
+                <select id="sdistrictid" name="sdistrictid" class="auf-select" required>
+                    <% districts.forEach(district => { %>
+                        <option value="<%= district.districtid %>"
+                                <%= school.sdistrictid === district.districtid ? 'selected' : '' %>>
+                            <%= district.districtname %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="slanguageid">Language</label>
+                <select id="slanguageid" name="slanguageid" class="auf-select" required>
+                    <% languages.forEach(language => { %>
+                        <option value="<%= language.languageid %>"
+                                <%= school.slanguageid === language.languageid ? 'selected' : '' %>>
+                            <%= language.languagename %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <div class="auf-checkbox-group">
+                    <input
+                            type="checkbox"
+                            id="sgss"
+                            name="sgss"
+                            class="auf-checkbox"
+                            <%= school.sgss ? 'checked' : '' %>
+                    >
+                    <label class="auf-label" for="sgss">GSS Status</label>
+                </div>
+                <div class="auf-checkbox-group">
+                    <input
+                            type="checkbox"
+                            id="stitle1"
+                            name="stitle1"
+                            class="auf-checkbox"
+                            <%= school.stitle1 ? 'checked' : '' %>
+                    >
+                    <label class="auf-label" for="stitle1">Title I Status</label>
+                </div>
+            </div>
+
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-save"></i> Update School
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="auf-error-message">
+        <%= error %>
+    </div>
+<% } %>
+</body>

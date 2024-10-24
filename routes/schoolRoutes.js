@@ -25,10 +25,7 @@ router.post('/api/schools', isAuthenticated, schoolController.addSchool);
 router.get('/api/schools/edit/:schoolId', isAuthenticated, schoolController.editSchoolForm);
 
 // Route to update a specific school
-router.post('/api/schools/edit/:schoolId', isAuthenticated, (req, res, next) => {
-    req.method = 'PUT'; // Change the method to PUT for the update
-    next();
-}, schoolController.updateSchool);
+router.put('/api/schools/edit/:schoolId', isAuthenticated, schoolController.updateSchool);
 
 // Route to delete a specific school
 router.delete('/api/schools/delete/:schoolId', isAuthenticated, schoolController.deleteSchool);
