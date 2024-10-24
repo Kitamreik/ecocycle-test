@@ -32,9 +32,9 @@ const addFundingForm = (req, res) => {
 // Add a new funding source
 const addFunding = async (req, res) => {
     try {
-        const { fName } = req.body;
+        const { fName, fCode } = req.body;
 
-        // Input validation
+        // Input validation for name
         if (!fName || typeof fName !== 'string') {
             return res.status(400).json({
                 error: 'Funding name is required and must be a string'
@@ -65,10 +65,16 @@ const addFunding = async (req, res) => {
             });
         }
 
+        // Prepare insert data
+        const insertData = { fname: trimmedName };
+        if (fCode) {
+            insertData.fcode = fCode.trim();
+        }
+
         // Insert new funding
         const { data, error } = await supabase
             .from('funding')
-            .insert([{ fname: trimmedName }])
+            .insert([insertData])
             .select();
 
         if (error) throw error;
@@ -102,7 +108,7 @@ const editFundingForm = async (req, res) => {
             .select('*')
             .eq('fid', fundingId)
             .single();
-
+        console.log('Funding data:', fundingData);
         if (fundingError) throw fundingError;
 
         if (!fundingData) {
@@ -129,7 +135,7 @@ const editFundingForm = async (req, res) => {
 const updateFunding = async (req, res) => {
     try {
         const { fundingId } = req.params;
-        const { fName } = req.body;
+        const { fName, fCode } = req.body;
 
         // Input validation
         if (!fName || typeof fName !== 'string') {
@@ -163,9 +169,15 @@ const updateFunding = async (req, res) => {
             });
         }
 
+        // Prepare update data
+        const updateData = { fname: trimmedName };
+        if (fCode !== undefined) {
+            updateData.fcode = fCode.trim() || null; // Set to null if empty string
+        }
+
         const { data, error } = await supabase
             .from('funding')
-            .update({ fname: trimmedName })
+            .update(updateData)
             .eq('fid', fundingId)
             .select();
 

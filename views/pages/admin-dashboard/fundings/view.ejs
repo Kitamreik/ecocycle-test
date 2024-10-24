@@ -57,9 +57,9 @@
                         <td><%= funding.fname %></td>
                         <td><%= new Date(funding.created_at).toLocaleString() %></td>
                         <td><%= new Date(funding.updated_at).toLocaleString() %></td>
-                        <td>
-                            <a href="/admin/fundings/edit/<%= funding.fid %>" class="button link">Edit</a>
-                            <button class="button link delete-funding" data-id="<%= funding.fid %>">Delete</button>
+                        <td>                            
+                            <a href="/admin/fundings/edit/<%= funding.fid %>" class="button link edit-funding-btn" data-id="<%= funding.fid %>">Edit</a>
+                            <button class="button link delete-funding" data-id="<%= funding.fid %>">Delete</button> 
                         </td>
                     </tr>
                 <% }); %>
@@ -85,9 +85,9 @@
         </section>
     </div>
 </div>
-<script type="module">
-import { attachFundingEventListeners } from '../../../../public/js/fundings.js';
-document.addEventListener('DOMContentLoaded', () => {
-attachFundingEventListeners();
-});
-</script>
+<!--<script type="module">-->
+<!--import { attachFundingEventListeners } from '../../../../public/js/fundings.js';-->
+<!--document.addEventListener('DOMContentLoaded', () => {-->
+<!--attachFundingEventListeners();-->
+<!--});-->
+<!--</script>-->
