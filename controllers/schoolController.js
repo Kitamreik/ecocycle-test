@@ -93,7 +93,7 @@ const addSchoolForm = async (req, res) => {
 const addSchool = async (req, res) => {
     try {
         const { sname, sstreetaddress, sdistrictid, scityid, slanguageid, sgss, stitle1 } = req.body;
-
+        console.log("this is the req.body", req.body);
         // Input validation
         if (!sname || typeof sname !== 'string') {
             return res.status(400).json({
@@ -114,7 +114,7 @@ const addSchool = async (req, res) => {
             .select('sid')
             .ilike('sname', trimmedName)
             .single();
-
+        
         if (checkError && checkError.code !== 'PGRST116') {
             throw checkError;
         }
@@ -133,13 +133,13 @@ const addSchool = async (req, res) => {
                 sdistrictid,
                 scityid,
                 slanguageid,
-                sgss: sgss === 'true',
-                stitle1: stitle1 === 'true'
+                sgss: Boolean(sgss),
+                stitle1: Boolean(stitle1)
             }])
             .select();
-
+        
         if (error) throw error;
-
+        console.log("this is data when gets to the schooolController", data);
         res.status(201).json({
             message: 'School added successfully',
             data: data[0]

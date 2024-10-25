@@ -61,7 +61,7 @@ export class SchoolManager {
 
     async deleteSchool(schoolId) {
         try {
-            const response = await fetch(`/admin/schools/${schoolId}`, {
+            const response = await fetch(`/admin/api/schools/${schoolId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -88,7 +88,7 @@ export class SchoolManager {
         const formData = new FormData(event.target);
 
         try {
-            const response = await fetch(`/admin/schools/edit/${schoolId}`, {
+            const response = await fetch(`/admin/api/schools/${schoolId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -97,8 +97,8 @@ export class SchoolManager {
                     scityid: formData.get('scityid'),
                     sdistrictid: formData.get('sdistrictid'),
                     slanguageid: formData.get('slanguageid'),
-                    sgss: formData.get('sgss') === 'on',
-                    stitle1: formData.get('stitle1') === 'on'
+                    sgss: formData.get('sgss') !== null,
+                    stitle1: formData.get('stitle1') !== null
                 })
             });
 
@@ -121,7 +121,7 @@ export class SchoolManager {
         const formData = new FormData(event.target);
 
         try {
-            const response = await fetch('/admin/schools/add', {
+            const response = await fetch('/admin/api/schools/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -133,14 +133,16 @@ export class SchoolManager {
                     sgss: formData.get('sgss') === 'on',
                     stitle1: formData.get('stitle1') === 'on'
                 })
-            });
+            }
+            );
 
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Error adding school');
             }
-
+    
             const data = await response.json();
+            console.log("this is the data", data);
             showModal('School added successfully!', false);
             page('/admin/schools');
         } catch (error) {
