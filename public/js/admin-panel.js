@@ -2,12 +2,14 @@
 import { UserManager } from './users.js';
 import { FundingManager } from './fundings.js';
 import { SchoolManager } from './schools.js';
+import { PresentationManager } from "./presentations";
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize managers
     const userManager = new UserManager();
     const fundingManager = new FundingManager();
     const schoolManager = new SchoolManager();
-
+    const presentationManager = new PresentationManager();
     // Mobile menu toggle
     const menuIcon = document.querySelector(".menuicn");
     const nav = document.querySelector(".navcontainer");
@@ -48,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 userManager.init();
                 fundingManager.init();
                 schoolManager.init();
+                presentationManager.init();
             })
             .catch(error => {
                 console.error('Error fetching content:', error);
@@ -59,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
-    page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
     page('/admin/training-sessions', () => fetchAndRenderContent('/admin/api/training-sessions'));
 
     // Funding routes
@@ -81,7 +83,12 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/users/edit/:userId', (ctx) =>
         fetchAndRenderContent(`/admin/api/users/edit/${ctx.params.userId}`)
     );
-
+    
+    // Presentation routes
+    page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
+    page('/admin/presentations/add', () => fetchAndRenderContent('/admin/api/presentations/add'));
+    page('/admin/presentations/edit/:presentationId', (ctx) => fetchAndRenderContent(`/admin/api/presentations/edit/${ctx.params.presentationId}`));
+    
     page('/admin/calendar', () => fetchAndRenderContent('/admin/api/calendar'));
     page('/admin/logout', () => window.location.href = '/admin/logout');
 
@@ -119,7 +126,8 @@ document.addEventListener('DOMContentLoaded', function() {
         window.managers = {
             user: userManager,
             funding: fundingManager,
-            school: schoolManager
+            school: schoolManager,
+            presentation: presentationManager
         };
     }
 });
