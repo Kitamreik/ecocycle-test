@@ -1,11 +1,11 @@
-﻿<link rel="stylesheet" href="/css/users/view.css" />
+<link rel="stylesheet" href="/css/users/view.css" />
 <div class="users-table-component">
     <div class="content">
         <section class="main-header grid">
-            <h1>Users</h1>
-            <button class="button" onclick="location.href='/admin/users/add'">
+            <h1>Funding Sources</h1>
+            <button class="button" onclick="location.href='/admin/fundings/add'">
                 <i class="fa-solid fa-plus"></i>
-                <span>Add new user</span>
+                <span>Add new funding source</span>
             </button>
         </section>
 
@@ -18,7 +18,7 @@
                         <option value="export">Export selected</option>
                     </select>
                 </div>
-                <span>Selected <span id="selected-count">0</span> of <span id="total-count"><%= users.length %></span> items</span>
+                <span>Selected <span id="selected-count">0</span> of <span id="total-count"><%= fundings.length %></span> items</span>
             </div>
 
             <a class="button link" id="toggle-filters">
@@ -38,34 +38,28 @@
                         </div>
                     </th>
                     <th>ID</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th>Updated</th>
+                    <th>Name</th>
+                    <th>Date Created</th>
+                    <th>Date Modified</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody id="users-table-body">
-                <% users.forEach(user => { %>
-                    <tr data-id="<%= user.userid %>">
+                <tbody id="funding-table-body">
+                <% fundings.forEach(funding => { %>
+                    <tr data-id="<%= funding.fid %>">
                         <td>
                             <div class="checkbox">
-                                <input type="checkbox" class="user-select" />
+                                <input type="checkbox" class="funding-select" />
                                 <span class="checkmark"></span>
                             </div>
                         </td>
-                        <td><%= user.userid %></td>
-                        <td><%= user.username %></td>
-                        <td><%= user.useremail %></td>
-                        <td><%= user.userphone || 'N/A' %></td>
-                        <td><%= user.isactive ? 'Active' : 'Inactive' %></td>
-                        <td><%= new Date(user.created_at).toLocaleString() %></td>
-                        <td><%= new Date(user.updated_at).toLocaleString() %></td>
-                        <td>
-                            <a href="/admin/users/edit/<%= user.userid %>" class="button link">Edit</a>
-                            <button class="button link delete-user" data-id="<%= user.userid %>">Delete</button>
+                        <td><%= funding.fid %></td>
+                        <td><%= funding.fname %></td>
+                        <td><%= new Date(funding.created_at).toLocaleString() %></td>
+                        <td><%= new Date(funding.updated_at).toLocaleString() %></td>
+                        <td>                            
+                            <a href="/admin/fundings/edit/<%= funding.fid %>" class="button link edit-funding-btn" data-id="<%= funding.fid %>">Edit</a>
+                            <button class="button link delete-funding" data-id="<%= funding.fid %>">Delete</button> 
                         </td>
                     </tr>
                 <% }); %>
@@ -74,7 +68,7 @@
         </div>
 
         <section class="table-footer grid">
-            <span>Displaying <%= users.length %> items</span>
+            <span>Displaying <%= fundings.length %> items</span>
             <div class="paging grid">
                 <span>
                     Page
@@ -91,3 +85,9 @@
         </section>
     </div>
 </div>
+<!--<script type="module">-->
+<!--import { attachFundingEventListeners } from '../../../../public/js/fundings.js';-->
+<!--document.addEventListener('DOMContentLoaded', () => {-->
+<!--attachFundingEventListeners();-->
+<!--});-->
+<!--</script>-->

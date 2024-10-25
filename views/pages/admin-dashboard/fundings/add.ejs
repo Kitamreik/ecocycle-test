@@ -1,0 +1,57 @@
+<link rel="stylesheet" href="/css/users/add.css">
+<body>
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>Funding Management</h1>
+        </div>
+
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/fundings">Funding Sources</a></li>
+                <li class="auf-breadcrumb-item">New Funding Source</li>
+            </ol>
+        </nav>
+
+        <div class="auf-user-id">
+            <strong>Funding ID:</strong> <span id="aufFundingId">Auto-generated</span>
+        </div>
+
+        <form method="POST" id="aufAddFundingForm">
+            <div class="auf-form-row">
+                <div class="auf-form-col">
+                    <div class="auf-form-group">
+                        <label class="auf-label" for="fName">Funding Name</label>
+                        <input
+                                type="text"
+                                id="fName"
+                                name="fName"
+                                class="auf-input"
+                                required
+                                minlength="2"
+                                maxlength="35"
+                                placeholder="Enter funding source name"
+                        >
+                    </div>
+                    <div class="auf-form-group">
+                        <label class="auf-label" for="fCode">Code (optional)</label>
+                        <input
+                                type="text"
+                                id="fCode"
+                                name="fCode"
+                                class="auf-input"
+                                placeholder="Enter funding code"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-plus-circle"></i> Add Funding Source
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>

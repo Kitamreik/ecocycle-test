@@ -1,5 +1,4 @@
-﻿// users.js
-export class UserManager {
+export class FundingManager {
     constructor() {
         this.init();
     }
@@ -10,96 +9,103 @@ export class UserManager {
 
     attachEventListeners() {
         // Add button
-        const addUserBtn = document.querySelector('.button[onclick="location.href=\'/admin/users/add\'"]');
-        if (addUserBtn) {
-            addUserBtn.removeAttribute('onclick');
-            addUserBtn.addEventListener('click', this.handleAddClick.bind(this));
+        const addFundingBtn = document.querySelector('.button[onclick="location.href=\'/admin/fundings/add\'"]');
+        if (addFundingBtn) {
+            addFundingBtn.removeAttribute('onclick');
+            addFundingBtn.addEventListener('click', this.handleAddClick.bind(this));
         }
 
         // Edit buttons
-        const editButtons = document.querySelectorAll('.edit-user-btn');
+        const editButtons = document.querySelectorAll('.edit-funding-btn');
         editButtons.forEach(button => {
-            button.addEventListener('click', this.handleEditClick.bind(this));
+            button.addEventListener('click', (e) => this.handleEditClick(e, button));
         });
 
         // Delete buttons
-        const deleteButtons = document.querySelectorAll('.delete-user');
+        const deleteButtons = document.querySelectorAll('.delete-funding');
         deleteButtons.forEach(button => {
             button.addEventListener('click', (e) => this.handleDeleteClick(e, button));
         });
 
         // Forms
-        const editForm = document.getElementById('eufEditUserForm');
+        const editForm = document.getElementById('editFundingForm');
         if (editForm) {
-            editForm.addEventListener('submit', this.handleEditFormSubmission.bind(this));
+            editForm.addEventListener('submit', (e) => this.handleEditFormSubmission(e));
         }
 
-        const addForm = document.getElementById('aufAddUserForm');
+        const addForm = document.getElementById('aufAddFundingForm');
         if (addForm) {
-            addForm.addEventListener('submit', this.handleAddFormSubmission.bind(this));
+            addForm.addEventListener('submit', (e) => this.handleAddFormSubmission(e));
         }
     }
 
     handleAddClick(e) {
         e.preventDefault();
-        page('/admin/users/add');
+        page('/admin/fundings/add');
     }
 
-    handleEditClick(e) {
+    handleEditClick(e, button) {
         e.preventDefault();
-        const userId = this.dataset.userId;
-        page(`/admin/users/edit/${userId}`);
+        const fundingId = button.getAttribute('data-id');
+        console.log('Edit clicked for funding:', fundingId);
+        page(`/admin/fundings/edit/${fundingId}`);
     }
 
     handleDeleteClick(e, button) {
         e.preventDefault();
-        const userId = button.getAttribute('data-id');
-        showModal('Are you sure you want to delete this user?', false, true,
-            () => this.deleteUser(userId));
+        const fundingId = button.getAttribute('data-id');
+        console.log('Delete clicked for funding:', fundingId);
+        showModal('Are you sure you want to delete this funding source?', false, true,
+            () => this.deleteFunding(fundingId));
     }
 
-    async deleteUser(userId) {
+    async deleteFunding(fundingId) {
         try {
-            const response = await fetch(`/admin/api/users/${userId}`, {
+            const response = await fetch(`/admin/api/fundings/${fundingId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
             const data = await response.json();
 
-            if (data.message === 'User deleted successfully') {
-                const userRow = document.querySelector(`tr[data-id="${userId}"]`);
-                if (userRow) userRow.remove();
-                showModal('User deleted successfully');
+            if (data.message === 'Funding deleted successfully') {
+                const fundingRow = document.querySelector(`tr[data-id="${fundingId}"]`);
+                if (fundingRow) {
+                    fundingRow.remove();
+                }
+                showModal('Funding source deleted successfully');
             } else {
-                throw new Error(data.error || 'Error deleting user');
+                throw new Error(data.error || 'Error deleting funding source');
             }
         } catch (error) {
             console.error('Error:', error);
-            showModal('Error deleting user', true);
+            showModal('Error deleting funding source', true);
         }
     }
 
     async handleEditFormSubmission(event) {
         event.preventDefault();
-        const userId = document.getElementById('eufUserId').textContent;
+        const fundingId = document.getElementById('fundingId').textContent;
         const formData = new FormData(event.target);
 
         try {
-            const response = await fetch(`/admin/api/users/${userId}`, {
+            const response = await fetch(`/admin/api/fundings/${fundingId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(Object.fromEntries(formData))
+                body: JSON.stringify({
+                    fName: formData.get('fName')
+                })
             });
             const data = await response.json();
 
-            if (data.message === 'User updated successfully') {
-                page('/admin/users');
+            if (response.ok) {
+                showModal('Funding updated successfully');
+                page('/admin/fundings');
             } else {
-                throw new Error(data.error || 'Error updating user');
+                throw new Error(data.error || 'Error updating funding source');
             }
         } catch (error) {
             console.error('Error:', error);
-            showModal('Error updating user', true);
+            showModal('Error updating funding source', true);
         }
     }
 
@@ -108,20 +114,22 @@ export class UserManager {
         const formData = new FormData(event.target);
 
         try {
-            const response = await fetch('/admin/api/users/add', {
+            const response = await fetch('/admin/api/fundings/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(Object.fromEntries(formData))
+                body: JSON.stringify({
+                    fName: formData.get('fName')
+                })
             });
 
             if (!response.ok) throw new Error('Network response was not ok');
 
             const data = await response.json();
-            showModal('User added successfully!', false);
-            page('/admin/users');
+            showModal('Funding source added successfully!', false);
+            page('/admin/fundings');
         } catch (error) {
             console.error('Error:', error);
-            showModal('Error adding user', true);
+            showModal('Error adding funding source', true);
         }
     }
 }
@@ -164,3 +172,6 @@ export function showModal(message, isError = false, isConfirmation = false, onCo
         setTimeout(closeModal, 3000);
     }
 }
+document.addEventListener('DOMContentLoaded', () => {
+    new FundingManager();
+});

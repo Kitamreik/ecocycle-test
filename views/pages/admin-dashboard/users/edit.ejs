@@ -1,11 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
-    <link rel="stylesheet" href="/css/users/edit.css">
-</head>
+﻿<link rel="stylesheet" href="/css/users/edit.css">
 <body>
 <div class="edit-user-form">
     <div class="euf-container">
@@ -21,55 +14,56 @@
         </nav>
 
         <div class="euf-user-id">
-            <strong>User ID:</strong> <span id="eufUserId"><%= user.user_id %></span>
+            <strong>User ID:</strong> <span id="eufUserId"><%= user.userid %></span>
         </div>
 
-        <form action="/edit/<%= user.user_id %>?_method=PUT" method="POST" id="eufEditUserForm">
-            <div class="euf-form-row">
-                <div class="euf-form-col">
-                    <div class="euf-form-group">
-                        <label class="euf-label" for="eufFirstname">First Name</label>
-                        <input type="text" id="eufFirstname" name="firstname" class="euf-input" value="<%= user.firstname %>" required>
-                    </div>
-                </div>
-                <div class="euf-form-col">
-                    <div class="euf-form-group">
-                        <label class="euf-label" for="eufLastname">Last Name</label>
-                        <input type="text" id="eufLastname" name="lastname" class="euf-input" value="<%= user.lastname %>" required>
-                    </div>
-                </div>
+        <form action="/admin/users/edit/<%= user.userid %>?_method=PUT" method="POST" id="eufEditUserForm">
+            <div class="euf-form-group">
+                <label class="euf-label" for="eufUsername">Username</label>
+                <input
+                        type="text"
+                        id="eufUsername"
+                        name="username"
+                        class="euf-input"
+                        value="<%= user.username %>"
+                        required
+                        maxlength="50"
+                >
             </div>
 
             <div class="euf-form-group">
                 <label class="euf-label" for="eufEmail">Email</label>
-                <input type="email" id="eufEmail" name="email" class="euf-input" value="<%= user.email %>" required>
-            </div>
-
-            <div class="euf-form-row">
-                <div class="euf-form-col">
-                    <div class="euf-form-group">
-                        <label class="euf-label" for="eufPhoneNumber">Phone Number</label>
-                        <input type="text" id="eufPhoneNumber" name="phone_number" class="euf-input" value="<%= user.phone_number %>" required>
-                    </div>
-                </div>
-                <div class="euf-form-col">
-                    <div class="euf-form-group">
-                        <label class="euf-label" for="eufPhoneType">Phone Type</label>
-                        <select id="eufPhoneType" name="phone_type" class="euf-select" required>
-                            <option value="Mobile" <%= user.phone_type === 'Mobile' ? 'selected' : '' %>>Mobile</option>
-                            <option value="Home" <%= user.phone_type === 'Home' ? 'selected' : '' %>>Home</option>
-                            <option value="Work" <%= user.phone_type === 'Work' ? 'selected' : '' %>>Work</option>
-                        </select>
-                    </div>
-                </div>
+                <input
+                        type="email"
+                        id="eufEmail"
+                        name="useremail"
+                        class="euf-input"
+                        value="<%= user.useremail %>"
+                        required
+                        maxlength="50"
+                        pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}"
+                >
             </div>
 
             <div class="euf-form-group">
-                <label class="euf-label" for="eufRole">Role</label>
-                <select id="eufRole" name="role" class="euf-select" required>
-                    <option value="1" <%= user.role === '1' ? 'selected' : '' %>>Admin</option>
-                    <option value="2" <%= user.role === '2' ? 'selected' : '' %>>User</option>
-                    <option value="3" <%= user.role === '3' ? 'selected' : '' %>>Guest</option>
+                <label class="euf-label" for="eufPhone">Phone Number</label>
+                <input
+                        type="tel"
+                        id="eufPhone"
+                        name="userphone"
+                        class="euf-input"
+                        value="<%= user.userphone %>"
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                        placeholder="1234567890"
+                >
+            </div>
+
+            <div class="euf-form-group">
+                <label class="euf-label" for="eufStatus">Status</label>
+                <select id="eufStatus" name="isactive" class="euf-select">
+                    <option value="true" <%= user.isactive ? 'selected' : '' %>>Active</option>
+                    <option value="false" <%= !user.isactive ? 'selected' : '' %>>Inactive</option>
                 </select>
             </div>
 
@@ -82,4 +76,3 @@
     </div>
 </div>
 </body>
-</html>

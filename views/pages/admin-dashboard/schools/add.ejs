@@ -1,0 +1,111 @@
+<link rel="stylesheet" href="/css/users/add.css">
+<body>
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>School Management</h1>
+        </div>
+
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/schools">Schools</a></li>
+                <li class="auf-breadcrumb-item">New School</li>
+            </ol>
+        </nav>
+
+        <div class="auf-user-id">
+            <strong>School ID:</strong> <span id="aufSchoolId">Auto-generated</span>
+        </div>
+
+        <form method="POST" id="aufAddSchoolForm">
+            <div class="auf-form-group">
+                <label class="auf-label" for="sname">School Name</label>
+                <input
+                        type="text"
+                        id="sname"
+                        name="sname"
+                        class="auf-input"
+                        required
+                        minlength="2"
+                        placeholder="Enter school name"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="sstreetaddress">Street Address</label>
+                <input
+                        type="text"
+                        id="sstreetaddress"
+                        name="sstreetaddress"
+                        class="auf-input"
+                        required
+                        placeholder="Enter street address"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="scityid">City</label>
+                <select id="scityid" name="scityid" class="auf-select" required>
+                    <option value="">Select City</option>
+                    <% cities.forEach(city => { %>
+                        <option value="<%= city.cityid %>"><%= city.cityname %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="sdistrictid">District</label>
+                <select id="sdistrictid" name="sdistrictid" class="auf-select" required>
+                    <option value="">Select District</option>
+                    <% districts.forEach(district => { %>
+                        <option value="<%= district.districtid %>"><%= district.districtname %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="slanguageid">Language</label>
+                <select id="slanguageid" name="slanguageid" class="auf-select" required>
+                    <option value="">Select Language</option>
+                    <% languages.forEach(language => { %>
+                        <option value="<%= language.languageid %>"><%= language.languagename %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <div class="auf-checkbox-group">
+                    <input
+                            type="checkbox"
+                            id="sgss"
+                            name="sgss"
+                            class="auf-checkbox"
+                    >
+                    <label class="auf-label" for="sgss">GSS Status</label>
+                </div>
+                <div class="auf-checkbox-group">
+                    <input
+                            type="checkbox"
+                            id="stitle1"
+                            name="stitle1"
+                            class="auf-checkbox"
+                    >
+                    <label class="auf-label" for="stitle1">Title I Status</label>
+                </div>
+            </div>
+
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-plus-circle"></i> Add School
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="auf-error-message">
+        <%= error %>
+    </div>
+<% } %>
+</body>
