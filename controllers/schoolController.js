@@ -260,8 +260,8 @@ const updateSchool = async (req, res) => {
                 sdistrictid,
                 scityid,
                 slanguageid,
-                sgss: sgss === 'true',
-                stitle1: stitle1 === 'true'
+                sgss: Boolean(sgss),
+                stitle1: Boolean(stitle1)
             })
             .eq('sid', schoolId)
             .select();

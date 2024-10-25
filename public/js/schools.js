@@ -63,7 +63,7 @@ export class SchoolManager {
         try {
             const response = await fetch(`/admin/api/schools/${schoolId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
             });
             const data = await response.json();
 
@@ -86,19 +86,21 @@ export class SchoolManager {
         event.preventDefault();
         const schoolId = document.getElementById('aufSchoolId').textContent;
         const formData = new FormData(event.target);
+        const sgssChecked = formData.has('sgss');
+        const stitle1Checked = formData.has('stitle1');
 
         try {
             const response = await fetch(`/admin/api/schools/${schoolId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     sname: formData.get('sname'),
                     sstreetaddress: formData.get('sstreetaddress'),
                     scityid: formData.get('scityid'),
                     sdistrictid: formData.get('sdistrictid'),
                     slanguageid: formData.get('slanguageid'),
-                    sgss: formData.get('sgss') !== null,
-                    stitle1: formData.get('stitle1') !== null
+                    sgss: sgssChecked,  
+                    stitle1: stitle1Checked 
                 })
             });
 
@@ -120,29 +122,43 @@ export class SchoolManager {
         event.preventDefault();
         const formData = new FormData(event.target);
 
+        // Log raw form data values
+        console.log('Raw form values:', {
+            sgss: formData.get('sgss'),
+            stitle1: formData.get('stitle1')
+        });
+
+        // Checkboxes will only be included in formData if they're checked
+        const sgssChecked = formData.has('sgss');
+        const stitle1Checked = formData.has('stitle1');
+
+        console.log('Checkbox states:', {
+            sgssChecked,
+            stitle1Checked
+        });
+
         try {
             const response = await fetch('/admin/api/schools/add', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     sname: formData.get('sname'),
                     sstreetaddress: formData.get('sstreetaddress'),
                     scityid: formData.get('scityid'),
                     sdistrictid: formData.get('sdistrictid'),
                     slanguageid: formData.get('slanguageid'),
-                    sgss: formData.get('sgss') === 'on',
-                    stitle1: formData.get('stitle1') === 'on'
+                    sgss: sgssChecked,  // Use the checked state directly
+                    stitle1: stitle1Checked  // Use the checked state directly
                 })
-            }
-            );
+            });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Error adding school');
             }
-    
+
             const data = await response.json();
-            console.log("this is the data", data);
+            console.log('Response data:', data);
             showModal('School added successfully!', false);
             page('/admin/schools');
         } catch (error) {
