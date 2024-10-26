@@ -1,118 +1,159 @@
 ﻿// admin-panel.js
+import { showModal } from './utils.js';
 import { UserManager } from './users.js';
 import { FundingManager } from './fundings.js';
 import { SchoolManager } from './schools.js';
 import { PresentationManager } from './presentations.js';
+import { RequestManager } from './requests.js';
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize managers
-    const userManager = new UserManager();
-    const fundingManager = new FundingManager();
-    const schoolManager = new SchoolManager();
-    const presentationManager = new PresentationManager();
+class AdminPanel {
+    constructor() {
+        this.managers = {};
+        this.initialized = false;
+    }
 
-    // Mobile menu toggle
-    const menuIcon = document.querySelector(".menuicn");
-    const nav = document.querySelector(".navcontainer");
+    init() {
+        if (this.initialized) return;
 
-    menuIcon.addEventListener("click", () => {
-        nav.classList.toggle("navclose");
-    });
+        try {
+            this.managers = {
+                user: new UserManager(),
+                funding: new FundingManager(),
+                school: new SchoolManager(),
+                presentation: new PresentationManager(),
+                request: new RequestManager()
+            };
 
-    // Navigation active state
-    const navOptions = document.querySelectorAll('.nav-option');
-    navOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            navOptions.forEach(opt => opt.classList.remove('option-active'));
-            this.classList.add('option-active');
-        });
-    });
+            this.setupEventListeners();
+            this.setupRoutes();
+            this.initializeSearch();
+            page();
 
-    // Responsive behavior
-    function handleResponsive() {
-        if (window.innerWidth <= 850) {
-            nav.classList.add('navclose');
-        } else {
-            nav.classList.remove('navclose');
+            this.initialized = true;
+            window.managers = this.managers;
+        } catch (error) {
+            console.error('Error initializing admin panel:', error);
+            showModal('Error initializing application', true);
         }
     }
-    window.addEventListener('resize', handleResponsive);
-    handleResponsive(); // Call once on load
 
-    // Function to fetch and render content
-    function fetchAndRenderContent(url) {
-        fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.text();
-            })
-            .then(html => {
-                document.querySelector('.main').innerHTML = html;
-                userManager.init();
-                fundingManager.init();
-                schoolManager.init();
-                presentationManager.init();
-            })
-            .catch(error => {
-                console.error('Error fetching content:', error);
-                showModal('Error loading content. Please try again.', true);
+    setupEventListeners() {
+        // Mobile menu toggle
+        const menuIcon = document.querySelector(".menuicn");
+        const nav = document.querySelector(".navcontainer");
+
+        if (menuIcon && nav) {
+            menuIcon.addEventListener("click", () => {
+                nav.classList.toggle("navclose");
             });
+        }
+
+        // Navigation active state
+        const navOptions = document.querySelectorAll('.nav-option');
+        navOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                navOptions.forEach(opt => opt.classList.remove('option-active'));
+                this.classList.add('option-active');
+            });
+        });
+
+        // Responsive behavior
+        this.handleResponsive();
+        window.addEventListener('resize', () => this.handleResponsive());
     }
 
-    // Define routes
-    page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
-    page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
-    page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
-    page('/admin/training-sessions', () => fetchAndRenderContent('/admin/api/training-sessions'));
+    handleResponsive() {
+        const nav = document.querySelector(".navcontainer");
+        if (nav) {
+            if (window.innerWidth <= 850) {
+                nav.classList.add('navclose');
+            } else {
+                nav.classList.remove('navclose');
+            }
+        }
+    }
 
-    // Funding routes
-    page('/admin/fundings', () => fetchAndRenderContent('/admin/api/fundings'));
-    page('/admin/fundings/add', () => fetchAndRenderContent('/admin/api/fundings/add'));
-    page('/admin/fundings/edit/:fundingId', (ctx) =>
-        fetchAndRenderContent(`/admin/api/fundings/edit/${ctx.params.fundingId}`)
-    );
+    async fetchAndRenderContent(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Network response was not ok');
 
-    // School routes
-    page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
-    page('/admin/schools/add', () => fetchAndRenderContent('/admin/api/schools/add'));
-    page('/admin/schools/edit/:schoolId', (ctx) =>
-        fetchAndRenderContent(`/admin/api/schools/edit/${ctx.params.schoolId}`)
-    );
+            const html = await response.text();
+            const mainContent = document.querySelector('.main');
+            if (mainContent) {
+                mainContent.innerHTML = html;
+                this.updateManagerListeners();
+            }
+        } catch (error) {
+            console.error('Error fetching content:', error);
+            showModal('Error loading content. Please try again.', true);
+        }
+    }
 
-    // User routes
-    page('/admin/users', () => fetchAndRenderContent('/admin/api/users'));
-    page('/admin/users/add', () => fetchAndRenderContent('/admin/api/users/add'));
-    page('/admin/users/edit/:userId', (ctx) =>
-        fetchAndRenderContent(`/admin/api/users/edit/${ctx.params.userId}`)
-    );
+    updateManagerListeners() {
+        Object.values(this.managers).forEach(manager => {
+            if (manager && typeof manager.attachEventListeners === 'function') {
+                manager.attachEventListeners();
+            }
+        });
+    }
 
-    // Presentation routes
-    page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
-    page('/admin/presentations/add', () => fetchAndRenderContent('/admin/api/presentations/add'));
-    page('/admin/presentations/edit/:presentationId', (ctx) =>
-        fetchAndRenderContent(`/admin/api/presentations/edit/${ctx.params.presentationId}`)
-    );
+    setupRoutes() {
+        const API_BASE = '/admin/api';
 
-    page('/admin/calendar', () => fetchAndRenderContent('/admin/api/calendar'));
-    page('/admin/logout', () => window.location.href = '/admin/logout');
+        // Dashboard routes
+        page('/admin/panel', () => this.fetchAndRenderContent(`${API_BASE}/dashboard`));
+        page('/admin/dashboard', () => this.fetchAndRenderContent(`${API_BASE}/dashboard`));
 
-    // Catch-all route for the admin panel
-    page('/admin/*', () => fetchAndRenderContent('/admin/api/dashboard'));
+        // Funding routes
+        page('/admin/fundings', () => this.fetchAndRenderContent(`${API_BASE}/fundings`));
+        page('/admin/fundings/add', () => this.fetchAndRenderContent(`${API_BASE}/fundings/add`));
+        page('/admin/fundings/edit/:fundingId', (ctx) =>
+            this.fetchAndRenderContent(`${API_BASE}/fundings/edit/${ctx.params.fundingId}`));
 
-    // Initialize the router
-    page();
+        // School routes
+        page('/admin/schools', () => this.fetchAndRenderContent(`${API_BASE}/schools`));
+        page('/admin/schools/add', () => this.fetchAndRenderContent(`${API_BASE}/schools/add`));
+        page('/admin/schools/edit/:schoolId', (ctx) =>
+            this.fetchAndRenderContent(`${API_BASE}/schools/edit/${ctx.params.schoolId}`));
 
-    // Initialize Search Functionality
-    function initializeSearch() {
+        // User routes
+        page('/admin/users', () => this.fetchAndRenderContent(`${API_BASE}/users`));
+        page('/admin/users/add', () => this.fetchAndRenderContent(`${API_BASE}/users/add`));
+        page('/admin/users/edit/:userId', (ctx) =>
+            this.fetchAndRenderContent(`${API_BASE}/users/edit/${ctx.params.userId}`));
+
+        // Presentation routes
+        page('/admin/presentations', () => this.fetchAndRenderContent(`${API_BASE}/presentations`));
+        page('/admin/presentations/add', () => this.fetchAndRenderContent(`${API_BASE}/presentations/add`));
+        page('/admin/presentations/edit/:presentationId', (ctx) =>
+            this.fetchAndRenderContent(`${API_BASE}/presentations/edit/${ctx.params.presentationId}`));
+
+        // Request routes
+        page('/admin/requests', () => this.fetchAndRenderContent(`${API_BASE}/requests`));
+        page('/admin/requests/add', () => this.fetchAndRenderContent(`${API_BASE}/requests/add`));
+        page('/admin/requests/edit/:requestId', (ctx) =>
+            this.fetchAndRenderContent(`${API_BASE}/requests/edit/${ctx.params.requestId}`));
+
+        // Other routes
+        page('/admin/training-sessions', () => this.fetchAndRenderContent(`${API_BASE}/training-sessions`));
+        page('/admin/calendar', () => this.fetchAndRenderContent(`${API_BASE}/calendar`));
+        page('/admin/logout', () => window.location.href = '/admin/logout');
+
+        // Catch-all route
+        page('/admin/*', () => this.fetchAndRenderContent(`${API_BASE}/dashboard`));
+    }
+
+    initializeSearch() {
         const searchInputs = document.querySelectorAll('.searchbar input, .searchbar2 input');
         const userCards = document.querySelectorAll('.user-card');
 
         searchInputs.forEach(input => {
-            input.addEventListener('input', function() {
+            input?.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 userCards.forEach(card => {
-                    const userName = card.querySelector('.user-name')?.textContent.toLowerCase();
-                    const userRole = card.querySelector('.user-role')?.textContent.toLowerCase();
+                    const userName = card.querySelector('.user-name')?.textContent?.toLowerCase();
+                    const userRole = card.querySelector('.user-role')?.textContent?.toLowerCase();
                     if (userName && userRole) {
                         card.style.display = (userName.includes(searchTerm) ||
                             userRole.includes(searchTerm)) ? 'flex' : 'none';
@@ -121,37 +162,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // Hook up the search functionality
-    initializeSearch();
-
-    // Expose managers to window for debugging if needed
-    if (process.env.NODE_ENV === 'development') {
-        window.managers = {
-            user: userManager,
-            funding: fundingManager,
-            school: schoolManager,
-            presentation: presentationManager
-        };
-    }
-});
-
-// Utility function to show modals (if needed at panel level)
-function showModal(message, isError = false) {
-    const modal = document.createElement('div');
-    modal.className = 'custom-modal';
-    modal.innerHTML = `
-        <div class="modal-content ${isError ? 'error' : 'success'}">
-            <p>${message}</p>
-            <button class="close-modal">Close</button>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    const closeButton = modal.querySelector('.close-modal');
-    const closeModal = () => document.body.removeChild(modal);
-
-    closeButton.addEventListener('click', closeModal);
-    setTimeout(closeModal, 3000);
 }
+
+// Initialize once when DOM is ready
+const adminPanel = new AdminPanel();
+document.addEventListener('DOMContentLoaded', () => adminPanel.init());
+
+export { adminPanel };

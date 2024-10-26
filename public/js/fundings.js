@@ -1,4 +1,8 @@
+import { showModal } from './utils.js';
+
 export class FundingManager {
+    #eventListeners = new Map(); // Private field to track event listeners
+
     constructor() {
         this.init();
     }
@@ -8,35 +12,56 @@ export class FundingManager {
     }
 
     attachEventListeners() {
+        // Clean up existing event listeners
+        this.removeEventListeners();
+
         // Add button
         const addFundingBtn = document.querySelector('.button[onclick="location.href=\'/admin/fundings/add\'"]');
         if (addFundingBtn) {
             addFundingBtn.removeAttribute('onclick');
-            addFundingBtn.addEventListener('click', this.handleAddClick.bind(this));
+            const addHandler = this.handleAddClick.bind(this);
+            addFundingBtn.addEventListener('click', addHandler);
+            this.#eventListeners.set(addFundingBtn, { type: 'click', handler: addHandler });
         }
 
         // Edit buttons
         const editButtons = document.querySelectorAll('.edit-funding-btn');
         editButtons.forEach(button => {
-            button.addEventListener('click', (e) => this.handleEditClick(e, button));
+            const editHandler = (e) => this.handleEditClick(e, button);
+            button.addEventListener('click', editHandler);
+            this.#eventListeners.set(button, { type: 'click', handler: editHandler });
         });
 
         // Delete buttons
         const deleteButtons = document.querySelectorAll('.delete-funding');
         deleteButtons.forEach(button => {
-            button.addEventListener('click', (e) => this.handleDeleteClick(e, button));
+            const deleteHandler = (e) => this.handleDeleteClick(e, button);
+            button.addEventListener('click', deleteHandler);
+            this.#eventListeners.set(button, { type: 'click', handler: deleteHandler });
         });
 
         // Forms
         const editForm = document.getElementById('editFundingForm');
         if (editForm) {
-            editForm.addEventListener('submit', (e) => this.handleEditFormSubmission(e));
+            const editSubmitHandler = (e) => this.handleEditFormSubmission(e);
+            editForm.addEventListener('submit', editSubmitHandler);
+            this.#eventListeners.set(editForm, { type: 'submit', handler: editSubmitHandler });
         }
 
         const addForm = document.getElementById('aufAddFundingForm');
         if (addForm) {
-            addForm.addEventListener('submit', (e) => this.handleAddFormSubmission(e));
+            const addSubmitHandler = (e) => this.handleAddFormSubmission(e);
+            addForm.addEventListener('submit', addSubmitHandler);
+            this.#eventListeners.set(addForm, { type: 'submit', handler: addSubmitHandler });
         }
+    }
+
+    removeEventListeners() {
+        // Clean up old event listeners to prevent memory leaks
+        this.#eventListeners.forEach((config, element) => {
+            element.removeEventListener(config.type, config.handler);
+        });
+        this.#eventListeners.clear();
     }
 
     handleAddClick(e) {
@@ -47,14 +72,12 @@ export class FundingManager {
     handleEditClick(e, button) {
         e.preventDefault();
         const fundingId = button.getAttribute('data-id');
-        console.log('Edit clicked for funding:', fundingId);
         page(`/admin/fundings/edit/${fundingId}`);
     }
 
     handleDeleteClick(e, button) {
         e.preventDefault();
         const fundingId = button.getAttribute('data-id');
-        console.log('Delete clicked for funding:', fundingId);
         showModal('Are you sure you want to delete this funding source?', false, true,
             () => this.deleteFunding(fundingId));
     }
@@ -65,17 +88,17 @@ export class FundingManager {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
-            const data = await response.json();
 
-            if (data.message === 'Funding deleted successfully') {
-                const fundingRow = document.querySelector(`tr[data-id="${fundingId}"]`);
-                if (fundingRow) {
-                    fundingRow.remove();
-                }
-                showModal('Funding source deleted successfully');
-            } else {
+            if (!response.ok) {
+                const data = await response.json();
                 throw new Error(data.error || 'Error deleting funding source');
             }
+
+            const fundingRow = document.querySelector(`tr[data-id="${fundingId}"]`);
+            if (fundingRow) {
+                fundingRow.remove();
+            }
+            showModal('Funding source deleted successfully');
         } catch (error) {
             console.error('Error:', error);
             showModal('Error deleting funding source', true);
@@ -84,94 +107,70 @@ export class FundingManager {
 
     async handleEditFormSubmission(event) {
         event.preventDefault();
-        const fundingId = document.getElementById('fundingId').textContent;
+        const fundingId = document.getElementById('fundingId')?.textContent;
+        if (!fundingId) {
+            showModal('Error: Funding ID not found', true);
+            return;
+        }
+
         const formData = new FormData(event.target);
+        const fName = formData.get('fName');
+        if (!fName) {
+            showModal('Error: Funding name is required', true);
+            return;
+        }
 
         try {
             const response = await fetch(`/admin/api/fundings/${fundingId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fName: formData.get('fName')
-                })
+                body: JSON.stringify({ fName })
             });
-            const data = await response.json();
 
-            if (response.ok) {
-                showModal('Funding updated successfully');
-                page('/admin/fundings');
-            } else {
-                throw new Error(data.error || 'Error updating funding source');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error updating funding source');
             }
+
+            showModal('Funding updated successfully');
+            setTimeout(() => {
+                page('/admin/fundings');
+            }, 1000);
         } catch (error) {
             console.error('Error:', error);
-            showModal('Error updating funding source', true);
+            showModal(error.message || 'Error updating funding source', true);
         }
     }
 
     async handleAddFormSubmission(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
+        const fName = formData.get('fName');
+
+        if (!fName) {
+            showModal('Error: Funding name is required', true);
+            return;
+        }
 
         try {
             const response = await fetch('/admin/api/fundings/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fName: formData.get('fName')
-                })
+                body: JSON.stringify({ fName })
             });
 
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error adding funding source');
+            }
 
-            const data = await response.json();
             showModal('Funding source added successfully!', false);
-            page('/admin/fundings');
+            setTimeout(() => {
+                page('/admin/fundings');
+            }, 1000);
         } catch (error) {
             console.error('Error:', error);
-            showModal('Error adding funding source', true);
+            showModal(error.message || 'Error adding funding source', true);
         }
     }
 }
-
-export function showModal(message, isError = false, isConfirmation = false, onConfirm = null) {
-    const modal = document.createElement('div');
-    modal.className = 'custom-modal';
-
-    let buttonHtml = isConfirmation
-        ? '<button class="confirm-modal">Confirm</button><button class="cancel-modal">Cancel</button>'
-        : '<button class="close-modal">Close</button>';
-
-    modal.innerHTML = `
-        <div class="modal-content ${isError ? 'error' : isConfirmation ? 'confirmation' : 'success'}">
-            <p>${message}</p>
-            ${buttonHtml}
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    const closeModal = () => {
-        document.body.removeChild(modal);
-    };
-
-    if (isConfirmation) {
-        const confirmButton = modal.querySelector('.confirm-modal');
-        const cancelButton = modal.querySelector('.cancel-modal');
-
-        confirmButton.addEventListener('click', () => {
-            closeModal();
-            if (onConfirm) onConfirm();
-        });
-
-        cancelButton.addEventListener('click', closeModal);
-    } else {
-        const closeButton = modal.querySelector('.close-modal');
-        closeButton.addEventListener('click', closeModal);
-
-        // Auto-close the modal after 3 seconds for non-confirmation modals
-        setTimeout(closeModal, 3000);
-    }
-}
-document.addEventListener('DOMContentLoaded', () => {
-    new FundingManager();
-});
