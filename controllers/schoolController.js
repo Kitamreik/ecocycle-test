@@ -113,6 +113,9 @@ const addSchool = async (req, res) => {
             .from('schools')
             .select('sid')
             .ilike('sname', trimmedName)
+            .eq('sstreetaddress', sstreetaddress)
+            .eq('sdistrictid', sdistrictid)
+            .eq('scityid', scityid)
             .single();
         
         if (checkError && checkError.code !== 'PGRST116') {
@@ -233,12 +236,14 @@ const updateSchool = async (req, res) => {
                 error: 'School name must be at least 2 characters'
             });
         }
-
-        // Check for existing school with same name (excluding current record)
+        // Check for existing school with same name AND address (excluding current record)
         const { data: existingSchool, error: checkError } = await supabase
             .from('schools')
             .select('sid')
             .ilike('sname', trimmedName)
+            .eq('sstreetaddress', sstreetaddress)
+            .eq('sdistrictid', sdistrictid)
+            .eq('scityid', scityid)
             .neq('sid', schoolId)
             .single();
 
