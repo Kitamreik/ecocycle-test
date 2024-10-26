@@ -52,7 +52,7 @@ const addUser = async (req, res) => {
             username: req.body.username,
             useremail: req.body.useremail,
             userphone: req.body.userphone || null,
-            isactive: req.body.isactive === 'true'
+            isactive: typeof req.body.isactive === 'undefined' ? true : req.body.isactive === true
         };
 
         // Validate user data
@@ -115,7 +115,7 @@ const updateUser = async (req, res) => {
             username: req.body.username,
             useremail: req.body.useremail,
             userphone: req.body.userphone || null,
-            isactive: req.body.isactive === 'true',
+            isactive: typeof req.body.isactive === 'undefined' ? true : req.body.isactive === true,
             updated_at: new Date()
         };
 
@@ -129,7 +129,7 @@ const updateUser = async (req, res) => {
         const { data: existingUser, error: checkError } = await supabase
             .from('users')
             .select('userid')
-            .or(`username.eq.${userData.username},useremail.eq.${userData.useremail}`)
+            .or(`username.eq.${userData.username}`)
             .neq('userid', req.params.userId)
             .single();
 

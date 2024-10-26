@@ -41,7 +41,7 @@ export class UserManager {
         });
 
         // Forms
-        const editForm = document.getElementById('eufEditUserForm');
+        const editForm = document.getElementById('aufEditUserForm');  // Changed from euf to auf
         if (editForm) {
             const editSubmitHandler = (e) => this.handleEditFormSubmission(e);
             editForm.addEventListener('submit', editSubmitHandler);
@@ -136,7 +136,7 @@ export class UserManager {
 
     async handleEditFormSubmission(event) {
         event.preventDefault();
-        const userId = document.getElementById('eufUserId')?.textContent;
+        const userId = document.getElementById('aufUserId')?.textContent;  // Changed from euf to auf
         if (!userId) {
             showModal('Error: User ID not found', true);
             return;
@@ -158,7 +158,7 @@ export class UserManager {
                     username: formData.get('username'),
                     useremail: formData.get('useremail'),
                     userphone: formData.get('userphone'),
-                    isactive: formData.get('isactive') === 'true'
+                    isactive: formData.get('isactive') ? formData.get('isactive') === 'true' : true
                 })
             });
 
@@ -195,7 +195,7 @@ export class UserManager {
                     username: formData.get('username'),
                     useremail: formData.get('useremail'),
                     userphone: formData.get('userphone'),
-                    isactive: formData.get('isactive') === 'true'
+                    isactive: formData.get('isactive') ? formData.get('isactive') === 'true' : true
                 })
             });
 
