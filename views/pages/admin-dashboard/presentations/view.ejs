@@ -1,47 +1,58 @@
-<body>
-<style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-</style>
+<link rel="stylesheet" href="/css/users/view.css" />
+<div class="users-table-component">
+    <div class="content">
+        <section class="main-header grid">
+            <h1>Presentations</h1>
+            <button class="button" onclick="location.href='/admin/presentations/add'">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add new presentation</span>
+            </button>
+        </section>
 
-<h1>Presentations Dashboard</h1>
+        <div class="card">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="presentations-table-body">
+                <% if (presentations && presentations.length > 0) { %>
+                    <% presentations.forEach(presentation => { %>
+                        <tr data-id="<%= presentation.pid %>">
+                            <td><%= presentation.pid %></td>
+                            <td><%= presentation.pname %></td>
+                            <td><%= presentation.categoryName %></td>
+                            <td><%= new Date(presentation.created_at).toLocaleDateString() %></td>
+                            <td><%= new Date(presentation.updated_at).toLocaleDateString() %></td>
+                            <td>
+                                <button class="button link edit-presentation-btn" data-id="<%= presentation.pid %>">Edit</button>
+                                <button class="button link delete-presentation" data-id="<%= presentation.pid %>">Delete</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="text-center">No presentations data available.</td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="table-footer grid">
+            <span>Displaying <%= presentations ? presentations.length : 0 %> items</span>
+        </section>
+    </div>
+</div>
+
 <% if (typeof error !== 'undefined') { %>
-    <p style="color: red;"><%= error %></p>
+    <div class="alert error">
+        <%= error %>
+    </div>
 <% } %>
-<% if (presentations && presentations.length > 0) { %>
-    <table>
-        <thead>
-        <tr>
-            <th>Presentation ID</th>
-            <th>Presentation Name</th>
-            <th>Category</th>
-            <th>Created At</th>
-            <th>Updated At</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% presentations.forEach(presentation => { %>
-            <tr>
-                <td><%= presentation.pid %></td>
-                <td><%= presentation.pname %></td>
-                <td><%= presentation.presentationcategories.categoryname %></td>
-                <td><%= presentation.created_at %></td>
-                <td><%= presentation.updated_at %></td>
-            </tr>
-        <% }); %>
-        </tbody>
-    </table>
-<% } else { %>
-    <p>No presentations data available.</p>
-<% } %>
-</body>

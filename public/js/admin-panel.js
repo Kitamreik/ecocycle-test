@@ -2,11 +2,14 @@
 import { UserManager } from './users.js';
 import { FundingManager } from './fundings.js';
 import { SchoolManager } from './schools.js';
+import { PresentationManager } from './presentations.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize managers
     const userManager = new UserManager();
     const fundingManager = new FundingManager();
     const schoolManager = new SchoolManager();
+    const presentationManager = new PresentationManager();
 
     // Mobile menu toggle
     const menuIcon = document.querySelector(".menuicn");
@@ -48,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 userManager.init();
                 fundingManager.init();
                 schoolManager.init();
+                presentationManager.init();
             })
             .catch(error => {
                 console.error('Error fetching content:', error);
@@ -59,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/panel', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/dashboard', () => fetchAndRenderContent('/admin/api/dashboard'));
     page('/admin/requests', () => fetchAndRenderContent('/admin/api/requests'));
-    page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
     page('/admin/training-sessions', () => fetchAndRenderContent('/admin/api/training-sessions'));
 
     // Funding routes
@@ -68,18 +71,26 @@ document.addEventListener('DOMContentLoaded', function() {
     page('/admin/fundings/edit/:fundingId', (ctx) =>
         fetchAndRenderContent(`/admin/api/fundings/edit/${ctx.params.fundingId}`)
     );
+
     // School routes
     page('/admin/schools', () => fetchAndRenderContent('/admin/api/schools'));
     page('/admin/schools/add', () => fetchAndRenderContent('/admin/api/schools/add'));
     page('/admin/schools/edit/:schoolId', (ctx) =>
         fetchAndRenderContent(`/admin/api/schools/edit/${ctx.params.schoolId}`)
     );
-    
+
     // User routes
     page('/admin/users', () => fetchAndRenderContent('/admin/api/users'));
     page('/admin/users/add', () => fetchAndRenderContent('/admin/api/users/add'));
     page('/admin/users/edit/:userId', (ctx) =>
         fetchAndRenderContent(`/admin/api/users/edit/${ctx.params.userId}`)
+    );
+
+    // Presentation routes
+    page('/admin/presentations', () => fetchAndRenderContent('/admin/api/presentations'));
+    page('/admin/presentations/add', () => fetchAndRenderContent('/admin/api/presentations/add'));
+    page('/admin/presentations/edit/:presentationId', (ctx) =>
+        fetchAndRenderContent(`/admin/api/presentations/edit/${ctx.params.presentationId}`)
     );
 
     page('/admin/calendar', () => fetchAndRenderContent('/admin/api/calendar'));
@@ -119,7 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
         window.managers = {
             user: userManager,
             funding: fundingManager,
-            school: schoolManager
+            school: schoolManager,
+            presentation: presentationManager
         };
     }
 });
