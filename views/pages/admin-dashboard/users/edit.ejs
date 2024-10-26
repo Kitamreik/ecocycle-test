@@ -1,43 +1,43 @@
-﻿<link rel="stylesheet" href="/css/users/edit.css">
+﻿<link rel="stylesheet" href="/css/dashboard-pages/add.css">
 <body>
-<div class="edit-user-form">
-    <div class="euf-container">
-        <div class="euf-header">
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
             <h1>User Management</h1>
         </div>
 
         <nav>
-            <ol class="euf-breadcrumb">
-                <li class="euf-breadcrumb-item"><a href="/admin/users">Users</a></li>
-                <li class="euf-breadcrumb-item">Edit User</li>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/users">Users</a></li>
+                <li class="auf-breadcrumb-item">Edit User</li>
             </ol>
         </nav>
 
-        <div class="euf-user-id">
-            <strong>User ID:</strong> <span id="eufUserId"><%= user.userid %></span>
+        <div class="auf-user-id">
+            <strong>User ID:</strong> <span id="aufUserId"><%= user.userid %></span>
         </div>
 
-        <form action="/admin/users/edit/<%= user.userid %>?_method=PUT" method="POST" id="eufEditUserForm">
-            <div class="euf-form-group">
-                <label class="euf-label" for="eufUsername">Username</label>
+        <form action="/admin/users/edit/<%= user.userid %>?_method=PUT" method="POST" id="aufEditUserForm">
+            <div class="auf-form-group">
+                <label class="auf-label" for="aufUsername">Username</label>
                 <input
                         type="text"
-                        id="eufUsername"
+                        id="aufUsername"
                         name="username"
-                        class="euf-input"
+                        class="auf-input"
                         value="<%= user.username %>"
                         required
                         maxlength="50"
                 >
             </div>
 
-            <div class="euf-form-group">
-                <label class="euf-label" for="eufEmail">Email</label>
+            <div class="auf-form-group">
+                <label class="auf-label" for="aufEmail">Email</label>
                 <input
                         type="email"
-                        id="eufEmail"
+                        id="aufEmail"
                         name="useremail"
-                        class="euf-input"
+                        class="auf-input"
                         value="<%= user.useremail %>"
                         required
                         maxlength="50"
@@ -45,13 +45,13 @@
                 >
             </div>
 
-            <div class="euf-form-group">
-                <label class="euf-label" for="eufPhone">Phone Number</label>
+            <div class="auf-form-group">
+                <label class="auf-label" for="aufPhone">Phone Number</label>
                 <input
                         type="tel"
-                        id="eufPhone"
+                        id="aufPhone"
                         name="userphone"
-                        class="euf-input"
+                        class="auf-input"
                         value="<%= user.userphone %>"
                         pattern="[0-9]{10}"
                         maxlength="10"
@@ -59,16 +59,16 @@
                 >
             </div>
 
-            <div class="euf-form-group">
-                <label class="euf-label" for="eufStatus">Status</label>
-                <select id="eufStatus" name="isactive" class="euf-select">
+            <div class="auf-form-group">
+                <label class="auf-label" for="aufStatus">Status</label>
+                <select id="aufStatus" name="isactive" class="auf-select">
                     <option value="true" <%= user.isactive ? 'selected' : '' %>>Active</option>
                     <option value="false" <%= !user.isactive ? 'selected' : '' %>>Inactive</option>
                 </select>
             </div>
 
-            <div class="euf-form-group">
-                <button type="submit" class="euf-submit-btn">
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
                     <i class="fas fa-save"></i> Update User
                 </button>
             </div>
