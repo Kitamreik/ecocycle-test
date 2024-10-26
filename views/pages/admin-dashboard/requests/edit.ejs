@@ -1,0 +1,143 @@
+<!-- edit.ejs -->
+<link rel="stylesheet" href="/css/users/edit.css">
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>Request Management</h1>
+        </div>
+
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/requests">Requests</a></li>
+                <li class="auf-breadcrumb-item">Edit Request</li>
+            </ol>
+        </nav>
+
+        <div class="auf-user-id">
+            <strong>Request ID:</strong> <span id="aufRequestId"><%= request.rid %></span>
+        </div>
+
+        <form action="/admin/requests/edit/<%= request.rid %>?_method=PUT" method="POST" id="aufEditRequestForm">
+            <!-- School Selection -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="rsid">School</label>
+                <select id="rsid" name="rsid" class="auf-select" required>
+                    <% schools.forEach(school => { %>
+                        <option value="<%= school.sid %>"
+                                <%= request.rsid === school.sid ? 'selected' : '' %>>
+                            <%= school.sname %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="rcontactname">Contact Name</label>
+                <input
+                        type="text"
+                        id="rcontactname"
+                        name="rcontactname"
+                        class="auf-input"
+                        value="<%= request.rcontactname %>"
+                        required
+                        minlength="2"
+                        maxlength="35"
+                        placeholder="Enter contact name"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="rcontactemail">Contact Email</label>
+                <input
+                        type="email"
+                        id="rcontactemail"
+                        name="rcontactemail"
+                        class="auf-input"
+                        value="<%= request.rcontactemail %>"
+                        required
+                        maxlength="50"
+                        placeholder="Enter email address"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="rcontactphone">Contact Phone</label>
+                <input
+                        type="tel"
+                        id="rcontactphone"
+                        name="rcontactphone"
+                        class="auf-input"
+                        value="<%= request.rcontactphone %>"
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                        placeholder="Enter phone number (10 digits)"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="rcontactptype">Phone Type</label>
+                <select id="rcontactptype" name="rcontactptype" class="auf-select">
+                    <option value="">Select Phone Type</option>
+                    <option value="Mobile" <%= request.rcontactptype === 'Mobile' ? 'selected' : '' %>>Mobile</option>
+                    <option value="Home" <%= request.rcontactptype === 'Home' ? 'selected' : '' %>>Home</option>
+                    <option value="Work" <%= request.rcontactptype === 'Work' ? 'selected' : '' %>>Work</option>
+                    <option value="Fax" <%= request.rcontactptype === 'Fax' ? 'selected' : '' %>>Fax</option>
+                </select>
+            </div>
+
+            <!-- Other Fields -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="rcontactbesttimes">Best Contact Times</label>
+                <input
+                        type="text"
+                        id="rcontactbesttimes"
+                        name="rcontactbesttimes"
+                        class="auf-input"
+                        value="<%= request.rcontactbesttimes %>"
+                        placeholder="Enter best contact times"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="rstatusid">Status</label>
+                <select id="rstatusid" name="rstatusid" class="auf-select" required>
+                    <% statuses.forEach(status => { %>
+                        <option value="<%= status.requeststatusid %>"
+                                <%= request.rstatusid === status.requeststatusid ? 'selected' : '' %>>
+                            <%= status.requeststatusname %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="rcommunication">Communication Level</label>
+                <select id="rcommunication" name="rcommunication" class="auf-select">
+                    <option value="">Select Communication Level</option>
+                    <option value="High" <%= request.rcommunication === 'High' ? 'selected' : '' %>>High</option>
+                    <option value="Medium" <%= request.rcommunication === 'Medium' ? 'selected' : '' %>>Medium</option>
+                    <option value="Low" <%= request.rcommunication === 'Low' ? 'selected' : '' %>>Low</option>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="rnotes">Notes</label>
+                <textarea
+                        id="rnotes"
+                        name="rnotes"
+                        class="auf-textarea"
+                        maxlength="255"
+                        rows="4"
+                        placeholder="Enter any additional notes"
+                ><%= request.rnotes %></textarea>
+            </div>
+
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-save"></i> Update Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

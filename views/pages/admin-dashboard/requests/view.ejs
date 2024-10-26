@@ -1,55 +1,114 @@
-<body>
-<style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-</style>
+<!-- view.ejs -->
+<link rel="stylesheet" href="/css/users/view.css" />
+<div class="users-table-component">
+    <div class="content">
+        <section class="main-header grid">
+            <h1>Requests</h1>
+            <button class="button" onclick="location.href='/admin/requests/add'">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add new request</span>
+            </button>
+        </section>
 
-<h1>Requests Dashboard</h1>
+        <section class="table-header grid">
+            <div>
+                <div class="select">
+                    <select id="bulk-action">
+                        <option value="">Choose action</option>
+                        <option value="delete">Delete selected</option>
+                        <option value="export">Export selected</option>
+                    </select>
+                </div>
+                <span>Selected <span id="selected-count">0</span> of <span id="total-count"><%= requests.length %></span> items</span>
+            </div>
+
+            <a class="button link" id="toggle-filters">
+                <span>Filters</span>
+                <i class="fa-solid fa-angle-down"></i>
+            </a>
+        </section>
+
+        <div class="card">
+            <table>
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkbox">
+                            <input type="checkbox" id="select-all" />
+                            <span class="checkmark"></span>
+                        </div>
+                    </th>
+                    <th>ID</th>
+                    <th>School</th>
+                    <th>Contact Name</th>
+                    <th>Contact Email</th>
+                    <th>Contact Phone</th>
+                    <th>Best Contact Time</th>
+                    <th>Status</th>
+                    <th>Communication</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="requests-table-body">
+                <% if (requests && requests.length > 0) { %>
+                    <% requests.forEach(request => { %>
+                        <tr data-id="<%= request.rid %>">
+                            <td>
+                                <div class="checkbox">
+                                    <input type="checkbox" class="request-select" />
+                                    <span class="checkmark"></span>
+                                </div>
+                            </td>
+                            <td><%= request.rid %></td>
+                            <td><%= request.schoolName %></td>
+                            <td><%= request.rcontactname %></td>
+                            <td><%= request.rcontactemail %></td>
+                            <td><%= request.rcontactphone || 'N/A' %></td>
+                            <td><%= request.rcontactbesttimes %></td>
+                            <td>
+                                <span class="status-badge <%= request.statusName?.toLowerCase() %>">
+                                    <%= request.statusName %>
+                                </span>
+                            </td>
+                            <td><%= request.rcommunication || 'N/A' %></td>
+                            <td><%= new Date(request.created_at).toLocaleDateString() %></td>
+                            <td>
+                                <a href="/admin/requests/edit/<%= request.rid %>" class="button link">Edit</a>
+                                <button class="button link delete-request" data-id="<%= request.rid %>">Delete</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="11" class="text-center">No requests data available.</td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="table-footer grid">
+            <span>Displaying <%= requests ? requests.length : 0 %> items</span>
+            <div class="paging grid">
+                <span>
+                    Page
+                    <input type="number" id="current-page" value="1" min="1">
+                    of <span id="total-pages">1</span>
+                </span>
+                <div class="button icon" id="prev-page">
+                    <i class="fa-solid fa-angle-left"></i>
+                </div>
+                <div class="button icon" id="next-page">
+                    <i class="fa-solid fa-angle-right"></i>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
 <% if (typeof error !== 'undefined') { %>
-    <p style="color: red;"><%= error %></p>
+    <div class="alert error">
+        <%= error %>
+    </div>
 <% } %>
-<% if (requests && requests.length > 0) { %>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>School Name</th>
-            <th>Contact</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Best Times to Contact</th>
-            <th>Status</th>
-            <th>Communication</th>
-            <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% requests.forEach(request => { %>
-            <tr>
-                <td><%= request.rid %></td>
-                <td><%= request.rsid ? request.rsid.sname : 'N/A' %></td> <!-- School name -->
-                <td><%= request.rcontactname %></td>
-                <td><%= request.rcontactemail %></td>
-                <td><%= request.rcontactphone %></td>
-                <td><%= request.rcontactbesttimes %></td>
-                <td><%= request.rstatusid ? request.rstatusid.requeststatusname : 'N/A' %></td> <!-- Status name -->
-                <td><%= request.rcommunication %></td>
-                <td><%= request.rnotes %></td>
-            </tr>
-        <% }); %>
-        </tbody>
-    </table>
-<% } else { %>
-    <p>No requests data available.</p>
-<% } %>
-</body>

@@ -1,126 +1,324 @@
 const { supabase } = require('../config/supabase');
 
-// Fetch all requests
+// Fetch all requests with phone types
 const getRequests = async (req, res) => {
     try {
         const { data: requestsData, error: requestsError } = await supabase
             .from('requests')
             .select(`
                 rid,
-                rsid (sname),
+                rsid,
                 rcontactname,
                 rcontactemail,
                 rcontactphone,
+                rcontactptype,
                 rcontactbesttimes,
-                rstatusid (requeststatusname),
+                rstatusid,
                 rcommunication,
-                rnotes
-            `);
+                rnotes,
+                created_at,
+                updated_at,
+                schools (
+                    sid,
+                    sname
+                ),
+                requeststatuses (
+                    requeststatusid,
+                    requeststatusname
+                )
+            `)
+            .order('created_at', { ascending: false });
 
         if (requestsError) throw requestsError;
-        res.render('pages/admin-dashboard/requests/view', { requests: requestsData || [] });
+
+        const formattedRequestsData = requestsData.map(request => ({
+            ...request,
+            schoolName: request.schools ? request.schools.sname : null,
+            statusName: request.requeststatuses ? request.requeststatuses.requeststatusname : null
+        }));
+
+        res.render('pages/admin-dashboard/requests/view', {
+            requests: formattedRequestsData || [],
+            error: null
+        });
     } catch (error) {
         console.error('Error fetching requests data:', error);
-        res.status(500).json({ error: 'Error retrieving data from Supabase' });
+        res.render('pages/admin-dashboard/requests/view', {
+            requests: [],
+            error: 'Error retrieving requests data'
+        });
     }
 };
 
-// Add a new request
+// Render add request form without phone types
 const addRequestForm = async (req, res) => {
     try {
-        const { data: schools, error: schoolsError } = await supabase.from('schools').select('sid, sname');
-        const { data: statuses, error: statusesError } = await supabase.from('requeststatuses').select('requeststatusid, requeststatusname');
+        const [schoolsResponse, statusesResponse] = await Promise.all([
+            supabase.from('schools').select('sid, sname').order('sname'),
+            supabase.from('requeststatuses').select('requeststatusid, requeststatusname').order('requeststatusname')
+        ]);
 
-        if (schoolsError) throw schoolsError;
-        if (statusesError) throw statusesError;
+        if (schoolsResponse.error) throw schoolsResponse.error;
+        if (statusesResponse.error) throw statusesResponse.error;
 
-        res.json({ schools, statuses });
+        res.render('pages/admin-dashboard/requests/add', {
+            schools: schoolsResponse.data,
+            statuses: statusesResponse.data,
+            error: null
+        });
     } catch (error) {
         console.error('Error fetching data for add request form:', error);
-        res.status(500).json({ error: 'Error retrieving data from Supabase' });
+        res.render('pages/admin-dashboard/requests/add', {
+            schools: [],
+            statuses: [],
+            error: 'Error loading form data'
+        });
     }
 };
 
-const addRequest = async (req, res) => {
-    try {
-        const { rsid, rcontactname, rcontactemail, rcontactphone, rcontactptype, rcontactbesttimes, rstatusid, rcommunication, rnotes } = req.body;
-
-        const { data, error } = await supabase
-            .from('requests')
-            .insert([{ rsid, rcontactname, rcontactemail, rcontactphone, rcontactptype, rcontactbesttimes, rstatusid, rcommunication, rnotes }])
-            .select();
-
-        if (error) throw error;
-
-        res.status(201).json({ message: 'Request added successfully', data });
-    } catch (error) {
-        console.error('Error adding new request:', error);
-        res.status(500).json({ error: 'Error adding new request to Supabase' });
-    }
-};
-
-// Edit request
+// Edit request form
 const editRequestForm = async (req, res) => {
     try {
-        const { data: requestData, error: requestError } = await supabase
-            .from('requests')
-            .select('*')
-            .eq('rid', req.params.requestId)
-            .single();
+        const { requestId } = req.params;
 
-        if (requestError) throw requestError;
-
-        if (!requestData) {
-            return res.status(404).json({ error: 'Request not found' });
+        if (!requestId || isNaN(requestId)) {
+            return res.status(400).render('pages/admin-dashboard/requests/edit', {
+                error: 'Invalid request ID',
+                request: null,
+                schools: [],
+                statuses: []
+            });
         }
 
-        const { data: schools, error: schoolsError } = await supabase.from('schools').select('sid, sname');
-        const { data: statuses, error: statusesError } = await supabase.from('requeststatuses').select('requeststatusid, requeststatusname');
+        // Fetch request data and all required dropdown data
+        const [requestResponse, schoolsResponse, statusesResponse] = await Promise.all([
+            supabase.from('requests').select('*').eq('rid', requestId).single(),
+            supabase.from('schools').select('sid, sname').order('sname'),
+            supabase.from('requeststatuses').select('requeststatusid, requeststatusname').order('requeststatusname')
+        ]);
 
-        if (schoolsError) throw schoolsError;
-        if (statusesError) throw statusesError;
+        if (requestResponse.error) throw requestResponse.error;
+        if (schoolsResponse.error) throw schoolsResponse.error;
+        if (statusesResponse.error) throw statusesResponse.error;
 
-        res.json({ request: requestData, schools, statuses });
+        if (!requestResponse.data) {
+            return res.render('pages/admin-dashboard/requests/edit', {
+                error: 'Request not found',
+                request: null,
+                schools: [],
+                statuses: []
+            });
+        }
+        
+        res.render('pages/admin-dashboard/requests/edit', {
+            request: requestResponse.data,
+            schools: schoolsResponse.data,
+            statuses: statusesResponse.data,
+            error: null
+        });
     } catch (error) {
         console.error('Error fetching request data for edit:', error);
-        res.status(500).json({ error: 'Error retrieving request data from Supabase' });
+        res.render('pages/admin-dashboard/requests/edit', {
+            error: 'Error retrieving request data',
+            request: null,
+            schools: [],
+            statuses: []
+        });
     }
 };
 
 // Update request
 const updateRequest = async (req, res) => {
     try {
-        const { rsid, rcontactname, rcontactemail, rcontactphone, rcontactptype, rcontactbesttimes, rstatusid, rcommunication, rnotes } = req.body;
+        const { requestId } = req.params;
+        const {
+            rsid,
+            rcontactname,
+            rcontactemail,
+            rcontactphone,
+            rcontactptype,
+            rcontactbesttimes,
+            rstatusid,
+            rcommunication,
+            rnotes
+        } = req.body;
+
+        // Input validation
+        if (!rcontactname || typeof rcontactname !== 'string') {
+            return res.status(400).json({
+                error: 'Contact name is required and must be a string'
+            });
+        }
+
+        const trimmedName = rcontactname.trim();
+        if (trimmedName.length < 2 || trimmedName.length > 35) {
+            return res.status(400).json({
+                error: 'Contact name must be between 2 and 35 characters'
+            });
+        }
+
+        // Email validation
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
+        if (!rcontactemail || !emailRegex.test(rcontactemail)) {
+            return res.status(400).json({
+                error: 'Valid email address is required'
+            });
+        }
+
+        // Phone validation if provided
+        if (rcontactphone && !/^[0-9]{10}$/.test(rcontactphone)) {
+            return res.status(400).json({
+                error: 'Phone number must be 10 digits'
+            });
+        }
 
         const { data, error } = await supabase
             .from('requests')
-            .update({ rsid, rcontactname, rcontactemail, rcontactphone, rcontactptype, rcontactbesttimes, rstatusid, rcommunication, rnotes, updated_at: new Date() })
-            .eq('rid', req.params.requestId)
+            .update({
+                rsid,
+                rcontactname: trimmedName,
+                rcontactemail,
+                rcontactphone,
+                rcontactptype: rcontactptype || null,
+                rcontactbesttimes,
+                rstatusid,
+                rcommunication,
+                rnotes,
+                updated_at: new Date()
+            })
+            .eq('rid', requestId)
             .select();
 
         if (error) throw error;
 
-        res.json({ message: 'Request updated successfully', data });
+        res.json({
+            message: 'Request updated successfully',
+            data: data[0]
+        });
     } catch (error) {
         console.error('Error updating request:', error);
-        res.status(500).json({ error: 'Error updating request in Supabase' });
+        res.status(500).json({
+            error: 'Failed to update request'
+        });
+    }
+};
+
+// Add a new request
+const addRequest = async (req, res) => {
+    try {
+        const {
+            rsid,
+            rcontactname,
+            rcontactemail,
+            rcontactphone,
+            rcontactptype,
+            rcontactbesttimes,
+            rstatusid,
+            rcommunication,
+            rnotes
+        } = req.body;
+
+        // Input validation
+        if (!rcontactname || typeof rcontactname !== 'string') {
+            return res.status(400).json({
+                error: 'Contact name is required and must be a string'
+            });
+        }
+
+        const trimmedName = rcontactname.trim();
+        if (trimmedName.length < 2 || trimmedName.length > 35) {
+            return res.status(400).json({
+                error: 'Contact name must be between 2 and 35 characters'
+            });
+        }
+
+        // Email validation
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
+        if (!rcontactemail || !emailRegex.test(rcontactemail)) {
+            return res.status(400).json({
+                error: 'Valid email address is required'
+            });
+        }
+
+        // Phone validation if provided
+        if (rcontactphone && !/^[0-9]{10}$/.test(rcontactphone)) {
+            return res.status(400).json({
+                error: 'Phone number must be 10 digits'
+            });
+        }
+
+        const { data, error } = await supabase
+            .from('requests')
+            .insert([{
+                rsid,
+                rcontactname: trimmedName,
+                rcontactemail,
+                rcontactphone,
+                rcontactptype: rcontactptype || null, // Handle null case for phone type
+                rcontactbesttimes,
+                rstatusid,
+                rcommunication,
+                rnotes
+            }])
+            .select();
+
+        if (error) throw error;
+
+        res.status(201).json({
+            message: 'Request added successfully',
+            data: data[0]
+        });
+    } catch (error) {
+        console.error('Error adding new request:', error);
+        res.status(500).json({
+            error: 'Failed to add request'
+        });
     }
 };
 
 // Delete request
 const deleteRequest = async (req, res) => {
     try {
+        const { requestId } = req.params;
+
+        if (!requestId || isNaN(requestId)) {
+            return res.status(400).json({
+                error: 'Invalid request ID'
+            });
+        }
+
+        // Check if request exists before deletion
+        const { data: existingRequest, error: checkError } = await supabase
+            .from('requests')
+            .select('rid')
+            .eq('rid', requestId)
+            .single();
+
+        if (checkError && checkError.code !== 'PGRST116') {
+            throw checkError;
+        }
+
+        if (!existingRequest) {
+            return res.status(404).json({
+                error: 'Request not found'
+            });
+        }
+
         const { error } = await supabase
             .from('requests')
             .delete()
-            .eq('rid', req.params.requestId);
+            .eq('rid', requestId);
 
         if (error) throw error;
 
-        res.json({ message: 'Request deleted successfully' });
+        res.json({
+            message: 'Request deleted successfully'
+        });
     } catch (error) {
         console.error('Error deleting request:', error);
-        res.status(500).json({ error: 'Error deleting request from Supabase' });
+        res.status(500).json({
+            error: 'Failed to delete request'
+        });
     }
 };
 
