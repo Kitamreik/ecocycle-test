@@ -196,7 +196,7 @@ When deleting records, start from the dependent tables and move up to the parent
 
 Todo:
 - [ ] Make sure to reset the sequences for the tables that have auto-incrementing primary keys once the actual data is populated.
-- [ ] Have global styles for the add, edit, view so that the forms look consistent & code is less repetitive.
+- [x] Have global styles for the add, edit, view so that the forms look consistent & code is less repetitive.
 - [ ] Implement the sorting and filtering for the tables.
 - [ ] Implement the search functionality for the tables.
 - [ ] Implement the pagination for the tables.
@@ -204,5 +204,7 @@ Todo:
 - [ ] Implement the session and cookie management.
 - [ ] Have a nice looking Dashboard.
 - [ ] Get feedback from the users and make necessary changes.
-- [ ] Fix the active/inactive boolean checkboxes/dropdowns in user route.
+- [x] Fix the active/inactive boolean checkboxes/dropdowns in user route.
+- [ ] Make sure the cities are not duplicate.
+- [x] Make sure the school is checked against the school name, and address for duplicate entry
 
