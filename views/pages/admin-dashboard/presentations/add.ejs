@@ -1,1 +1,56 @@
-<h2> This  is a test</h2>
+<link rel="stylesheet" href="/css/users/add.css">
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>Presentation Management</h1>
+        </div>
+
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/presentations">Presentations</a></li>
+                <li class="auf-breadcrumb-item">New Presentation</li>
+            </ol>
+        </nav>
+
+        <div class="auf-user-id">
+            <strong>Presentation ID:</strong> <span id="aufPresentationId">Auto-generated</span>
+        </div>
+
+        <form method="POST" id="aufAddPresentationForm">
+            <div class="auf-form-group">
+                <label class="auf-label" for="pname">Presentation Name</label>
+                <input
+                        type="text"
+                        id="pname"
+                        name="pname"
+                        class="auf-input"
+                        required
+                        minlength="2"
+                        placeholder="Enter presentation name"
+                >
+            </div>
+
+            <div class="auf-form-group">
+                <label class="auf-label" for="pcategoryid">Category</label>
+                <select id="pcategoryid" name="pcategoryid" class="auf-select" required>
+                    <option value="">Select Category</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category.categoryid %>"><%= category.categoryname %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-plus-circle"></i> Add Presentation
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="auf-error-message">
+        <%= error %>
+    </div>
+<% } %>
