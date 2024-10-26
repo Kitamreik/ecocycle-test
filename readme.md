@@ -204,4 +204,5 @@ Todo:
 - [ ] Implement the session and cookie management.
 - [ ] Have a nice looking Dashboard.
 - [ ] Get feedback from the users and make necessary changes.
+- [ ] Fix the active/inactive boolean checkboxes/dropdowns in user route.
 
