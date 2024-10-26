@@ -9,6 +9,7 @@ const isAuthenticated = (req, res, next) => {
 
 // Get all presentations
 router.get('/api/presentations', isAuthenticated, presentationController.getPresentations);
+router.get('/api/presentations/add', presentationController.addPresentationForm);
 router.post('/api/presentations/add', isAuthenticated, presentationController.addPresentation);
 router.get('/api/presentations/edit/:presentationId', isAuthenticated, presentationController.editPresentationForm);
 router.put('/api/presentations/:presentationId', isAuthenticated, presentationController.updatePresentation);
