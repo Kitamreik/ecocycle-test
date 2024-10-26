@@ -194,21 +194,14 @@ When deleting records, start from the dependent tables and move up to the parent
 
 <hr> 
 
-## Wireframe for the project (First Draft & MVP - Subject to Change):
-
-### Dashboard Section:
-![Mockup Image](./mockups/dashboard.png)
-
-### Request Management Section:
-![Mockup Image](./mockups/requestpage.png)
-
-### School Management Section:
-![Mockup Image](./mockups/schoolsection.png)
-
-### User Management Section:
-![Mockup Image](./mockups/usersection.png)
-
-### Calendar Section:
-![Mockup Image](./mockups/calendar.png)
-
+Todo:
+- [ ] Make sure to reset the sequences for the tables that have auto-incrementing primary keys once the actual data is populated.
+- [ ] Have global styles for the add, edit, view so that the forms look consistent & code is less repetitive.
+- [ ] Implement the sorting and filtering for the tables.
+- [ ] Implement the search functionality for the tables.
+- [ ] Implement the pagination for the tables.
+- [ ] Implement multi checkbox selection.
+- [ ] Implement the session and cookie management.
+- [ ] Have a nice looking Dashboard.
+- [ ] Get feedback from the users and make necessary changes.
 
