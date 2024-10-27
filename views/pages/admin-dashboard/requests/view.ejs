@@ -28,87 +28,158 @@
             </a>
         </section>
 
-        <div class="card">
-            <table>
-                <thead>
-                <tr>
-                    <th>
-                        <div class="checkbox">
-                            <input type="checkbox" id="select-all" />
-                            <span class="checkmark"></span>
-                        </div>
-                    </th>
-                    <th>ID</th>
-                    <th>School</th>
-                    <th>Contact Name</th>
-                    <th>Contact Email</th>
-                    <th>Contact Phone</th>
-                    <th>Best Contact Time</th>
-                    <th>Status</th>
-                    <th>Communication</th>
-                    <th>Created</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody id="requests-table-body">
-                <% if (requests && requests.length > 0) { %>
-                    <% requests.forEach(request => { %>
-                        <tr data-id="<%= request.rid %>">
-                            <td>
+        <div class="users-table-component">
+            <div class="content">
+                <!-- ... existing header code ... -->
+
+                <div class="card">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>
                                 <div class="checkbox">
-                                    <input type="checkbox" class="request-select" />
+                                    <input type="checkbox" id="select-all" />
                                     <span class="checkmark"></span>
                                 </div>
-                            </td>
-                            <td><%= request.rid %></td>
-                            <td><%= request.schoolName %></td>
-                            <td><%= request.rcontactname %></td>
-                            <td><%= request.rcontactemail %></td>
-                            <td><%= request.rcontactphone || 'N/A' %></td>
-                            <td><%= request.rcontactbesttimes %></td>
-                            <td>
+                            </th>
+                            <th>ID</th>
+                            <th>School</th>
+                            <th>Contact Name</th>
+                            <th>Contact Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="requests-table-body">
+                        <% if (requests && requests.length > 0) { %>
+                            <% requests.forEach(request => { %>
+                                <!-- Main Request Row -->
+                                <tr data-id="<%= request.rid %>">
+                                    <td>
+                                        <div class="checkbox">
+                                            <input type="checkbox" class="request-select" />
+                                            <span class="checkmark"></span>
+                                        </div>
+                                    </td>
+                                    <td><%= request.rid %></td>
+                                    <td><%= request.schoolName %></td>
+                                    <td><%= request.rcontactname %></td>
+                                    <td><%= request.rcontactemail %></td>
+                                    <td>
                                 <span class="status-badge <%= request.statusName?.toLowerCase() %>">
                                     <%= request.statusName %>
                                 </span>
-                            </td>
-                            <td><%= request.rcommunication || 'N/A' %></td>
-                            <td><%= new Date(request.created_at).toLocaleDateString() %></td>
-                            <td>
-                                <a href="/admin/requests/edit/<%= request.rid %>" class="button link">Edit</a>
-                                <button class="button link delete-request" data-id="<%= request.rid %>">Delete</button>
-                            </td>
-                        </tr>
-                    <% }); %>
-                <% } else { %>
-                    <tr>
-                        <td colspan="11" class="text-center">No requests data available.</td>
-                    </tr>
-                <% } %>
-                </tbody>
-            </table>
-        </div>
+                                    </td>
+                                    <td>
+                                        <button class="button link toggle-sessions" data-rid="<%= request.rid %>">
+                                            <i class="fa-solid fa-calendar"></i> Sessions
+                                            (<%= request.trainingsessions ? request.trainingsessions.length : 0 %>)
+                                        </button>
+                                        <a href="/admin/training-sessions/add?rid=<%= request.rid %>" class="button link">
+                                            <i class="fa-solid fa-plus"></i> Add Session
+                                        </a>
+                                        <a href="/admin/requests/edit/<%= request.rid %>" class="button link">Edit</a>
+                                        <button class="button link delete-request" data-id="<%= request.rid %>">Delete</button>
+                                    </td>
+                                </tr>
 
-        <section class="table-footer grid">
-            <span>Displaying <%= requests ? requests.length : 0 %> items</span>
-            <div class="paging grid">
-                <span>
-                    Page
-                    <input type="number" id="current-page" value="1" min="1">
-                    of <span id="total-pages">1</span>
-                </span>
-                <div class="button icon" id="prev-page">
-                    <i class="fa-solid fa-angle-left"></i>
-                </div>
-                <div class="button icon" id="next-page">
-                    <i class="fa-solid fa-angle-right"></i>
+                                <!-- Training Sessions Row (Initially Hidden) -->
+                                <tr class="sessions-row" id="sessions-<%= request.rid %>" style="display: none;">
+                                    <td colspan="7">
+                                        <div class="sessions-container">
+                                            <% if (request.trainingsessions && request.trainingsessions.length > 0) { %>
+                                                <% request.trainingsessions.forEach(session => { %>
+                                                    <div class="session-card">
+                                                        <div class="session-header">
+                                                            <span class="session-id">#<%= session.tsid %></span>
+                                                            <span class="status-badge <%= session.statusname?.toLowerCase() %>">
+                                                        <%= session.statusname %>
+                                                    </span>
+                                                        </div>
+                                                        <div class="session-details">
+                                                            <p>Scheduled: <%= session.tsscheduleddatetime ? new Date(session.tsscheduleddatetime).toLocaleDateString() : 'Not Scheduled' %></p>
+                                                            <p>Grades: <%= session.tsgrades || 'Not Specified' %></p>
+                                                            <p>Students: <%= session.tsstudents || 0 %></p>
+                                                            <p>Educator: <%= session.educatorName || 'Not Assigned' %></p>
+                                                        </div>
+                                                        <div class="session-actions">
+                                                            <a href="/admin/training-sessions/edit/<%= session.tsid %>" class="button link">
+                                                                <i class="fa-solid fa-edit"></i> Edit
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <p class="no-sessions">No training sessions scheduled yet.</p>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" class="text-center">No requests data available.</td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 </div>
+        <style>
+            .sessions-container {
+                padding: 15px;
+                background: #f8f9fa;
+            }
 
-<% if (typeof error !== 'undefined') { %>
-    <div class="alert error">
-        <%= error %>
-    </div>
-<% } %>
+            .session-card {
+                background: white;
+                border: 1px solid #e0eeeb;
+                border-radius: 4px;
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .session-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .session-details {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 10px;
+            }
+
+            .session-details p {
+                margin: 0;
+            }
+
+            .session-actions {
+                margin-top: 10px;
+                text-align: right;
+            }
+
+            .toggle-sessions {
+                color: #3f9783;
+            }
+        </style>
+
+        <script>
+            document.querySelectorAll('.toggle-sessions').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const rid = btn.dataset.rid;
+                    const sessionsRow = document.querySelector(`#sessions-${rid}`);
+                    if (sessionsRow) {
+                        const isHidden = sessionsRow.style.display === 'none';
+                        sessionsRow.style.display = isHidden ? 'table-row' : 'none';
+                        btn.querySelector('i').classList.toggle('fa-calendar');
+                        btn.querySelector('i').classList.toggle('fa-calendar-minus');
+                    }
+                });
+            });
+        </script>
