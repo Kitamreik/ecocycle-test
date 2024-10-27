@@ -206,5 +206,9 @@ Todo:
 - [ ] Get feedback from the users and make necessary changes.
 - [x] Fix the active/inactive boolean checkboxes/dropdowns in user route.
 - [ ] Make sure the cities are not duplicate.
-- [x] Make sure the school is checked against the school name, and address for duplicate entry
+- [ ] Make sure the school is checked against the school name, and ~~stret address~~ district for duplicate entry.
+- [ ] Add grades information field (string) in the requests as well.
+- [ ] Make the grades information field type to be a string in the presentation table.
+- [ ] Ask the Ecocycle if there would be a case when more than one users are assigned to a training sessions.
+- [ ] For school add/edit form, have the user select the districts first and then populate the schools/counties based on those selected droop down.  
 
