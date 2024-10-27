@@ -14,12 +14,10 @@ const isAuthenticated = (req, res, next) => {
 
 // Get all training sessions
 router.get('/api/training-sessions', isAuthenticated, trainingSessionController.getTrainingSessions);
+router.get('/api/training-sessions/add', isAuthenticated, trainingSessionController.addTrainingSessionForm);
 router.post('/api/training-sessions/add', isAuthenticated, trainingSessionController.addTrainingSession);
 router.get('/api/training-sessions/edit/:trainingsessionid', isAuthenticated, trainingSessionController.editTrainingSessionForm);
-router.post('/api/training-sessions/edit/:trainingsessionid', isAuthenticated, (req, res, next) => {
-    req.method = 'PUT';
-    next();
-}, trainingSessionController.updateTrainingSession);
-router.delete('/api/training-sessions/delete/:trainingsessionid', isAuthenticated, trainingSessionController.deleteTrainingSession);
+router.put('/api/training-sessions/:trainingsessionid', isAuthenticated, trainingSessionController.updateTrainingSession);
+router.delete('/api/training-sessions/:trainingsessionid', isAuthenticated, trainingSessionController.deleteTrainingSession);
 
 module.exports = router;
