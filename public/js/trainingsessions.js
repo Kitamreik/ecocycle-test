@@ -1,7 +1,7 @@
 import { showModal } from './utils.js';
 
 export class TrainingSessionManager {
-    #eventListeners = new Map(); // Private field to track event listeners
+    #eventListeners = new Map();
 
     constructor() {
         this.init();
@@ -23,7 +23,15 @@ export class TrainingSessionManager {
             addSessionBtn.addEventListener('click', addHandler);
             this.#eventListeners.set(addSessionBtn, { type: 'click', handler: addHandler });
         }
-
+        
+        // Toggle sessions buttons
+        const toggleSessionsButtons = document.querySelectorAll('.toggle-sessions');
+        toggleSessionsButtons.forEach(button => {
+            const toggleHandler = (e) => this.handleToggleSessions(e, button);
+            button.addEventListener('click', toggleHandler);
+            this.#eventListeners.set(button, { type: 'click', handler: toggleHandler });
+        });
+        
         // Toggle details buttons
         const toggleButtons = document.querySelectorAll('.toggle-details');
         toggleButtons.forEach(button => {
@@ -31,7 +39,7 @@ export class TrainingSessionManager {
             button.addEventListener('click', toggleHandler);
             this.#eventListeners.set(button, { type: 'click', handler: toggleHandler });
         });
-
+        
         // Delete buttons
         const deleteButtons = document.querySelectorAll('.delete-session');
         deleteButtons.forEach(button => {
@@ -54,6 +62,7 @@ export class TrainingSessionManager {
             addForm.addEventListener('submit', addSubmitHandler);
             this.#eventListeners.set(addForm, { type: 'submit', handler: addSubmitHandler });
         }
+        
     }
 
     removeEventListeners() {
@@ -62,7 +71,31 @@ export class TrainingSessionManager {
         });
         this.#eventListeners.clear();
     }
+    handleToggleSessions(e, button) {
+        e.preventDefault();
+        const requestId = button.dataset.rid;
+        const sessionsRow = document.getElementById(`sessions-${requestId}`);
 
+        if (sessionsRow) {
+            const isHidden = sessionsRow.style.display === 'none';
+            sessionsRow.style.display = isHidden ? 'table-row' : 'none';
+
+            // Toggle icon
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            }
+
+            // Log the sessions data for debugging
+            const sessionsData = sessionsRow.querySelector('.sessions-container');
+            if (sessionsData) {
+                console.log('Sessions for Request ID:', requestId);
+                console.log('Sessions Container:', sessionsData);
+            }
+        }
+    }
+    
     handleToggleDetails(e, button) {
         e.preventDefault();
         const sessionId = button.dataset.id;
