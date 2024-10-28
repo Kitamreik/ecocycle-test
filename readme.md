@@ -32,13 +32,6 @@ erDiagram
         TIMESTAMP updated_at
     }
 
-    phoneTypes {
-        INT phoneTypeId PK
-        STRING phoneTypeName
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
-
     requestStatuses {
         INT requestStatusId PK
         STRING requestStatusName
@@ -80,7 +73,7 @@ erDiagram
         STRING rContactName
         STRING rContactEmail
         STRING rContactPhone
-        STRING rContactPType
+        ENUM phone_type(rContactPType)
         STRING rContactBestTimes
         INT rStatusId FK
         STRING rCommunication
