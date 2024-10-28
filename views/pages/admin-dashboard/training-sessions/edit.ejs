@@ -17,7 +17,7 @@
             <strong>Session ID:</strong> <span id="aufSessionId"><%= trainingsession.tsid %></span>
         </div>
 
-        <form action="/admin/training-sessions/edit/<%= trainingsession.tsid %>?_method=PUT" method="POST" id="aufEditTrainingSessionForm">
+        <form id="aufEditTrainingSessionForm">
             <!-- Request Selection -->
             <div class="auf-form-group">
                 <label class="auf-label" for="rid">Request</label>
@@ -160,7 +160,33 @@
                     >
                 </div>
             </div>
-
-            <!-- Status -->
             <div class="auf-form-group">
-                <label class="auf-label" for="tsstatus
+                <label class="auf-label" for="tsstatusid">Session Status</label>
+                <select name="tsstatusid" id="tsstatusid" class="auf-select" required>
+                    <option value="">Select Status</option>
+                    <% statuses.forEach(function(status) { %>
+                        <option value="<%= status.sessionstatusid %>"
+                                <%= trainingsession.tsstatusid === status.sessionstatusid ? 'selected' : '' %>>
+                            <%= status.sessionstatusname %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="auf-form-group" style="display: flex; gap: 10px;">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-save"></i> Update Session
+                </button>
+            </div>
+        </form>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="auf-error-message">
+                <%= error %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script src="/js/training-sessions.js"></script>

@@ -22,12 +22,14 @@
                 <label class="auf-label" for="rid">Request</label>
                 <select id="rid" name="rid" class="auf-select" required>
                     <option value="">Select Request</option>
-                    <% requests.forEach(request => { %>
-                        <option value="<%= request.rid %>"
-                                <%= selectedRequestId && selectedRequestId == request.rid ? 'selected' : '' %>>
-                            #<%= request.rid %> - <%= request.schools.sname %>
-                        </option>
-                    <% }); %>
+                    <% if (requests && requests.length > 0) { %>
+                        <% requests.forEach(request => { %>
+                            <option value="<%= request.rid %>"
+                                    <%= (selectedRequestId && selectedRequestId.toString() === request.rid.toString()) ? 'selected' : '' %>>
+                                #<%= request.rid %> - <%= request.schools?.sname || 'Unknown School' %>
+                            </option>
+                        <% }); %>
+                    <% } %>
                 </select>
             </div>
 
@@ -146,20 +148,18 @@
                     >
                 </div>
             </div>
+            <!-- Status Selection -->
 
-            <!-- Status -->
-            <div class="auf-form-group">
-                <label class="auf-label" for="tsstatusid">Status</label>
-                <select id="tsstatusid" name="tsstatusid" class="auf-select" required>
-                    <% statuses.forEach(status => { %>
-                        <option value="<%= status.sessionstatusid %>"
-                                <%= status.sessionstatusid === 1 ? 'selected' : '' %>>
-                            <%= status.statusname %>
-                        </option>
-                    <% }); %>
-                </select>
-            </div>
-
+            <select name="tsstatusid" id="tsstatusid" class="auf-select">
+                <option value="">Select Status</option>
+                <% statuses.forEach(function(status) { %>
+                    <option value="<%= status.sessionstatusid %>"
+                            <%= status.sessionstatusname.toLowerCase() === 'in progress' ? 'selected' : '' %>>
+                        <%= status.sessionstatusname %>
+                    </option>
+                <% }); %>
+            </select>
+            
             <div class="auf-form-group">
                 <button type="submit" class="auf-submit-btn">
                     <i class="fas fa-plus-circle"></i> Create Training Session

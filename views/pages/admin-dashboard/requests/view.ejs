@@ -30,8 +30,6 @@
 
         <div class="users-table-component">
             <div class="content">
-                <!-- ... existing header code ... -->
-
                 <div class="card">
                     <table>
                         <thead>
@@ -46,6 +44,7 @@
                             <th>School</th>
                             <th>Contact Name</th>
                             <th>Contact Email</th>
+                            <th>Date Created</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -65,52 +64,63 @@
                                     <td><%= request.schoolName %></td>
                                     <td><%= request.rcontactname %></td>
                                     <td><%= request.rcontactemail %></td>
+                                    <td><%= new Date(request.created_at).toLocaleDateString() %></td>
                                     <td>
-                                <span class="status-badge <%= request.statusName?.toLowerCase() %>">
-                                    <%= request.statusName %>
-                                </span>
+                                        <span class="status-badge <%= request.statusName?.toLowerCase() %>">
+                                            <%= request.statusName %>
+                                        </span>
                                     </td>
                                     <td>
-                                        <button class="button link toggle-sessions" data-rid="<%= request.rid %>">
-                                            <i class="fa-solid fa-calendar"></i> Sessions
-                                            (<%= request.trainingsessions ? request.trainingsessions.length : 0 %>)
+                                        <a href="/admin/requests/edit/<%= request.rid %>" class="button link">
+                                            <i class="fa-solid fa-edit"></i> Edit
+                                        </a>
+                                        <button class="button link delete-request" data-id="<%= request.rid %>">
+                                            <i class="fa-solid fa-trash"></i> Delete
                                         </button>
                                         <a href="/admin/training-sessions/add?rid=<%= request.rid %>" class="button link">
-                                            <i class="fa-solid fa-plus"></i> Add Session
-                                        </a>
-                                        <a href="/admin/requests/edit/<%= request.rid %>" class="button link">Edit</a>
-                                        <button class="button link delete-request" data-id="<%= request.rid %>">Delete</button>
+                                            <i class="fa-solid fa-plus"></i> Add training session
+                                        </a> 
+                                        <button class="button link toggle-sessions" data-rid="<%= request.rid %>">
+                                            <i class="fa-solid fa-chevron-down"></i> View Sessions
+                                        </button>
                                     </td>
                                 </tr>
-
-                                <!-- Training Sessions Row (Initially Hidden) -->
                                 <tr class="sessions-row" id="sessions-<%= request.rid %>" style="display: none;">
                                     <td colspan="7">
                                         <div class="sessions-container">
                                             <% if (request.trainingsessions && request.trainingsessions.length > 0) { %>
-                                                <% request.trainingsessions.forEach(session => { %>
-                                                    <div class="session-card">
-                                                        <div class="session-header">
-                                                            <span class="session-id">#<%= session.tsid %></span>
-                                                            <span class="status-badge <%= session.statusname?.toLowerCase() %>">
-                                                        <%= session.statusname %>
-                                                    </span>
-                                                        </div>
-                                                        <div class="session-details">
-                                                            <p>Scheduled: <%= session.tsscheduleddatetime ? new Date(session.tsscheduleddatetime).toLocaleDateString() : 'Not Scheduled' %></p>
-                                                            <p>Grades: <%= session.tsgrades || 'Not Specified' %></p>
-                                                            <p>Students: <%= session.tsstudents || 0 %></p>
-                                                            <p>Educator: <%= session.educatorName || 'Not Assigned' %></p>
-                                                        </div>
-                                                        <div class="session-actions">
-                                                            <a href="/admin/training-sessions/edit/<%= session.tsid %>" class="button link">
-                                                                <i class="fa-solid fa-edit"></i> Edit
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                <% }); %>
+                                                <div class="sessions-grid">
+                                                    <% request.trainingsessions.forEach(session => { %>
+                                                        <a href="/admin/training-sessions/edit/<%= session.tsid %>" class="session-card">
+                                                            <div class="session-header">
+                                                                <span class="session-id">#<%= session.tsid %></span>
+                                                                <span class="status-badge <%= session.statusName?.toLowerCase() %>">
+                                                                    <%= session.statusName || 'Pending' %>
+                                                                </span>
+                                                            </div>
+                                                            <div class="session-content">
+                                                                <div class="session-detail">
+                                                                    <i class="fa-solid fa-calendar"></i>
+                                                                    <%= session.tsscheduleddatetime ? new Date(session.tsscheduleddatetime).toLocaleDateString() : 'Not Scheduled' %>
+                                                                </div>
+                                                                <div class="session-detail">
+                                                                    <i class="fa-solid fa-graduation-cap"></i>
+                                                                    <%= session.tsgrades || 'Grades N/A' %>
+                                                                </div>
+                                                                <div class="session-detail">
+                                                                    <i class="fa-solid fa-users"></i>
+                                                                    <%= session.tsstudents || 0 %> students
+                                                                </div>
+                                                                <div class="session-detail">
+                                                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                                                    <%= session.educatorName || 'No Educator Assigned' %>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    <% }); %>
+                                                </div>
                                             <% } else { %>
-                                                <p class="no-sessions">No training sessions scheduled yet.</p>
+                                                <p class="no-sessions">No training sessions found for this request.</p>
                                             <% } %>
                                         </div>
                                     </td>
@@ -128,58 +138,89 @@
         </div>
     </div>
 </div>
-        <style>
-            .sessions-container {
-                padding: 15px;
-                background: #f8f9fa;
-            }
 
-            .session-card {
-                background: white;
-                border: 1px solid #e0eeeb;
-                border-radius: 4px;
-                padding: 15px;
-                margin-bottom: 10px;
-            }
+<style>
+    .sessions-container {
+        padding: 15px;
+        background: #f8f9fa;
+    }
 
-            .session-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 10px;
-            }
+    .sessions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+        padding: 10px;
+    }
 
-            .session-details {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 10px;
-            }
+    .session-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 15px;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        color: inherit;
+    }
 
-            .session-details p {
-                margin: 0;
-            }
+    .session-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
 
-            .session-actions {
-                margin-top: 10px;
-                text-align: right;
-            }
+    .session-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
+    }
 
-            .toggle-sessions {
-                color: #3f9783;
-            }
-        </style>
+    .session-id {
+        font-weight: 600;
+        color: #666;
+    }
 
-        <script>
-            document.querySelectorAll('.toggle-sessions').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const rid = btn.dataset.rid;
-                    const sessionsRow = document.querySelector(`#sessions-${rid}`);
-                    if (sessionsRow) {
-                        const isHidden = sessionsRow.style.display === 'none';
-                        sessionsRow.style.display = isHidden ? 'table-row' : 'none';
-                        btn.querySelector('i').classList.toggle('fa-calendar');
-                        btn.querySelector('i').classList.toggle('fa-calendar-minus');
-                    }
-                });
-            });
-        </script>
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.85em;
+        font-weight: 500;
+    }
+
+    .status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .session-content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .session-detail {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #666;
+    }
+
+    .session-detail i {
+        width: 16px;
+        color: #4a90e2;
+    }
+
+    .no-sessions {
+        text-align: center;
+        color: #666;
+        padding: 20px;
+        font-style: italic;
+    }
+</style>
