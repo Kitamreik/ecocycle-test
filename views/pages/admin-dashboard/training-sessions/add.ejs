@@ -1,0 +1,170 @@
+<link rel="stylesheet" href="/css/dashboard-pages/add.css">
+<div class="add-user-form">
+    <div class="auf-container">
+        <div class="auf-header">
+            <h1>Training Session Management</h1>
+        </div>
+
+        <nav>
+            <ol class="auf-breadcrumb">
+                <li class="auf-breadcrumb-item"><a href="/admin/training-sessions">Training Sessions</a></li>
+                <li class="auf-breadcrumb-item">New Training Session</li>
+            </ol>
+        </nav>
+
+        <div class="auf-user-id">
+            <strong>Session ID:</strong> <span id="aufSessionId">Auto-generated</span>
+        </div>
+
+        <form method="POST" id="aufAddTrainingSessionForm">
+            <!-- Request Selection (Required) -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="rid">Request</label>
+                <select id="rid" name="rid" class="auf-select" required>
+                    <option value="">Select Request</option>
+                    <% if (requests && requests.length > 0) { %>
+                        <% requests.forEach(request => { %>
+                            <option value="<%= request.rid %>"
+                                    <%= (selectedRequestId && selectedRequestId.toString() === request.rid.toString()) ? 'selected' : '' %>>
+                                #<%= request.rid %> - <%= request.schools?.sname || 'Unknown School' %>
+                            </option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            </div>
+
+            <!-- Presentation Selection -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="pid">Presentation</label>
+                <select id="pid" name="pid" class="auf-select">
+                    <option value="">Select Presentation</option>
+                    <% presentations.forEach(presentation => { %>
+                        <option value="<%= presentation.pid %>"><%= presentation.pname %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <!-- Funding Selection -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="fid">Funding Source</label>
+                <select id="fid" name="fid" class="auf-select">
+                    <option value="">Select Funding</option>
+                    <% funding.forEach(fund => { %>
+                        <option value="<%= fund.fid %>"><%= fund.fname %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <!-- Educator Selection -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="userid">Educator</label>
+                <select id="userid" name="userid" class="auf-select">
+                    <option value="">Select Educator</option>
+                    <% educators.forEach(educator => { %>
+                        <option value="<%= educator.userid %>"><%= educator.username %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <!-- Grades -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="tsgrades">Grade Levels</label>
+                <input
+                        type="text"
+                        id="tsgrades"
+                        name="tsgrades"
+                        class="auf-input"
+                        maxlength="25"
+                        placeholder="e.g., K-5, 6-8"
+                >
+            </div>
+
+            <!-- Scheduled Date/Time -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="tsscheduleddatetime">Scheduled Date/Time</label>
+                <input
+                        type="datetime-local"
+                        id="tsscheduleddatetime"
+                        name="tsscheduleddatetime"
+                        class="auf-input"
+                >
+            </div>
+
+            <!-- Preferred Date/Time Range -->
+            <div class="auf-form-row">
+                <div class="auf-form-col">
+                    <label class="auf-label" for="tspreferreddatetimestart">Preferred Start</label>
+                    <input
+                            type="datetime-local"
+                            id="tspreferreddatetimestart"
+                            name="tspreferreddatetimestart"
+                            class="auf-input"
+                    >
+                </div>
+                <div class="auf-form-col">
+                    <label class="auf-label" for="tspreferreddatetimeend">Preferred End</label>
+                    <input
+                            type="datetime-local"
+                            id="tspreferreddatetimeend"
+                            name="tspreferreddatetimeend"
+                            class="auf-input"
+                    >
+                </div>
+            </div>
+
+            <!-- Participant Numbers -->
+            <div class="auf-form-row">
+                <div class="auf-form-col">
+                    <label class="auf-label" for="tsstudents">Number of Students</label>
+                    <input
+                            type="number"
+                            id="tsstudents"
+                            name="tsstudents"
+                            class="auf-input"
+                            min="0"
+                            value="0"
+                    >
+                </div>
+                <div class="auf-form-col">
+                    <label class="auf-label" for="tsclassrooms">Number of Classrooms</label>
+                    <input
+                            type="number"
+                            id="tsclassrooms"
+                            name="tsclassrooms"
+                            class="auf-input"
+                            min="0"
+                            value="0"
+                    >
+                </div>
+                <div class="auf-form-col">
+                    <label class="auf-label" for="tsadults">Number of Adults</label>
+                    <input
+                            type="number"
+                            id="tsadults"
+                            name="tsadults"
+                            class="auf-input"
+                            min="0"
+                            value="0"
+                    >
+                </div>
+            </div>
+            <!-- Status Selection -->
+
+            <select name="tsstatusid" id="tsstatusid" class="auf-select">
+                <option value="">Select Status</option>
+                <% statuses.forEach(function(status) { %>
+                    <option value="<%= status.sessionstatusid %>"
+                            <%= status.sessionstatusname.toLowerCase() === 'in progress' ? 'selected' : '' %>>
+                        <%= status.sessionstatusname %>
+                    </option>
+                <% }); %>
+            </select>
+            
+            <div class="auf-form-group">
+                <button type="submit" class="auf-submit-btn">
+                    <i class="fas fa-plus-circle"></i> Create Training Session
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

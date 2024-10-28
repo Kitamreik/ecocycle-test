@@ -1,0 +1,194 @@
+<!-- view.ejs -->
+<link rel="stylesheet" href="/css/dashboard-pages/view.css" />
+<div class="users-table-component">
+    <div class="content">
+        <section class="main-header grid">
+            <h1>Training Sessions</h1>
+            <button class="button" onclick="location.href='/admin/training-sessions/add'">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add new session</span>
+            </button>
+        </section>
+
+        <section class="table-header grid">
+            <div>
+                <div class="select">
+                    <select id="bulk-action">
+                        <option value="">Choose action</option>
+                        <option value="delete">Delete selected</option>
+                        <option value="export">Export selected</option>
+                    </select>
+                </div>
+                <span>Selected <span id="selected-count">0</span> of <span id="total-count"><%= trainingsessions.length %></span> items</span>
+            </div>
+
+            <a class="button link" id="toggle-filters">
+                <span>Filters</span>
+                <i class="fa-solid fa-angle-down"></i>
+            </a>
+        </section>
+
+        <div class="card">
+            <table>
+                <thead>
+                <tr>
+                    <th>
+                        <div class="checkbox">
+                            <input type="checkbox" id="select-all" />
+                            <span class="checkmark"></span>
+                        </div>
+                    </th>
+                    <th>ID</th>
+                    <th>Request/School</th>
+                    <th>Scheduled Date</th>
+                    <th>Grades</th>
+                    <th>Educator</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="sessions-table-body">
+                <% if (trainingsessions && trainingsessions.length > 0) { %>
+                    <% trainingsessions.forEach(session => { %>
+                        <tr data-id="<%= session.tsid %>">
+                            <td>
+                                <div class="checkbox">
+                                    <input type="checkbox" class="session-select" />
+                                    <span class="checkmark"></span>
+                                </div>
+                            </td>
+                            <td><%= session.tsid %></td>
+                            <td>
+                                Request #<%= session.rid %><br>
+                                <small><%= session.schoolName %></small>
+                            </td>
+                            <td>
+                                <% if (session.tsscheduleddatetime) { %>
+                                    <%= new Date(session.tsscheduleddatetime).toLocaleDateString() %>
+                                    <br>
+                                    <small><%= new Date(session.tsscheduleddatetime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
+                                <% } else { %>
+                                    Not Scheduled
+                                <% } %>
+                            </td>
+                            <td><%= session.tsgrades || 'N/A' %></td>
+                            <td><%= session.educatorName || 'Not Assigned' %></td>
+                            <td>
+                                <span class="status-badge <%= session.statusName?.toLowerCase() %>">
+                                    <%= session.statusName %>
+                                </span>
+                            </td>
+                            <td>
+                                <button class="button link toggle-details" data-id="<%= session.tsid %>">
+                                    <i class="fa-solid fa-eye"></i> Details
+                                </button>
+                                <a href="/admin/training-sessions/edit/<%= session.tsid %>" class="button link">Edit</a>
+                                <button class="button link delete-session" data-id="<%= session.tsid %>">Delete</button>
+                            </td>
+                        </tr>
+                        <!-- Details Row (Initially Hidden) -->
+                        <tr class="details-row" id="details-<%= session.tsid %>" style="display: none;">
+                            <td colspan="8">
+                                <div class="session-details-container">
+                                    <div class="detail-section">
+                                        <h4>Participants</h4>
+                                        <p>Students: <%= session.tsstudents || 0 %></p>
+                                        <p>Classrooms: <%= session.tsclassrooms || 0 %></p>
+                                        <p>Adults: <%= session.tsadults || 0 %></p>
+                                    </div>
+                                    <div class="detail-section">
+                                        <h4>Scheduling</h4>
+                                        <% if (session.tspreferreddatetimestart && session.tspreferreddatetimeend) { %>
+                                            <p>Preferred Time Range:</p>
+                                            <p>From: <%= new Date(session.tspreferreddatetimestart).toLocaleString() %></p>
+                                            <p>To: <%= new Date(session.tspreferreddatetimeend).toLocaleString() %></p>
+                                        <% } else { %>
+                                            <p>No preferred time range specified</p>
+                                        <% } %>
+                                    </div>
+                                    <div class="detail-section">
+                                        <h4>Additional Info</h4>
+                                        <p>Presentation: <%= session.presentationName || 'Not Selected' %></p>
+                                        <p>Funding: <%= session.fundingName || 'Not Selected' %></p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="8" class="text-center">No training sessions available.</td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="table-footer grid">
+            <span>Displaying <%= trainingsessions ? trainingsessions.length : 0 %> items</span>
+            <div class="paging grid">
+                <span>
+                    Page
+                    <input type="number" id="current-page" value="1" min="1">
+                    of <span id="total-pages">1</span>
+                </span>
+                <div class="button icon" id="prev-page">
+                    <i class="fa-solid fa-angle-left"></i>
+                </div>
+                <div class="button icon" id="next-page">
+                    <i class="fa-solid fa-angle-right"></i>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+    .session-details-container {
+        padding: 20px;
+        background: #f8f9fa;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .detail-section {
+        background: white;
+        padding: 15px;
+        border-radius: 4px;
+        border: 1px solid #e0eeeb;
+    }
+
+    .detail-section h4 {
+        color: #3f9783;
+        margin: 0 0 10px 0;
+    }
+
+    .detail-section p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        background: #e0eeeb;
+        color: #3f9783;
+    }
+</style>
+
+<script>
+    document.querySelectorAll('.toggle-details').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const detailsRow = document.querySelector(`#details-${id}`);
+            if (detailsRow) {
+                const isHidden = detailsRow.style.display === 'none';
+                detailsRow.style.display = isHidden ? 'table-row' : 'none';
+                btn.querySelector('i').classList.toggle('fa-eye');
+                btn.querySelector('i').classList.toggle('fa-eye-slash');
+            }
+        });
+    });
+</script>
