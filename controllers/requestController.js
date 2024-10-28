@@ -1,6 +1,5 @@
 const { supabase } = require('../config/supabase');
 
-// Fetch all requests with phone types
 const getRequests = async (req, res) => {
     try {
         const { data: requestsData, error: requestsError } = await supabase
@@ -25,17 +24,58 @@ const getRequests = async (req, res) => {
                 requeststatuses (
                     requeststatusid,
                     requeststatusname
+                ),
+                trainingsessions (
+                    tsid,
+                    pid,
+                    fid,
+                    userid,
+                    tsgrades,
+                    tsscheduleddatetime,
+                    tspreferreddatetimestart,
+                    tspreferreddatetimeend,
+                    tsstudents,
+                    tsclassrooms,
+                    tsadults,
+                    tsstatusid,
+                    users (
+                        userid,
+                        username
+                    ),
+                    presentations (
+                        pid,
+                        pname
+                    ),
+                    funding (
+                        fid,
+                        fname
+                    ),
+                    sessionstatuses (
+                        sessionstatusid,
+                        sessionstatusname
+                    )
                 )
             `)
             .order('created_at', { ascending: false });
+
+        console.log('Raw Requests Data:', JSON.stringify(requestsData, null, 2));
 
         if (requestsError) throw requestsError;
 
         const formattedRequestsData = requestsData.map(request => ({
             ...request,
-            schoolName: request.schools ? request.schools.sname : null,
-            statusName: request.requeststatuses ? request.requeststatuses.requeststatusname : null
+            schoolName: request.schools?.sname || null,
+            statusName: request.requeststatuses?.requeststatusname || null,
+            trainingsessions: request.trainingsessions?.map(session => ({
+                ...session,
+                educatorName: session.users?.username || null,
+                presentationName: session.presentations?.pname || null,
+                fundingName: session.funding?.fname || null,
+                statusName: session.sessionstatuses?.sessionstatusname || null
+            })) || []
         }));
+
+        console.log('Formatted Requests Data:', JSON.stringify(formattedRequestsData, null, 2));
 
         res.render('pages/admin-dashboard/requests/view', {
             requests: formattedRequestsData || [],
