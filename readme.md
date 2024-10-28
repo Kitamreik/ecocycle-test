@@ -32,13 +32,6 @@ erDiagram
         TIMESTAMP updated_at
     }
 
-    phoneTypes {
-        INT phoneTypeId PK
-        STRING phoneTypeName
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
-    }
-
     requestStatuses {
         INT requestStatusId PK
         STRING requestStatusName
@@ -80,7 +73,7 @@ erDiagram
         STRING rContactName
         STRING rContactEmail
         STRING rContactPhone
-        STRING rContactPType
+        ENUM phone_type(rContactPType)
         STRING rContactBestTimes
         INT rStatusId FK
         STRING rCommunication
@@ -206,9 +199,10 @@ Todo:
 - [ ] Get feedback from the users and make necessary changes.
 - [x] Fix the active/inactive boolean checkboxes/dropdowns in user route.
 - [ ] Make sure the cities are not duplicate.
-- [ ] Make sure the school is checked against the school name, and ~~stret address~~ district for duplicate entry.
+- [ ] Make sure the school is checked against the school name, and ~~stret address~~--district-- city for duplicate entry.
 - [ ] Add grades information field (string) in the requests as well.
 - [ ] Make the grades information field type to be a string in the presentation table.
 - [ ] Ask the Ecocycle if there would be a case when more than one users are assigned to a training sessions.
 - [ ] For school add/edit form, have the user select the districts first and then populate the schools/counties based on those selected droop down.  
-
+- [ ] Add registrar to every request.
+- [ ] THe UI elements should be in the order specified in the Requirements
