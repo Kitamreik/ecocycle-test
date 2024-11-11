@@ -109,19 +109,31 @@ erDiagram
     }
 
     trainingSessions {
-        INT tsId PK
-        INT rId FK
-        INT pId FK
-        INT fId FK
-        INT userId FK
-        STRING tsGrades
-        TIMESTAMP tsScheduledDateTime
-        TIMESTAMP tsPreferredDateTimeStart
-        TIMESTAMP tsPreferredDateTimeEnd
-        INT tsStudents
-        INT tsClassrooms
-        INT tsAdults
-        INT tsStatusId FK
+        INT4 tsid PK
+        INT4 tsrid FK
+        INT4 tssid FK
+        INT4 tspid FK
+        INT4 tsfid FK
+        TEXT tsSName
+        TEXT tsContactName
+        TEXT tsContactEmail
+        TEXT tsContactPhone
+        CONTACTPHONRTYPR tsContactPType
+        TEXT tsContactBestTimes
+        TEXT tsGrades
+        REQUESTSTATUS tsStatus
+        TEXT tsNotes
+        INT4 tsClassrooms
+        INT4 tsStudents
+        INT4 tsAdults
+        DATE tsdate
+        TEXT tsEducators
+        TEXT tsTeachers
+        TIME tsStartTime
+        TIME tsEndTime
+        TIMESTAMP tsScheduledDatetime
+        INT4 tsDuration
+        INT4 userid FK
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
