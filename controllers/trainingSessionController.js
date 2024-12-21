@@ -7,26 +7,24 @@ const getTrainingSessions = async (req, res) => {
             .from('trainingsessions')
             .select(`
                 tsid,
-                rid,
-                pid,
-                fid,
+                tsrid,
+                tssid,
+                tspid,
+                tsfid,
                 userid,
                 tsgrades,
-                tsscheduleddatetime,
-                tspreferreddatetimestart,
-                tspreferreddatetimeend,
+                tsdate,
+                tsstarttime,
+                tsendtime,
                 tsstudents,
                 tsclassrooms,
                 tsadults,
                 tsstatusid,
                 created_at,
                 updated_at,
-                requests (
-                    rid,
-                    schools (
-                        sid,
-                        sname
-                    )
+                schools (
+                    sid,
+                    sname
                 ),
                 presentations (
                     pid,
@@ -41,6 +39,7 @@ const getTrainingSessions = async (req, res) => {
                     username
                 ),
                 sessionstatuses (
+                    sessionstatusid,
                     sessionstatusname
                 )
             `)
@@ -50,7 +49,7 @@ const getTrainingSessions = async (req, res) => {
 
         const formattedSessionsData = trainingsessionsdata.map(session => ({
             ...session,
-            schoolName: session.requests?.schools?.sname || null,
+            schoolName: session.schools?.sname || null,
             presentationName: session.presentations?.pname || null,
             fundingName: session.funding?.fname || null,
             educatorName: session.users?.username || null,
