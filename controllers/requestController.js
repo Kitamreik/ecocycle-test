@@ -21,23 +21,19 @@ const getRequests = async (req, res) => {
                     sid,
                     sname
                 ),
-                requeststatuses (
-                    requeststatusid,
-                    requeststatusname
-                ),
                 trainingsessions (
                     tsid,
-                    pid,
-                    fid,
+                    tspid,
+                    tsfid,
                     userid,
                     tsgrades,
-                    tsscheduleddatetime,
-                    tspreferreddatetimestart,
-                    tspreferreddatetimeend,
+                    tsstarttime,
+                    tsendtime,
                     tsstudents,
                     tsclassrooms,
                     tsadults,
-                    tsstatusid,
+                    tsdate,
+                    tseducators,
                     users (
                         userid,
                         username
@@ -49,10 +45,6 @@ const getRequests = async (req, res) => {
                     funding (
                         fid,
                         fname
-                    ),
-                    sessionstatuses (
-                        sessionstatusid,
-                        sessionstatusname
                     )
                 )
             `)
@@ -70,8 +62,7 @@ const getRequests = async (req, res) => {
                 ...session,
                 educatorName: session.users?.username || null,
                 presentationName: session.presentations?.pname || null,
-                fundingName: session.funding?.fname || null,
-                statusName: session.sessionstatuses?.sessionstatusname || null
+                fundingName: session.funding?.fname || null
             })) || []
         }));
 
