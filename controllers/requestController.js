@@ -12,13 +12,14 @@ const getRequests = async (req, res) => {
                 rcontactphone,
                 rcontactptype,
                 rcontactbesttimes,
-                rstatusid,
+                requeststatuses (
+                    requeststatusname
+                ),
                 rcommunication,
                 rnotes,
                 created_at,
                 updated_at,
                 schools (
-                    sid,
                     sname
                 ),
                 trainingsessions (
@@ -35,22 +36,18 @@ const getRequests = async (req, res) => {
                     tsdate,
                     tseducators,
                     users (
-                        userid,
                         username
                     ),
                     presentations (
-                        pid,
                         pname
                     ),
                     funding (
-                        fid,
                         fname
                     )
                 )
             `)
             .order('created_at', { ascending: false });
 
-        console.log('Raw Requests Data:', JSON.stringify(requestsData, null, 2));
 
         if (requestsError) throw requestsError;
 
@@ -66,7 +63,6 @@ const getRequests = async (req, res) => {
             })) || []
         }));
 
-        console.log('Formatted Requests Data:', JSON.stringify(formattedRequestsData, null, 2));
 
         res.render('pages/admin-dashboard/requests/view', {
             requests: formattedRequestsData || [],
@@ -98,7 +94,6 @@ const addRequestForm = async (req, res) => {
             error: null
         });
     } catch (error) {
-        console.error('Error fetching data for add request form:', error);
         res.render('pages/admin-dashboard/requests/add', {
             schools: [],
             statuses: [],
@@ -148,7 +143,6 @@ const editRequestForm = async (req, res) => {
             error: null
         });
     } catch (error) {
-        console.error('Error fetching request data for edit:', error);
         res.render('pages/admin-dashboard/requests/edit', {
             error: 'Error retrieving request data',
             request: null,
