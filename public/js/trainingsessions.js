@@ -147,15 +147,15 @@ export class TrainingSessionManager {
         const errors = [];
 
         // Required field validation
-        if (!formData.get('rid')) {
+        if (!formData.get('tsrid')) {
             errors.push('Request is required');
         }
 
-        // Date validation
-        const startTime = formData.get('tspreferreddatetimestart');
-        const endTime = formData.get('tspreferreddatetimeend');
-        if (startTime && endTime && new Date(startTime) > new Date(endTime)) {
-            errors.push('Preferred start time must be before end time');
+        // Date and time validation
+        const startTime = formData.get('tsstarttime');
+        const endTime = formData.get('tsendtime');
+        if (startTime && endTime && startTime > endTime) {
+            errors.push('Start time must be before end time');
         }
 
         // Number validation
@@ -191,14 +191,14 @@ export class TrainingSessionManager {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    rid: formData.get('rid'),
-                    pid: formData.get('pid') || null,
-                    fid: formData.get('fid') || null,
+                    tsrid: formData.get('tsrid'),
+                    tspid: formData.get('tspid') || null,
+                    tsfid: formData.get('tsfid') || null,
                     userid: formData.get('userid') || null,
                     tsgrades: formData.get('tsgrades'),
-                    tsscheduleddatetime: formData.get('tsscheduleddatetime'),
-                    tspreferreddatetimestart: formData.get('tspreferreddatetimestart'),
-                    tspreferreddatetimeend: formData.get('tspreferreddatetimeend'),
+                    tsdate: formData.get('tsdate'),
+                    tsstarttime: formData.get('tsstarttime'),
+                    tsendtime: formData.get('tsendtime'),
                     tsstudents: formData.get('tsstudents') || 0,
                     tsclassrooms: formData.get('tsclassrooms') || 0,
                     tsadults: formData.get('tsadults') || 0,
@@ -236,14 +236,14 @@ export class TrainingSessionManager {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    rid: formData.get('rid'),
-                    pid: formData.get('pid') || null,
-                    fid: formData.get('fid') || null,
+                    tsrid: formData.get('tsrid'),
+                    tspid: formData.get('tspid') || null,
+                    tsfid: formData.get('tsfid') || null,
                     userid: formData.get('userid') || null,
                     tsgrades: formData.get('tsgrades'),
-                    tsscheduleddatetime: formData.get('tsscheduleddatetime'),
-                    tspreferreddatetimestart: formData.get('tspreferreddatetimestart'),
-                    tspreferreddatetimeend: formData.get('tspreferreddatetimeend'),
+                    tsdate: formData.get('tsdate'),
+                    tsstarttime: formData.get('tsstarttime'),
+                    tsendtime: formData.get('tsendtime'),
                     tsstudents: formData.get('tsstudents') || 0,
                     tsclassrooms: formData.get('tsclassrooms') || 0,
                     tsadults: formData.get('tsadults') || 0,
