@@ -1,4 +1,3 @@
-<!-- view.ejs -->
 <link rel="stylesheet" href="/css/dashboard-pages/view.css" />
 <div class="users-table-component">
     <div class="content">
@@ -59,14 +58,18 @@
                             </td>
                             <td><%= session.tsid %></td>
                             <td>
-                                Request #<%= session.rid %><br>
+                                Request #<%= session.tsrid %><br>
                                 <small><%= session.schoolName %></small>
                             </td>
                             <td>
-                                <% if (session.tsscheduleddatetime) { %>
-                                    <%= new Date(session.tsscheduleddatetime).toLocaleDateString() %>
-                                    <br>
-                                    <small><%= new Date(session.tsscheduleddatetime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></small>
+                                <% if (session.tsdate) { %>
+                                    <%= new Date(session.tsdate).toLocaleDateString() %>
+                                    <% if (session.tsstarttime && session.tsendtime) { %>
+                                        <br>
+                                        <small>
+                                            <%= session.tsstarttime %> - <%= session.tsendtime %>
+                                        </small>
+                                    <% } %>
                                 <% } else { %>
                                     Not Scheduled
                                 <% } %>
@@ -74,9 +77,9 @@
                             <td><%= session.tsgrades || 'N/A' %></td>
                             <td><%= session.educatorName || 'Not Assigned' %></td>
                             <td>
-                                <span class="status-badge <%= session.statusName?.toLowerCase() %>">
-                                    <%= session.statusName %>
-                                </span>
+                                    <span class="status-badge <%= session.statusName?.toLowerCase() %>">
+                                        <%= session.statusName %>
+                                    </span>
                             </td>
                             <td>
                                 <button class="button link toggle-details" data-id="<%= session.tsid %>">
@@ -97,13 +100,13 @@
                                         <p>Adults: <%= session.tsadults || 0 %></p>
                                     </div>
                                     <div class="detail-section">
-                                        <h4>Scheduling</h4>
-                                        <% if (session.tspreferreddatetimestart && session.tspreferreddatetimeend) { %>
-                                            <p>Preferred Time Range:</p>
-                                            <p>From: <%= new Date(session.tspreferreddatetimestart).toLocaleString() %></p>
-                                            <p>To: <%= new Date(session.tspreferreddatetimeend).toLocaleString() %></p>
+                                        <h4>Session Times</h4>
+                                        <% if (session.tsdate) { %>
+                                            <p>Date: <%= new Date(session.tsdate).toLocaleDateString() %></p>
+                                            <p>Start Time: <%= session.tsstarttime || 'Not set' %></p>
+                                            <p>End Time: <%= session.tsendtime || 'Not set' %></p>
                                         <% } else { %>
-                                            <p>No preferred time range specified</p>
+                                            <p>Session not yet scheduled</p>
                                         <% } %>
                                     </div>
                                     <div class="detail-section">
@@ -142,7 +145,6 @@
         </section>
     </div>
 </div>
-
 <style>
     .session-details-container {
         padding: 20px;
