@@ -12,6 +12,8 @@ const schoolRoutes = require('./routes/schoolRoutes');
 const fundingRoutes = require('./routes/fundingRoutes');
 const presentationRoutes = require('./routes/presentationRoutes');
 const trainingSessionsRoutes = require('./routes/trainingSessionRoutes');
+const calendarRoutes = require('./routes/calendarRoutes');
+
 
 // Create an express app
 const app = express();
@@ -54,6 +56,7 @@ app.use('/admin', schoolRoutes);
 app.use('/admin', fundingRoutes);
 app.use('/admin', presentationRoutes);
 app.use('/admin', trainingSessionsRoutes);
+app.use('/admin', calendarRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

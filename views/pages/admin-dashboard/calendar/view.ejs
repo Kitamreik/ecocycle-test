@@ -1,0 +1,312 @@
+<!-- Link to CSS -->
+<link rel="stylesheet" href="/css/dashboard-pages/view.css" />
+
+<div class="calendar-component">
+    <div class="content">
+        <section class="main-header grid">
+            <h1>Calendar</h1>
+            <button class="button" onclick="location.href='/admin/training-sessions/add'">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add new session</span>
+            </button>
+        </section>
+
+        <section class="calendar-container">
+            <!-- Calendar navigation -->
+            <div class="calendar-nav">
+                <button id="prevMonth" class="button link"><i class="fa-solid fa-chevron-left"></i></button>
+                <h2 id="currentMonth"></h2>
+                <button id="nextMonth" class="button link"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <!-- Simple calendar grid -->
+            <div class="calendar-grid">
+                <!-- Days of week header -->
+                <div class="calendar-header">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <div id="calendarDays" class="calendar-days"></div>
+            </div>
+
+            <!-- Training sessions list -->
+            <div class="sessions-list">
+                <h3>Scheduled Sessions</h3>
+                <% if (events && events.length > 0) { %>
+                    <%
+                        // Group events by date
+                        const groupedEvents = events.reduce((groups, event) => {
+                            const date = new Date(event.start).toLocaleDateString();
+                            if (!groups[date]) {
+                                groups[date] = [];
+                            }
+                            groups[date].push(event);
+                            return groups;
+                        }, {});
+                    %>
+
+                    <% Object.entries(groupedEvents).forEach(([date, dateEvents]) => { %>
+                        <div class="date-group">
+                            <h4><%= date %></h4>
+                            <% dateEvents.forEach(event => { %>
+                                <div class="session-card">
+                                    <div class="session-time">
+                                        <%= new Date(event.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                        <% if (event.end) { %>
+                                            - <%= new Date(event.end).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                        <% } %>
+                                    </div>
+                                    <div class="session-details">
+                                        <strong><%= event.title %></strong>
+                                        <div class="session-info">
+                                            <span><i class="fa-solid fa-user"></i> <%= event.extendedProps.educator %></span>
+                                            <span><i class="fa-solid fa-graduation-cap"></i> <%= event.extendedProps.grades %></span>
+                                            <span><i class="fa-solid fa-users"></i> <%= event.extendedProps.students %> students</span>
+                                        </div>
+                                        <div class="session-status">
+                                            Status: <span class="status-badge <%= event.extendedProps.status.toLowerCase() %>">
+                                                <%= event.extendedProps.status %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="session-actions">
+                                        <a href="/admin/training-sessions/edit/<%= event.id %>" class="button link">
+                                            <i class="fa-solid fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="no-sessions">No training sessions scheduled.</p>
+                <% } %>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+    .calendar-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .calendar-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .calendar-grid {
+        margin-bottom: 30px;
+    }
+
+    .calendar-header {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-weight: bold;
+        padding: 10px 0;
+        background: #f8f9fa;
+    }
+
+    .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        background: #e9ecef;
+    }
+
+    .calendar-day {
+        background: white;
+        padding: 10px;
+        min-height: 80px;
+        position: relative;
+    }
+
+    .calendar-day.has-events {
+        background: #e0f7fa;
+    }
+
+    .calendar-day.today {
+        background: #e3f2fd;
+    }
+
+    .calendar-day:not(.current-month) {
+        color: #adb5bd;
+    }
+
+    .sessions-list {
+        margin-top: 30px;
+    }
+
+    .date-group {
+        margin-bottom: 20px;
+    }
+
+    .date-group h4 {
+        margin: 10px 0;
+        padding: 5px 10px;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .session-card {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 20px;
+        padding: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        margin: 10px 0;
+        align-items: center;
+    }
+
+    .session-time {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .session-details {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .session-info {
+        display: flex;
+        gap: 15px;
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+
+    .session-info i {
+        width: 16px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.85em;
+    }
+
+    .status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.in.progress {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .session-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .no-sessions {
+        text-align: center;
+        padding: 20px;
+        color: #6c757d;
+        font-style: italic;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        function updateCalendar() {
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const startingDay = firstDay.getDay();
+            const monthLength = lastDay.getDate();
+
+            document.getElementById('currentMonth').textContent =
+                `${monthNames[currentMonth]} ${currentYear}`;
+
+            const calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+
+            // Previous month days
+            const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = prevMonthLastDay - i;
+                dayDiv.classList.add('not-current-month');
+                calendarDays.appendChild(dayDiv);
+            }
+
+            // Current month days
+            for (let i = 1; i <= monthLength; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = i;
+
+                // Check if it's today
+                if (currentYear === currentDate.getFullYear() &&
+                    currentMonth === currentDate.getMonth() &&
+                    i === currentDate.getDate()) {
+                    dayDiv.classList.add('today');
+                }
+
+                calendarDays.appendChild(dayDiv);
+            }
+
+            // Next month days
+            const remainingSlots = 42 - (startingDay + monthLength);
+            for (let i = 1; i <= remainingSlots; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'calendar-day';
+                dayDiv.textContent = i;
+                dayDiv.classList.add('not-current-month');
+                calendarDays.appendChild(dayDiv);
+            }
+        }
+
+        // Event listeners for month navigation
+        document.getElementById('prevMonth').addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateCalendar();
+        });
+
+        document.getElementById('nextMonth').addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updateCalendar();
+        });
+
+        // Initialize calendar
+        updateCalendar();
+    });
+</script>

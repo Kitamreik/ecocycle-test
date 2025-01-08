@@ -6,6 +6,7 @@ import { SchoolManager } from './schools.js';
 import { PresentationManager } from './presentations.js';
 import { RequestManager } from './requests.js';
 import { TrainingSessionManager } from './trainingsessions.js';
+import { CalendarManager } from './calendar.js';
 
 class AdminPanel {
     constructor() {
@@ -23,7 +24,8 @@ class AdminPanel {
                 school: new SchoolManager(),
                 presentation: new PresentationManager(),
                 request: new RequestManager(),
-                trainingsessions: new TrainingSessionManager()
+                trainingsessions: new TrainingSessionManager(),
+                calendar: new CalendarManager()
             };
 
             this.setupEventListeners();
@@ -146,8 +148,10 @@ class AdminPanel {
         });
         page('/admin/training-sessions/edit/:sessionId', (ctx) => this.fetchAndRenderContent(`${API_BASE}/training-sessions/edit/${ctx.params.sessionId}`));
         
-        // Other routes
+        // Calendar routes
         page('/admin/calendar', () => this.fetchAndRenderContent(`${API_BASE}/calendar`));
+        
+        // Other routes
         page('/admin/logout', () => window.location.href = '/admin/logout');
 
         // Catch-all route
