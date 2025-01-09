@@ -7,26 +7,21 @@ const getTrainingSessions = async (req, res) => {
             .from('trainingsessions')
             .select(`
                 tsid,
-                rid,
-                pid,
-                fid,
-                userid,
+                tsrid,
+                tssid,
                 tsgrades,
-                tsscheduleddatetime,
-                tspreferreddatetimestart,
-                tspreferreddatetimeend,
+                tsdate,
+                tsstarttime,
+                tsendtime,
                 tsstudents,
                 tsclassrooms,
                 tsadults,
                 tsstatusid,
                 created_at,
                 updated_at,
-                requests (
-                    rid,
-                    schools (
-                        sid,
-                        sname
-                    )
+                schools (
+                    sid,
+                    sname
                 ),
                 presentations (
                     pid,
@@ -41,20 +36,33 @@ const getTrainingSessions = async (req, res) => {
                     username
                 ),
                 sessionstatuses (
+                    sessionstatusid,
                     sessionstatusname
                 )
             `)
-            .order('created_at', { ascending: false });
+            .order('tsdate', { ascending: false });
 
         if (trainingsessionserror) throw trainingsessionserror;
 
         const formattedSessionsData = trainingsessionsdata.map(session => ({
             ...session,
-            schoolName: session.requests?.schools?.sname || null,
-            presentationName: session.presentations?.pname || null,
-            fundingName: session.funding?.fname || null,
-            educatorName: session.users?.username || null,
-            statusName: session.sessionstatuses?.sessionstatusname || null
+            // Main display fields
+            tsid: session.tsid,
+            rid: session.tsrid, // for displaying Request #
+            schoolName: session.schools?.sname || 'No School Assigned',
+            scheduledDate: session.tsdate ? new Date(session.tsdate).toLocaleDateString() : 'Not Scheduled',
+            scheduledStartTime: session.tsstarttime || null,
+            scheduledEndTime: session.tsendtime || null,
+            tsgrades: session.tsgrades || 'N/A',
+            educatorName: session.users?.username || 'Not Assigned',
+            statusName: session.sessionstatuses?.sessionstatusname || 'Unknown',
+
+            // Details section
+            tsstudents: session.tsstudents || 0,
+            tsclassrooms: session.tsclassrooms || 0,
+            tsadults: session.tsadults || 0,
+            presentationName: session.presentations?.pname || 'Not Selected',
+            fundingName: session.funding?.fname || 'Not Selected'
         }));
 
         res.render('pages/admin-dashboard/training-sessions/view', {
@@ -72,10 +80,10 @@ const getTrainingSessions = async (req, res) => {
 
 const addTrainingSessionForm = async (req, res) => {
     try {
-        // Get the request ID from query params if it exists
-        const rid = req.query.rid ? parseInt(req.query.rid) : null;
-        console.log('Request ID from query:', rid, typeof rid);
 
+        const selectedRequestId = req.query.rid ? parseInt(req.query.rid) : null;
+        const rid = req.query.rid ? parseInt(req.query.rid) : null;
+        
         // Fetch all required data for dropdowns
         const [
             requestsResponse,
@@ -99,8 +107,9 @@ const addTrainingSessionForm = async (req, res) => {
             supabase.from('sessionstatuses').select('sessionstatusid, sessionstatusname').order('sessionstatusname')
         ]);
 
+        // Log for debugging
         res.render('pages/admin-dashboard/training-sessions/add', {
-            selectedRequestId: rid || null,  // Pass the pre-selected request ID
+            selectedRequestId: rid,  // Pass the request ID if it exists
             requests: requestsResponse.data || [],
             presentations: presentationsResponse.data || [],
             funding: fundingResponse.data || [],
@@ -122,26 +131,25 @@ const addTrainingSessionForm = async (req, res) => {
     }
 };
 
-// Regular add training session (full info)
-// Regular add training session (full info)
+
 const addTrainingSession = async (req, res) => {
     try {
         const {
-            rid,            // Required
-            pid,            // Optional
-            fid,            // Optional
-            userid,         // Optional
-            tsgrades,       // Optional
-            tsscheduleddatetime,        // Optional
-            tspreferreddatetimestart,   // Optional
-            tspreferreddatetimeend,     // Optional
-            tsstudents,     // Optional
-            tsclassrooms,   // Optional
-            tsadults,       // Optional
-            tsstatusid = 2  // Optional, defaults to 1
+            tsrid,        
+            tspid,       
+            tsfid,            
+            userid,    
+            tsgrades,         
+            tsdate,           
+            tsstarttime,     
+            tsendtime,        
+            tsstudents,       
+            tsclassrooms, 
+            tsadults,         
+            tsstatusid = 2    
         } = req.body;
 
-        if (!rid) {
+        if (!tsrid) {
             return res.status(400).json({
                 error: 'Request ID is required'
             });
@@ -149,32 +157,32 @@ const addTrainingSession = async (req, res) => {
 
         // Create data object with only the required field first
         const sessionData = {
-            rid,
+            tsrid,
             tsstatusid
         };
 
         // Add optional fields only if they have valid values
-        if (pid) sessionData.pid = pid;
-        if (fid) sessionData.fid = fid;
+        if (tspid) sessionData.tspid = tspid;     
+        if (tsfid) sessionData.tsfid = tsfid;       
         if (userid) sessionData.userid = userid;
         if (tsgrades) sessionData.tsgrades = tsgrades;
 
-        // Handle timestamps - only add if they have values
-        if (tsscheduleddatetime && tsscheduleddatetime.trim() !== '') {
-            sessionData.tsscheduleddatetime = tsscheduleddatetime;
+        // Handle date and times - only add if they have values
+        if (tsdate && tsdate.trim() !== '') {
+            sessionData.tsdate = tsdate;
         }
-        if (tspreferreddatetimestart && tspreferreddatetimestart.trim() !== '') {
-            sessionData.tspreferreddatetimestart = tspreferreddatetimestart;
+        if (tsstarttime && tsstarttime.trim() !== '') {
+            sessionData.tsstarttime = tsstarttime;
         }
-        if (tspreferreddatetimeend && tspreferreddatetimeend.trim() !== '') {
-            sessionData.tspreferreddatetimeend = tspreferreddatetimeend;
+        if (tsendtime && tsendtime.trim() !== '') {
+            sessionData.tsendtime = tsendtime;
         }
 
-        // Validate dates if both are provided
-        if (sessionData.tspreferreddatetimestart && sessionData.tspreferreddatetimeend) {
-            if (new Date(sessionData.tspreferreddatetimestart) > new Date(sessionData.tspreferreddatetimeend)) {
+        // Validate times if both are provided
+        if (tsstarttime && tsendtime) {
+            if (tsstarttime > tsendtime) {
                 return res.status(400).json({
-                    error: 'Preferred start time must be before end time'
+                    error: 'Start time must be before end time'
                 });
             }
         }
@@ -183,7 +191,6 @@ const addTrainingSession = async (req, res) => {
         sessionData.tsstudents = tsstudents || 0;
         sessionData.tsclassrooms = tsclassrooms || 0;
         sessionData.tsadults = tsadults || 0;
-
         const { data, error } = await supabase
             .from('trainingsessions')
             .insert([sessionData])
@@ -206,10 +213,7 @@ const addTrainingSession = async (req, res) => {
 const editTrainingSessionForm = async (req, res) => {
     try {
         const { sessionId } = req.params;
-        console.log('Requested Session ID:', sessionId);
-
         if (!sessionId || isNaN(sessionId)) {
-            console.log('Invalid session ID provided');
             return res.render('pages/admin-dashboard/training-sessions/edit', {
                 error: 'Invalid session ID',
                 trainingsession: null,
@@ -225,13 +229,23 @@ const editTrainingSessionForm = async (req, res) => {
         const { data: sessionData, error: sessionError } = await supabase
             .from('trainingsessions')
             .select(`
-                *,
-                requests (
-                    rid,
-                    schools (
-                        sid,
-                        sname
-                    )
+                tsid,
+                tsrid,
+                tssid,
+                tspid,
+                tsfid,
+                userid,
+                tsgrades,
+                tsdate,
+                tsstarttime,
+                tsendtime,
+                tsstudents,
+                tsclassrooms,
+                tsadults,
+                tsstatusid,
+                schools (
+                    sid,
+                    sname
                 ),
                 presentations (
                     pid,
@@ -244,16 +258,16 @@ const editTrainingSessionForm = async (req, res) => {
                 users (
                     userid,
                     username
+                ),
+                sessionstatuses (
+                    sessionstatusid,
+                    sessionstatusname
                 )
             `)
             .eq('tsid', sessionId)
             .single();
 
-        console.log('Session Data:', sessionData);
-        console.log('Session Error:', sessionError);
-
         if (sessionError || !sessionData) {
-            console.log('No session found or error occurred');
             return res.render('pages/admin-dashboard/training-sessions/edit', {
                 error: sessionError ? sessionError.message : 'Training session not found',
                 trainingsession: null,
@@ -273,31 +287,22 @@ const editTrainingSessionForm = async (req, res) => {
             educatorsResponse,
             statusesResponse
         ] = await Promise.all([
-            supabase.from('requests').select('rid, schools(sname)').order('rid'),
-            supabase.from('presentations').select('pid, pname').order('pname'),
-            supabase.from('funding').select('fid, fname').order('fname'),
-            supabase.from('users').select('userid, username').order('username'),
-            supabase.from('sessionstatuses').select('sessionstatusid, sessionstatusname').order('sessionstatusname')
+            supabase.from('requests')
+                .select('rid, schools(sid, sname)')
+                .order('rid'),
+            supabase.from('presentations')
+                .select('pid, pname')
+                .order('pname'),
+            supabase.from('funding')
+                .select('fid, fname')
+                .order('fname'),
+            supabase.from('users')
+                .select('userid, username')
+                .order('username'),
+            supabase.from('sessionstatuses')
+                .select('sessionstatusid, sessionstatusname')
+                .order('sessionstatusname')
         ]);
-
-        // Log responses for debugging
-        console.log('Requests Response:', requestsResponse);
-        console.log('Status Response:', statusesResponse);
-
-        // Check if we have valid data for dropdowns
-        if (requestsResponse.error || presentationsResponse.error ||
-            fundingResponse.error || educatorsResponse.error || statusesResponse.error) {
-            console.log('Error fetching dropdown data');
-            return res.render('pages/admin-dashboard/training-sessions/edit', {
-                error: 'Error loading form data',
-                trainingsession: null,
-                requests: [],
-                presentations: [],
-                funding: [],
-                educators: [],
-                statuses: []
-            });
-        }
 
         res.render('pages/admin-dashboard/training-sessions/edit', {
             error: null,
@@ -322,60 +327,53 @@ const editTrainingSessionForm = async (req, res) => {
     }
 };
 
-// Update training session
 const updateTrainingSession = async (req, res) => {
     try {
         const { sessionId } = req.params;
         const {
-            rid,            // Required
-            pid,            // Optional
-            fid,            // Optional
-            userid,         // Optional
-            tsgrades,       // Optional
-            tsscheduleddatetime,        // Optional
-            tspreferreddatetimestart,   // Optional
-            tspreferreddatetimeend,     // Optional
-            tsstudents,     // Optional
-            tsclassrooms,   // Optional
-            tsadults,       // Optional
-            tsstatusid = 2  // Optional, defaults to 1
+            tsrid,            
+            tspid,           
+            tsfid,            
+            userid,           
+            tsgrades,         
+            tsdate,          
+            tsstarttime,      
+            tsendtime,       
+            tsstudents,      
+            tsclassrooms,     
+            tsadults,        
+            tsstatusid = 2   
         } = req.body;
 
-        if (!rid) {
+        if (!tsrid) {
             return res.status(400).json({
                 error: 'Request ID is required'
             });
         }
 
-        // Create update object with only the required field first
+        // Create update object with required fields
         const updateData = {
-            rid,
+            tsrid,
             tsstatusid,
             updated_at: new Date()
         };
 
         // Add optional fields only if they have valid values
-        if (pid) updateData.pid = pid;
-        if (fid) updateData.fid = fid;
+        if (tspid) updateData.tspid = tspid;
+        if (tsfid) updateData.tsfid = tsfid;
         if (userid) updateData.userid = userid;
         if (tsgrades) updateData.tsgrades = tsgrades;
 
-        // Handle timestamps - only update if they have values
-        if (tsscheduleddatetime && tsscheduleddatetime.trim() !== '') {
-            updateData.tsscheduleddatetime = tsscheduleddatetime;
-        }
-        if (tspreferreddatetimestart && tspreferreddatetimestart.trim() !== '') {
-            updateData.tspreferreddatetimestart = tspreferreddatetimestart;
-        }
-        if (tspreferreddatetimeend && tspreferreddatetimeend.trim() !== '') {
-            updateData.tspreferreddatetimeend = tspreferreddatetimeend;
-        }
+        // Handle date and times
+        if (tsdate) updateData.tsdate = tsdate;
+        if (tsstarttime) updateData.tsstarttime = tsstarttime;
+        if (tsendtime) updateData.tsendtime = tsendtime;
 
-        // Validate dates if both are provided
-        if (updateData.tspreferreddatetimestart && updateData.tspreferreddatetimeend) {
-            if (new Date(updateData.tspreferreddatetimestart) > new Date(updateData.tspreferreddatetimeend)) {
+        // Validate times if both are provided
+        if (tsstarttime && tsendtime) {
+            if (tsstarttime > tsendtime) {
                 return res.status(400).json({
-                    error: 'Preferred start time must be before end time'
+                    error: 'Start time must be before end time'
                 });
             }
         }

@@ -19,13 +19,13 @@
         <form method="POST" id="aufAddTrainingSessionForm">
             <!-- Request Selection (Required) -->
             <div class="auf-form-group">
-                <label class="auf-label" for="rid">Request</label>
-                <select id="rid" name="rid" class="auf-select" required>
+                <label class="auf-label" for="tsrid">Request</label>
+                <select id="tsrid" name="tsrid" class="auf-select" required>
                     <option value="">Select Request</option>
                     <% if (requests && requests.length > 0) { %>
                         <% requests.forEach(request => { %>
                             <option value="<%= request.rid %>"
-                                    <%= (selectedRequestId && selectedRequestId.toString() === request.rid.toString()) ? 'selected' : '' %>>
+                                    <%= parseInt(request.rid) === parseInt(selectedRequestId) ? 'selected' : '' %>>
                                 #<%= request.rid %> - <%= request.schools?.sname || 'Unknown School' %>
                             </option>
                         <% }); %>
@@ -35,8 +35,8 @@
 
             <!-- Presentation Selection -->
             <div class="auf-form-group">
-                <label class="auf-label" for="pid">Presentation</label>
-                <select id="pid" name="pid" class="auf-select">
+                <label class="auf-label" for="tspid">Presentation</label>
+                <select id="tspid" name="tspid" class="auf-select">
                     <option value="">Select Presentation</option>
                     <% presentations.forEach(presentation => { %>
                         <option value="<%= presentation.pid %>"><%= presentation.pname %></option>
@@ -46,8 +46,8 @@
 
             <!-- Funding Selection -->
             <div class="auf-form-group">
-                <label class="auf-label" for="fid">Funding Source</label>
-                <select id="fid" name="fid" class="auf-select">
+                <label class="auf-label" for="tsfid">Funding Source</label>
+                <select id="tsfid" name="tsfid" class="auf-select">
                     <option value="">Select Funding</option>
                     <% funding.forEach(fund => { %>
                         <option value="<%= fund.fid %>"><%= fund.fname %></option>
@@ -79,34 +79,34 @@
                 >
             </div>
 
-            <!-- Scheduled Date/Time -->
+            <!-- Session Date -->
             <div class="auf-form-group">
-                <label class="auf-label" for="tsscheduleddatetime">Scheduled Date/Time</label>
+                <label class="auf-label" for="tsdate">Session Date</label>
                 <input
-                        type="datetime-local"
-                        id="tsscheduleddatetime"
-                        name="tsscheduleddatetime"
+                        type="date"
+                        id="tsdate"
+                        name="tsdate"
                         class="auf-input"
                 >
             </div>
 
-            <!-- Preferred Date/Time Range -->
+            <!-- Time Range -->
             <div class="auf-form-row">
                 <div class="auf-form-col">
-                    <label class="auf-label" for="tspreferreddatetimestart">Preferred Start</label>
+                    <label class="auf-label" for="tsstarttime">Start Time</label>
                     <input
-                            type="datetime-local"
-                            id="tspreferreddatetimestart"
-                            name="tspreferreddatetimestart"
+                            type="time"
+                            id="tsstarttime"
+                            name="tsstarttime"
                             class="auf-input"
                     >
                 </div>
                 <div class="auf-form-col">
-                    <label class="auf-label" for="tspreferreddatetimeend">Preferred End</label>
+                    <label class="auf-label" for="tsendtime">End Time</label>
                     <input
-                            type="datetime-local"
-                            id="tspreferreddatetimeend"
-                            name="tspreferreddatetimeend"
+                            type="time"
+                            id="tsendtime"
+                            name="tsendtime"
                             class="auf-input"
                     >
                 </div>
@@ -148,18 +148,21 @@
                     >
                 </div>
             </div>
-            <!-- Status Selection -->
 
-            <select name="tsstatusid" id="tsstatusid" class="auf-select">
-                <option value="">Select Status</option>
-                <% statuses.forEach(function(status) { %>
-                    <option value="<%= status.sessionstatusid %>"
-                            <%= status.sessionstatusname.toLowerCase() === 'in progress' ? 'selected' : '' %>>
-                        <%= status.sessionstatusname %>
-                    </option>
-                <% }); %>
-            </select>
-            
+            <!-- Status Selection -->
+            <div class="auf-form-group">
+                <label class="auf-label" for="tsstatusid">Status</label>
+                <select name="tsstatusid" id="tsstatusid" class="auf-select">
+                    <option value="">Select Status</option>
+                    <% statuses.forEach(function(status) { %>
+                        <option value="<%= status.sessionstatusid %>"
+                                <%= status.sessionstatusname.toLowerCase() === 'in progress' ? 'selected' : '' %>>
+                            <%= status.sessionstatusname %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
             <div class="auf-form-group">
                 <button type="submit" class="auf-submit-btn">
                     <i class="fas fa-plus-circle"></i> Create Training Session

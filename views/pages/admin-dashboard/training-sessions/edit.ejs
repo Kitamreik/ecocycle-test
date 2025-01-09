@@ -1,4 +1,3 @@
-<!-- edit.ejs -->
 <link rel="stylesheet" href="/css/dashboard-pages/add.css">
 <div class="add-user-form">
     <div class="auf-container">
@@ -20,13 +19,13 @@
         <form id="aufEditTrainingSessionForm">
             <!-- Request Selection -->
             <div class="auf-form-group">
-                <label class="auf-label" for="rid">Request</label>
-                <select id="rid" name="rid" class="auf-select" required>
+                <label class="auf-label" for="tsrid">Request</label>
+                <select id="tsrid" name="tsrid" class="auf-select" required>
                     <option value="">Select Request</option>
                     <% requests.forEach(request => { %>
                         <option value="<%= request.rid %>"
-                                <%= trainingsession.rid === request.rid ? 'selected' : '' %>>
-                            #<%= request.rid %> - <%= request.schools.sname %>
+                                <%= trainingsession.tsrid === request.rid ? 'selected' : '' %>>
+                            #<%= request.rid %> - <%= request.schools?.sname %>
                         </option>
                     <% }); %>
                 </select>
@@ -34,12 +33,12 @@
 
             <!-- Presentation Selection -->
             <div class="auf-form-group">
-                <label class="auf-label" for="pid">Presentation</label>
-                <select id="pid" name="pid" class="auf-select">
+                <label class="auf-label" for="tspid">Presentation</label>
+                <select id="tspid" name="tspid" class="auf-select">
                     <option value="">Select Presentation</option>
                     <% presentations.forEach(presentation => { %>
                         <option value="<%= presentation.pid %>"
-                                <%= trainingsession.pid === presentation.pid ? 'selected' : '' %>>
+                                <%= trainingsession.tspid === presentation.pid ? 'selected' : '' %>>
                             <%= presentation.pname %>
                         </option>
                     <% }); %>
@@ -48,12 +47,12 @@
 
             <!-- Funding Selection -->
             <div class="auf-form-group">
-                <label class="auf-label" for="fid">Funding Source</label>
-                <select id="fid" name="fid" class="auf-select">
+                <label class="auf-label" for="tsfid">Funding Source</label>
+                <select id="tsfid" name="tsfid" class="auf-select">
                     <option value="">Select Funding</option>
                     <% funding.forEach(fund => { %>
                         <option value="<%= fund.fid %>"
-                                <%= trainingsession.fid === fund.fid ? 'selected' : '' %>>
+                                <%= trainingsession.tsfid === fund.fid ? 'selected' : '' %>>
                             <%= fund.fname %>
                         </option>
                     <% }); %>
@@ -88,38 +87,38 @@
                 >
             </div>
 
-            <!-- Scheduled Date/Time -->
+            <!-- Date and Time -->
             <div class="auf-form-group">
-                <label class="auf-label" for="tsscheduleddatetime">Scheduled Date/Time</label>
+                <label class="auf-label" for="tsdate">Session Date</label>
                 <input
-                        type="datetime-local"
-                        id="tsscheduleddatetime"
-                        name="tsscheduleddatetime"
+                        type="date"
+                        id="tsdate"
+                        name="tsdate"
                         class="auf-input"
-                        value="<%= trainingsession.tsscheduleddatetime ? new Date(trainingsession.tsscheduleddatetime).toISOString().slice(0, 16) : '' %>"
+                        value="<%= trainingsession.tsdate ? trainingsession.tsdate : '' %>"
                 >
             </div>
 
-            <!-- Preferred Date/Time Range -->
+            <!-- Time Range -->
             <div class="auf-form-row">
                 <div class="auf-form-col">
-                    <label class="auf-label" for="tspreferreddatetimestart">Preferred Start</label>
+                    <label class="auf-label" for="tsstarttime">Start Time</label>
                     <input
-                            type="datetime-local"
-                            id="tspreferreddatetimestart"
-                            name="tspreferreddatetimestart"
+                            type="time"
+                            id="tsstarttime"
+                            name="tsstarttime"
                             class="auf-input"
-                            value="<%= trainingsession.tspreferreddatetimestart ? new Date(trainingsession.tspreferreddatetimestart).toISOString().slice(0, 16) : '' %>"
+                            value="<%= trainingsession.tsstarttime || '' %>"
                     >
                 </div>
                 <div class="auf-form-col">
-                    <label class="auf-label" for="tspreferreddatetimeend">Preferred End</label>
+                    <label class="auf-label" for="tsendtime">End Time</label>
                     <input
-                            type="datetime-local"
-                            id="tspreferreddatetimeend"
-                            name="tspreferreddatetimeend"
+                            type="time"
+                            id="tsendtime"
+                            name="tsendtime"
                             class="auf-input"
-                            value="<%= trainingsession.tspreferreddatetimeend ? new Date(trainingsession.tspreferreddatetimeend).toISOString().slice(0, 16) : '' %>"
+                            value="<%= trainingsession.tsendtime || '' %>"
                     >
                 </div>
             </div>
@@ -160,6 +159,8 @@
                     >
                 </div>
             </div>
+
+            <!-- Status -->
             <div class="auf-form-group">
                 <label class="auf-label" for="tsstatusid">Session Status</label>
                 <select name="tsstatusid" id="tsstatusid" class="auf-select" required>

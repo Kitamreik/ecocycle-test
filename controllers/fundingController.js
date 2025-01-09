@@ -108,7 +108,6 @@ const editFundingForm = async (req, res) => {
             .select('*')
             .eq('fid', fundingId)
             .single();
-        console.log('Funding data:', fundingData);
         if (fundingError) throw fundingError;
 
         if (!fundingData) {
@@ -123,7 +122,6 @@ const editFundingForm = async (req, res) => {
             error: null
         });
     } catch (error) {
-        console.error('Error fetching funding data for edit:', error);
         res.render('pages/admin-dashboard/fundings/edit', {
             error: 'Error retrieving funding data',
             funding: null
@@ -199,7 +197,6 @@ const updateFunding = async (req, res) => {
 const deleteFunding = async (req, res) => {
     try {
         const { fundingId } = req.params;
-        console.log('Delete request for funding ID:', fundingId);
 
         if (!fundingId || isNaN(fundingId)) {
             return res.status(400).json({

@@ -93,8 +93,6 @@ const addSchoolForm = async (req, res) => {
 const addSchool = async (req, res) => {
     try {
         const { sname, sstreetaddress, sdistrictid, scityid, slanguageid, sgss, stitle1 } = req.body;
-        console.log("this is the req.body", req.body);
-        // Input validation
         if (!sname || typeof sname !== 'string') {
             return res.status(400).json({
                 error: 'School name is required and must be a string'
@@ -142,7 +140,6 @@ const addSchool = async (req, res) => {
             .select();
         
         if (error) throw error;
-        console.log("this is data when gets to the schooolController", data);
         res.status(201).json({
             message: 'School added successfully',
             data: data[0]

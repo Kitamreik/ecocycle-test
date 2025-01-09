@@ -1,11 +1,11 @@
-﻿// admin-panel.js
-import { showModal } from './utils.js';
+﻿import { showModal } from './utils.js';
 import { UserManager } from './users.js';
 import { FundingManager } from './fundings.js';
 import { SchoolManager } from './schools.js';
 import { PresentationManager } from './presentations.js';
 import { RequestManager } from './requests.js';
 import { TrainingSessionManager } from './trainingsessions.js';
+import { CalendarManager } from './calendar.js';
 
 class AdminPanel {
     constructor() {
@@ -23,7 +23,8 @@ class AdminPanel {
                 school: new SchoolManager(),
                 presentation: new PresentationManager(),
                 request: new RequestManager(),
-                trainingsessions: new TrainingSessionManager()
+                trainingsessions: new TrainingSessionManager(),
+                calendar: new CalendarManager()
             };
 
             this.setupEventListeners();
@@ -139,11 +140,21 @@ class AdminPanel {
 
         // Training session routes
         page('/admin/training-sessions', () => this.fetchAndRenderContent(`${API_BASE}/training-sessions`));
-        page('/admin/training-sessions/add', () => this.fetchAndRenderContent(`${API_BASE}/training-sessions/add`));
+        page('/admin/training-sessions/add', (ctx) => {
+            const queryString = ctx.querystring ? `?${ctx.querystring}` : '';
+            this.fetchAndRenderContent(`${API_BASE}/training-sessions/add${queryString}`);
+        });
         page('/admin/training-sessions/edit/:sessionId', (ctx) => this.fetchAndRenderContent(`${API_BASE}/training-sessions/edit/${ctx.params.sessionId}`));
         
+        // Calendar routes
+        page('/admin/calendar', async () => {
+            await this.fetchAndRenderContent(`${API_BASE}/calendar`);
+            if (window.calendarData && this.managers.calendar) {
+                await this.managers.calendar.init(window.calendarData);
+            }
+        });
+        
         // Other routes
-        page('/admin/calendar', () => this.fetchAndRenderContent(`${API_BASE}/calendar`));
         page('/admin/logout', () => window.location.href = '/admin/logout');
 
         // Catch-all route

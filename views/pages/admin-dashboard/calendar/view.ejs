@@ -1,0 +1,203 @@
+<link rel="stylesheet" href="/css/dashboard-pages/view.css" />
+
+<div class="content">
+    <div class="main-header">
+        <h1>Calendar</h1>
+        <button class="button" onclick="location.href='/admin/training-sessions/add'">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add new session</span>
+        </button>
+    </div>
+
+    <div class="calendar-container">
+        <!-- Calendar Navigation -->
+        <div class="calendar-nav">
+            <button id="prevMonth" class="nav-button"><i class="fa-solid fa-chevron-left"></i></button>
+            <h2 id="currentMonth">Loading...</h2>
+            <button id="nextMonth" class="nav-button"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <!-- Days of Week -->
+        <div class="weekdays-grid">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div id="calendar-days" class="days-grid">
+            <!-- Days will be populated by JavaScript -->
+        </div>
+
+        <!-- Training Sessions List -->
+        <div class="sessions-list">
+            <h3 id="selectedDateHeading">Training Sessions</h3>
+            <div id="sessionsList">
+                <p class="no-sessions">Select a day to view sessions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .calendar-container {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+
+    .calendar-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 10px;
+        background: #4CAF50;
+        color: white;
+        border-radius: 4px;
+    }
+
+    .nav-button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 5px 15px;
+        border-radius: 4px;
+    }
+
+    .nav-button:hover {
+        background: rgba(255,255,255,0.1);
+    }
+
+    .weekdays-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+        background: #f8f9fa;
+        padding: 10px 0;
+        border-radius: 4px;
+    }
+
+    .days-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        margin-bottom: 20px;
+    }
+
+    .calendar-day {
+        padding: 10px;
+        min-height: 80px;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .day-number {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .session-indicator {
+        width: 6px;
+        height: 6px;
+        background: #4CAF50;
+        border-radius: 50%;
+        margin: 2px auto;
+    }
+
+    .calendar-day:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .calendar-day.has-sessions {
+        background: #e3f2fd;
+        border-color: #2196f3;
+    }
+
+    .calendar-day.today {
+        background: #fff3e0;
+        border-color: #ff9800;
+    }
+
+    .calendar-day.other-month {
+        color: #adb5bd;
+        background: #f8f9fa;
+    }
+
+    .sessions-list {
+        margin-top: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .no-sessions {
+        text-align: center;
+        color: #6c757d;
+        padding: 20px;
+        font-style: italic;
+    }
+
+    .session-card {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 15px;
+        padding: 15px;
+        margin: 10px 0;
+        background: white;
+        border-radius: 4px;
+        border-left: 4px solid #4CAF50;
+    }
+
+    .session-time {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .session-info {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .session-details {
+        display: flex;
+        gap: 15px;
+        color: #6c757d;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.85em;
+    }
+
+    .status-badge.pending { background: #fff3cd; color: #856404; }
+    .status-badge.in-progress { background: #cce5ff; color: #004085; }
+    .status-badge.completed { background: #d4edda; color: #155724; }
+</style>
+
+<script type="text/javascript">
+    window.calendarData = {
+        sessions: <%- JSON.stringify(sessions || []) %>,
+        sessionsByDate: <%- JSON.stringify(sessionsByDate || {}) %>,
+        calendarData: <%- JSON.stringify(calendarData || {}) %>
+    };
+</script>
