@@ -142,7 +142,6 @@ class AdminPanel {
         page('/admin/training-sessions', () => this.fetchAndRenderContent(`${API_BASE}/training-sessions`));
         page('/admin/training-sessions/add', (ctx) => {
             const queryString = ctx.querystring ? `?${ctx.querystring}` : '';
-            console.log("queryString"+queryString);
             this.fetchAndRenderContent(`${API_BASE}/training-sessions/add${queryString}`);
         });
         page('/admin/training-sessions/edit/:sessionId', (ctx) => this.fetchAndRenderContent(`${API_BASE}/training-sessions/edit/${ctx.params.sessionId}`));

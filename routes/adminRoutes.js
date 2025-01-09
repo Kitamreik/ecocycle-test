@@ -20,7 +20,6 @@ const redirectIfAuthenticated = (req, res, next) => {
 
 // Render login page
 router.get('/login', redirectIfAuthenticated, (req, res) => {
-    console.log('Rendering login page');
     res.render('pages/admin-login', {
         layout: 'layout',
         header: false,
@@ -31,19 +30,15 @@ router.get('/login', redirectIfAuthenticated, (req, res) => {
 // Handle login form submission (no session management)
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
-    console.log('Login attempt:', { username, password });
     if (username === adminCredentials.username && password === adminCredentials.password) {
-        console.log('Login successful, redirecting to panel');
         res.redirect('/admin/panel');
     } else {
-        console.log('Login failed, redirecting to password error');
         res.redirect('/admin/password-error');
     }
 });
 
 // Admin panel route
 router.get('/panel', isAuthenticated, (req, res) => {
-    console.log('Rendering admin panel');
     res.render('pages/admin-dashboard/admin-panel');
 });
 

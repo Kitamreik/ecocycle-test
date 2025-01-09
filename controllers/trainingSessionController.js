@@ -108,9 +108,6 @@ const addTrainingSessionForm = async (req, res) => {
         ]);
 
         // Log for debugging
-        console.log('Selected Request ID:', rid);
-        console.log('Requests data:', requestsResponse.data);
-
         res.render('pages/admin-dashboard/training-sessions/add', {
             selectedRequestId: rid,  // Pass the request ID if it exists
             requests: requestsResponse.data || [],
@@ -194,7 +191,6 @@ const addTrainingSession = async (req, res) => {
         sessionData.tsstudents = tsstudents || 0;
         sessionData.tsclassrooms = tsclassrooms || 0;
         sessionData.tsadults = tsadults || 0;
-        console.log('Session Data:', sessionData);
         const { data, error } = await supabase
             .from('trainingsessions')
             .insert([sessionData])
@@ -217,10 +213,7 @@ const addTrainingSession = async (req, res) => {
 const editTrainingSessionForm = async (req, res) => {
     try {
         const { sessionId } = req.params;
-        console.log('Requested Session ID:', sessionId);
-
         if (!sessionId || isNaN(sessionId)) {
-            console.log('Invalid session ID provided');
             return res.render('pages/admin-dashboard/training-sessions/edit', {
                 error: 'Invalid session ID',
                 trainingsession: null,
@@ -275,7 +268,6 @@ const editTrainingSessionForm = async (req, res) => {
             .single();
 
         if (sessionError || !sessionData) {
-            console.log('No session found or error occurred');
             return res.render('pages/admin-dashboard/training-sessions/edit', {
                 error: sessionError ? sessionError.message : 'Training session not found',
                 trainingsession: null,

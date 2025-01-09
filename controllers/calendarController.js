@@ -106,8 +106,6 @@ const getEvents = async (req, res) => {
         const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
         const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
 
-        console.log('Fetching events for:', { month, year, startDate, endDate });
-
         const { data: sessions, error } = await supabase
             .from('trainingsessions')
             .select(`
@@ -152,8 +150,6 @@ const getEvents = async (req, res) => {
             educatorName: session.users?.username || 'Unassigned',
             status: session.sessionstatuses?.sessionstatusname || 'Unknown'
         }));
-
-        console.log('Processed events:', processedSessions);
 
         res.json({
             success: true,

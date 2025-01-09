@@ -90,8 +90,6 @@ export class TrainingSessionManager {
             // Log the sessions data for debugging
             const sessionsData = sessionsRow.querySelector('.sessions-container');
             if (sessionsData) {
-                console.log('Sessions for Request ID:', requestId);
-                console.log('Sessions Container:', sessionsData);
             }
         }
     }
