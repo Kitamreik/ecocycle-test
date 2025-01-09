@@ -3,7 +3,15 @@ const { supabase } = require('../config/supabase');
 // Get calendar view
 const getCalendarView = async (req, res) => {
     try {
-        // Fetch all training sessions with related data
+        // Get current date info
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
         const { data: sessions, error } = await supabase
             .from('trainingsessions')
             .select(`
@@ -32,64 +40,136 @@ const getCalendarView = async (req, res) => {
 
         if (error) throw error;
 
-        // Format sessions for calendar view
-        const calendarEvents = sessions.map(session => ({
-            id: session.tsid,
-            title: `${session.schools?.sname || 'Unknown School'} - ${session.presentations?.pname || 'No Presentation'}`,
-            start: session.tsdate + (session.tsstarttime ? 'T' + session.tsstarttime : ''),
-            end: session.tsdate + (session.tsendtime ? 'T' + session.tsendtime : ''),
-            extendedProps: {
-                educator: session.users?.username || 'Unassigned',
-                grades: session.tsgrades || 'N/A',
-                students: session.tsstudents || 0,
-                classrooms: session.tsclassrooms || 0,
-                adults: session.tsadults || 0,
-                status: session.sessionstatuses?.sessionstatusname || 'Unknown'
+        const sessionsByDate = sessions.reduce((acc, session) => {
+            if (!acc[session.tsdate]) {
+                acc[session.tsdate] = [];
             }
-        }));
+            acc[session.tsdate].push(session);
+            return acc;
+        }, {});
 
-        res.render('pages/admin-dashboard/calendar/view.ejs', {
-            events: calendarEvents,
+        // Calculate calendar data
+        const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const lastDayOfMonth = new Date(currentYear, currentMonth, daysInMonth).getDay();
+        const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+        res.render('pages/admin-dashboard/calendar/view', {
+            sessions: sessions || [],
+            sessionsByDate,
+            calendarData: {
+                monthName: monthNames[currentMonth],
+                currentYear,
+                currentMonth,
+                currentDate: now.getDate(),
+                firstDayOfMonth,
+                daysInMonth,
+                lastDayOfMonth,
+                daysInPrevMonth,
+                weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+            },
             error: null
         });
     } catch (error) {
         console.error('Error fetching calendar data:', error);
-        res.render('pages/admin-dashboard/calendar', {
-            events: [],
+        res.render('pages/admin-dashboard/calendar/view', {
+            sessions: [],
+            sessionsByDate: {},
+            calendarData: {
+                monthName: '',
+                currentYear: new Date().getFullYear(),
+                currentMonth: new Date().getMonth(),
+                currentDate: new Date().getDate(),
+                firstDayOfMonth: 0,
+                daysInMonth: 31,
+                lastDayOfMonth: 0,
+                daysInPrevMonth: 31,
+                weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+            },
             error: 'Error retrieving calendar data'
         });
     }
 };
 
-// Get events for a specific date range
+// Get events for a specific month
 const getEvents = async (req, res) => {
     try {
-        const { start, end } = req.query;
+        const { month, year } = req.query;
+
+        if (!month || !year) {
+            return res.status(400).json({
+                success: false,
+                error: 'Month and year are required'
+            });
+        }
+
+        const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+        const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+
+        console.log('Fetching events for:', { month, year, startDate, endDate });
 
         const { data: sessions, error } = await supabase
             .from('trainingsessions')
             .select(`
-                tsid
+                tsid,
+                tsdate,
+                tsstarttime,
+                tsendtime,
+                tsgrades,
+                tsstudents,
+                tsclassrooms,
+                tsadults,
+                schools (
+                    sname
+                ),
+                presentations (
+                    pname
+                ),
+                users (
+                    username
+                ),
+                sessionstatuses (
+                    sessionstatusname
+                )
             `)
-            .gte('tsdate', start)
-            .lte('tsdate', end)
+            .gte('tsdate', startDate)
+            .lte('tsdate', endDate)
             .order('tsdate', { ascending: true });
 
-        if (error) throw error;
+        if (error) {
+            console.error('Supabase query error:', error);
+            throw error;
+        }
 
-        const events = sessions.map(session => ({
-            id: session.tsid,
-            title: `${session.schools?.sname || 'Unknown School'} - ${session.presentations?.pname || 'No Presentation'}`,
-            start: session.tsdate + (session.tsstarttime ? 'T' + session.tsstarttime : ''),
-            end: session.tsdate + (session.tsendtime ? 'T' + session.tsendtime : ''),
-            status: session.sessionstatuses?.sessionstatusname || 'Unknown',
-            educator: session.users?.username || 'Unassigned'
+        // Process sessions for the response
+        const processedSessions = sessions.map(session => ({
+            ...session,
+            formattedDate: new Date(session.tsdate).toLocaleDateString(),
+            formattedStartTime: session.tsstarttime ? session.tsstarttime.substring(0, 5) : null,
+            formattedEndTime: session.tsendtime ? session.tsendtime.substring(0, 5) : null,
+            schoolName: session.schools?.sname || 'Unknown School',
+            presentationName: session.presentations?.pname || 'No Presentation',
+            educatorName: session.users?.username || 'Unassigned',
+            status: session.sessionstatuses?.sessionstatusname || 'Unknown'
         }));
 
-        res.json(events);
+        console.log('Processed events:', processedSessions);
+
+        res.json({
+            success: true,
+            sessions: processedSessions,
+            metadata: {
+                month,
+                year,
+                totalSessions: processedSessions.length
+            }
+        });
     } catch (error) {
-        console.error('Error fetching events:', error);
-        res.status(500).json({ error: 'Error retrieving events' });
+        console.error('Get events error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error retrieving events'
+        });
     }
 };
 

@@ -1,5 +1,4 @@
-﻿// admin-panel.js
-import { showModal } from './utils.js';
+﻿import { showModal } from './utils.js';
 import { UserManager } from './users.js';
 import { FundingManager } from './fundings.js';
 import { SchoolManager } from './schools.js';
@@ -149,7 +148,12 @@ class AdminPanel {
         page('/admin/training-sessions/edit/:sessionId', (ctx) => this.fetchAndRenderContent(`${API_BASE}/training-sessions/edit/${ctx.params.sessionId}`));
         
         // Calendar routes
-        page('/admin/calendar', () => this.fetchAndRenderContent(`${API_BASE}/calendar`));
+        page('/admin/calendar', async () => {
+            await this.fetchAndRenderContent(`${API_BASE}/calendar`);
+            if (window.calendarData && this.managers.calendar) {
+                await this.managers.calendar.init(window.calendarData);
+            }
+        });
         
         // Other routes
         page('/admin/logout', () => window.location.href = '/admin/logout');
