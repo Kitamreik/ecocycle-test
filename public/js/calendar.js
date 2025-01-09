@@ -1,6 +1,4 @@
-﻿import {showModal} from "./utils.js";
-
-export class CalendarManager {
+﻿export class CalendarManager {
     constructor() {
         this.sessions = [];
         this.sessionsByDate = {};
@@ -8,6 +6,7 @@ export class CalendarManager {
         this.currentDate = new Date();
         this.currentMonth = this.currentDate.getMonth();
         this.currentYear = this.currentDate.getFullYear();
+        this.isNavigating = false;
 
         this.monthNames = [
             "January", "February", "March", "April", "May", "June",
@@ -40,6 +39,12 @@ export class CalendarManager {
     }
 
     attachEventListeners() {
+        // Remove any existing event listeners
+        if (this.elements.prevMonthBtn) {
+            this.elements.prevMonthBtn.removeEventListener('click', this._handlePrevMonth);
+            this.elements.nextMonthBtn.removeEventListener('click', this._handleNextMonth);
+        }
+
         // Initialize DOM elements
         this.elements = {
             daysContainer: document.getElementById('calendar-days'),
@@ -50,12 +55,16 @@ export class CalendarManager {
             nextMonthBtn: document.getElementById('nextMonth')
         };
 
+        // Create bound event handlers
+        this._handlePrevMonth = () => this.navigateMonth(-1);
+        this._handleNextMonth = () => this.navigateMonth(1);
+
         // Attach event listeners
         if (this.elements.prevMonthBtn) {
-            this.elements.prevMonthBtn.addEventListener('click', () => this.navigateMonth(-1));
+            this.elements.prevMonthBtn.addEventListener('click', this._handlePrevMonth);
         }
         if (this.elements.nextMonthBtn) {
-            this.elements.nextMonthBtn.addEventListener('click', () => this.navigateMonth(1));
+            this.elements.nextMonthBtn.addEventListener('click', this._handleNextMonth);
         }
 
         // Initial render
@@ -63,15 +72,24 @@ export class CalendarManager {
     }
 
     async navigateMonth(direction) {
-        this.currentMonth += direction;
-        if (this.currentMonth < 0) {
-            this.currentMonth = 11;
-            this.currentYear--;
-        } else if (this.currentMonth > 11) {
-            this.currentMonth = 0;
-            this.currentYear++;
+        // Prevent duplicate calls
+        if (this.isNavigating) return;
+        this.isNavigating = true;
+
+        try {
+            this.currentMonth += direction;
+            if (this.currentMonth < 0) {
+                this.currentMonth = 11;
+                this.currentYear--;
+            } else if (this.currentMonth > 11) {
+                this.currentMonth = 0;
+                this.currentYear++;
+            }
+            await this.fetchMonthData();
+            this.renderCalendar();
+        } finally {
+            this.isNavigating = false;
         }
-        await this.fetchMonthData();
     }
 
     async fetchMonthData() {
